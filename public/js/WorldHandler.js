@@ -196,6 +196,7 @@ WorldHandler.prototype.createShape = function(){
 		name: 'Circle ' + (idCounter - 1),
 
 		type: 'circle',
+		color: Color.randomPastelHex(),
 		angle: 0,
 		x: 0,
 		y: 0,

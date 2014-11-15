@@ -4,6 +4,7 @@ angular.module('physicsApp', [])
 
 	var world = new p2.World();
 	var renderer = new WebGLRenderer(world);
+	renderer.state = renderer.defaultState = Renderer.PANZOOM;
 	worldHandler = new WorldHandler(world,renderer);
 
 	$scope.gravityX = 0;
@@ -101,8 +102,22 @@ angular.module('physicsApp', [])
 		state.actions.splice(idx, 1);
 	};
 
+	window.addEventListener('keyup', function (evt) {
+		switch(evt.keyCode){
+		case 32:
+			$scope.playing = !$scope.playing;
+		}
+		$scope.$apply();
+	});
+
 	$scope.$watch('playing', function (nv, ov){
 		renderer.paused = !nv;
+		if(renderer.paused){
+			renderer.state = renderer.defaultState = Renderer.PANZOOM;
+		} else {
+			renderer.state = renderer.defaultState = Renderer.DEFAULT;
+		}
+		worldHandler.updateAll($scope);
 	});
 
 	watchMany($scope, [

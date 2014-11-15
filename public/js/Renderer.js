@@ -35,6 +35,7 @@ function Renderer(world, options){
     var that = this;
 
     this.state = Renderer.DEFAULT;
+    this.defaultState = Renderer.DEFAULT;
 
     // Bodies to draw
     this.bodies=[];
@@ -126,7 +127,8 @@ Renderer.DRAWINGPOLYGON  =    5;
 Renderer.DRAWCIRCLE =         6;
 Renderer.DRAWINGCIRCLE  =     7;
 Renderer.DRAWRECTANGLE =      8;
-Renderer.DRAWINGRECTANGLE  =  9;
+Renderer.DRAWINGRECTANGLE =   9;
+Renderer.PANZOOM =           10;
 
 Renderer.toolStateMap = {
     'pick/pan [q]': Renderer.DEFAULT,
@@ -242,16 +244,16 @@ Renderer.prototype.setUpKeyboard = function() {
             that.drawAABBs = !that.drawAABBs;
             break;
         case "D": // toggle draw polygon mode
-            that.setState(s === Renderer.DRAWPOLYGON ? Renderer.DEFAULT : s = Renderer.DRAWPOLYGON);
+            that.setState(s === Renderer.DRAWPOLYGON ? that.defaultState : s = Renderer.DRAWPOLYGON);
             break;
         case "A": // toggle draw circle mode
-            that.setState(s === Renderer.DRAWCIRCLE ? Renderer.DEFAULT : s = Renderer.DRAWCIRCLE);
+            that.setState(s === Renderer.DRAWCIRCLE ? that.defaultState : s = Renderer.DRAWCIRCLE);
             break;
         case "F": // toggle draw rectangle mode
-            that.setState(s === Renderer.DRAWRECTANGLE ? Renderer.DEFAULT : s = Renderer.DRAWRECTANGLE);
+            that.setState(s === Renderer.DRAWRECTANGLE ? that.defaultState : s = Renderer.DRAWRECTANGLE);
             break;
         case "Q": // set default
-            that.setState(Renderer.DEFAULT);
+            that.setState(that.defaultState);
             break;
         case "1":
         case "2":
@@ -357,6 +359,10 @@ Renderer.prototype.handleMouseDown = function(physicsPosition){
         }
         break;
 
+    case Renderer.PANZOOM:
+        this.setState(Renderer.PANNING);
+        break;
+
     case Renderer.DRAWPOLYGON:
         // Start drawing a polygon
         this.setState(Renderer.DRAWINGPOLYGON);
@@ -435,6 +441,7 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
     switch(this.state){
 
     case Renderer.DEFAULT:
+    case Renderer.PANZOOM:
         break;
 
     case Renderer.DRAGGING:
@@ -442,11 +449,11 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
         this.world.removeConstraint(this.mouseConstraint);
         this.mouseConstraint = null;
         this.world.removeBody(this.nullBody);
-        this.setState(Renderer.DEFAULT);
+        this.setState(this.defaultState);
         break;
 
     case Renderer.PANNING:
-        this.setState(Renderer.DEFAULT);
+        this.setState(this.defaultState);
         break;
 
     case Renderer.DRAWINGPOLYGON:
