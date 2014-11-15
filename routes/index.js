@@ -31,8 +31,16 @@ exports.view = function(req, res){
 
 // GET /:id/edit
 exports.edit = function(req, res){
-	res.render('edit', {
-		scene: JSON.stringify(scene)
+	db.query('SELECT * FROM pt_scenes WHERE id=$1', [req.id], function (err, result){
+		if(err) return next(err);
+
+		if(!result.rows.length){
+			return res.status(404).render('error');
+		}
+
+		res.render('edit', {
+			scene: JSON.stringify(result.rows[0].scene)
+		});
 	});
 };
 
