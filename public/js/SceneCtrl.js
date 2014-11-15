@@ -9,35 +9,14 @@ angular.module('physicsApp', [])
 
 	$scope.playing = false;
 
-	$scope.world = {
-		gravityX: 0,
-		gravityY: 0,
-		fps: 60,
-		maxSubSteps: 3,
-		sleepMode: "NO_SLEEPING"
-	};
-
-	$scope.renderer = {
-		contacts: false,
-		aabbs: false,
-		constraints: false
-	};
-
-	$scope.solver = {
-		iterations: 10,
-		stiffness: 1000000,
-		relaxation: 4,
-		tolerance: 0.0001
-	};
-
-	$scope.bodies = [];
-
 	var scene;
 	if(window.scene){
 		scene = window.scene;
 	} else {
 		scene = worldHandler.createWorld();
 	}
+
+	// Extend the scope with the scene data
 	for(var key in scene){
 		$scope[key] = scene[key];
 	}

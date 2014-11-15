@@ -88,16 +88,19 @@ WorldHandler.prototype.updateShape = function(bodyId, config){
 	}
 
 	var i = body.shapes.indexOf(shape);
+	var oldColor = shape.color;
 
 	// Check if type changed
 	if(config.type == 'circle' && !(shape instanceof p2.Circle)){
-		body.shapes[i] = new p2.Circle(config.radius);
+		shape = new p2.Circle(config.radius);
 	} else if(config.type == 'box' && !(shape instanceof p2.Rectangle)){
-		body.shapes[i] = new p2.Rectangle(config.width, config.height);
+		shape = new p2.Rectangle(config.width, config.height);
 	} else if(config.type == 'plane' && !(shape instanceof p2.Plane)){
-		body.shapes[i] = new p2.Plane();
+		shape = new p2.Plane();
 	}
-	this.shapes[config.id] = body.shapes[i];
+	this.shapes[config.id] = body.shapes[i] = shape;
+
+	shape.color = oldColor;
 
 	switch(config.type){
 	case 'circle':
@@ -221,7 +224,7 @@ WorldHandler.prototype.createWorld = function(){
 	return {
 		world: {
 			gravityX: 0,
-			gravityY: 0,
+			gravityY: -10,
 			fps: 60,
 			maxSubSteps: 3,
 			sleepMode: "NO_SLEEPING"
