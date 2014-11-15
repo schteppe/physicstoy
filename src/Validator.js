@@ -11,7 +11,7 @@ schema = {
 		world: {
 			type: "object",
 			properties: {
-				gravityX: { type: "string" },
+				gravityX: { type: "number" },
 				gravityY: { type: "number" },
 
 				fps : { type: "number" },
