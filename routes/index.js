@@ -1,3 +1,5 @@
+var path = require('path');
+var db = require(path.join(__dirname, '..', 'src', 'Database'));
 var validate = require('../src/Validator').validate;
 
 var scene;
@@ -7,10 +9,23 @@ exports.index = function(req, res){
 	res.render('index');
 };
 
+// GET /new
+exports.new = function(req, res){
+	res.render('edit');
+};
+
 // GET /:id
 exports.view = function(req, res){
-	res.render('view', {
-		scene: JSON.stringify(scene)
+	db.query('SELECT * FROM pt_scenes WHERE id=$1', [req.id], function (err, result){
+		if(err) return next(err);
+
+		if(!result.rows.length){
+			return res.status(404).render('error');
+		}
+
+		res.render('view', {
+			scene: JSON.stringify(result.rows[0].scene)
+		});
 	});
 };
 
@@ -41,10 +56,21 @@ exports.save = function(req, res){
 		}
 	}
 
-	res.render('edit', {
-		errors: errors,
-		scene: req.body.scene
-	});
+	if(errors.length){
+		res.render('edit', {
+			errors: errors,
+			scene: req.body.scene
+		});
+	} else {
+
+		db.query('INSERT INTO pt_scenes (scene) VALUES($1) RETURNING id', [obj], function (err, result){
+			if(err) return next(err);
+
+			var insertId = result.rows[0].id;
+
+			res.redirect('/' + insertId);
+		});
+	}
 };
 
 scene = {

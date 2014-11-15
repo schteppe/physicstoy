@@ -130,7 +130,7 @@ WorldHandler.prototype.addShape = function(bodyId, config){
 		shape = new p2.Circle(config.radius);
 		break;
 	case 'box':
-		shape = new p2.Box(config.radius);
+		shape = new p2.Rectangle(config.width, config.height);
 		break;
 	case 'plane':
 		shape = new p2.Plane();
@@ -224,7 +224,6 @@ WorldHandler.prototype.createWorld = function(){
 			gravityY: 0,
 			fps: 60,
 			maxSubSteps: 3,
-			playing: false,
 			sleepMode: "NO_SLEEPING"
 		},
 		renderer: {

@@ -360,9 +360,12 @@
 			</script>
 		<% } %>
 
-		<script>
-			window.scene = JSON.parse('<%-scene%>');
-		</script>
+		<% if(typeof(scene) !== 'undefined'){ %>
+			<script>
+				window.scene = JSON.parse('<%-scene%>');
+			</script>
+		<% } %>
+
 		<% if(process.NODE_ENV === 'production'){ %>
 			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
 		<% } else { %>
