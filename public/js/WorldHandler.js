@@ -9,6 +9,16 @@ function WorldHandler(world,renderer){
 	this.actions = {};
 }
 
+WorldHandler.prototype.updateAll = function(config){
+	for (var i = 0; i < config.bodies.length; i++) {
+		var bodyConfig = config.bodies[i];
+		this.updateBody(bodyConfig);
+		for (var j = 0; j < bodyConfig.shapes.length; j++) {
+			this.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
+		}
+	}
+};
+
 WorldHandler.prototype.updateWorld = function(config){
 	var world = this.world;
 	world.gravity.set([config.gravityX, config.gravityY]);
