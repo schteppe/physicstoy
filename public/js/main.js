@@ -1,0 +1,2 @@
+document.onload = function(){
+};

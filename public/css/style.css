@@ -1,0 +1,106 @@
+html,body {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow: hidden;
+}
+.menu-container {
+	width:300px;
+	overflow:auto;
+	overflow-x:hidden;
+	max-height:100%;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.menu {
+	background: #eee;
+	font-family: sans-serif;
+	line-height: 1.5em;
+	font-size: 12px;
+	border: 1px solid black;
+	padding:0;
+	margin:0;
+	position:relative;
+}
+
+.menu ul {
+	list-style-type: none;
+	padding:0;
+	margin:0;
+	padding-left:10px;
+}
+.menu li {
+	border-left: 1px solid black;
+}
+.menu .header {
+	display:block;
+	text-transform: uppercase;
+	background: #ccc;
+	padding:0;
+	margin-left:0;
+	width:100%;
+	border-bottom: 1px solid black;
+}
+.menu .header .text {
+	margin-left: 4px;
+	display:inline-block;
+}
+.menu .form-group {
+	padding-left: 10px;
+	margin:0;
+	padding:2px;
+}
+.menu label {
+	display:inline-block;
+	text-transform: lowercase;
+	margin-left: 3px;
+}
+.menu input, .menu select {
+	width:150px;
+	position: absolute;
+	right: 3px;
+}
+.menu input.vec2.x {
+	right: 80px;
+}
+.menu input.vec2 {
+	width: 73px;
+}
+.menu .rm {
+	position: absolute;
+	right: 4px;
+}
+.menu .content {
+	padding-bottom: 10px;
+}
+.menu ul li:last-child > .content {
+	border-bottom: 1px solid black;
+}
+.menu ul li > .content {
+	border-bottom: 1px solid black;
+}
+.menu ul li:last-child > .content {
+	border-bottom: 1px solid black;
+}
+.menu > .header, .menu ul li:first-child > .header {
+	border-top: 1px solid black;
+}
+.menu .header.world { background-color: #afa; }
+.menu .content.world { background-color: #dfd; }
+.menu .header.body { background-color: #faa; }
+.menu .content.body { background-color: #fdd; }
+.menu .header.shape { background-color: #aaf; }
+.menu .content.shape { background-color: #ddf; }
+.menu .header.renderer { background-color: #faf; }
+.menu .content.renderer { background-color: #fdf; }
+.menu .header.solver { background-color: #aff; }
+.menu .content.solver { background-color: #dff; }
+.menu .header.machine { background-color: #aff; }
+.menu .content.machine { background-color: #dff; }
+.menu .header.state { background-color: #afa; }
+.menu .content.state { background-color: #dfd; }
+.menu .header.action { background-color: #faa; }
+.menu .content.action { background-color: #fdd; }

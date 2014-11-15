@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+		<script src="js/p2.js"></script>
+		<script src="js/pixi.js"></script>
+		<script src="js/Renderer.js"></script>
+		<script src="js/WebGLRenderer.js"></script>
+		<script src="js/WorldHandler.js"></script>
+		<script src="js/main.js"></script>
+		<script src="js/Machine.js"></script>
+		<script>
+			window.scene = {
+				gravityX : 0,
+				gravityY : -20,
+				fps : 60,
+				maxSubSteps : 3,
+				playing : false,
+				sleepMode : "NO_SLEEPING",
+
+				renderer : {
+					contacts: false,
+					aabbs: false,
+					constraints: false
+				},
+
+				solver : {
+					iterations: 10,
+					stiffness: 1000000,
+					relaxation: 4,
+					tolerance: 0.0001
+				},
+
+				bodies : [{
+					id: 1,
+					name: 'Body 1',
+
+					x: 0,
+					y: 0,
+					angle: 0,
+					type: 'dynamic',
+					mass: 1,
+					collisionResponse: true,
+					shapes: [{
+						id: 2,
+						name: 'Circle 2',
+
+						type: 'circle',
+						angle: 0,
+						x: 0,
+						y: 0,
+						collisionResponse: true,
+
+						// Circle
+						radius: 1,
+
+						// Box
+						width: 1,
+						height: 1,
+
+						// Convex
+						vertices: []
+					}],
+
+					velocityX: 0,
+					velocityY: 0,
+					angularVelocity: 0,
+
+					damping: 0,
+					angularDamping: 0,
+
+					fixedRotation: false,
+
+					enableSleep: false,
+
+					gravityScale: 1,
+					machines: []
+				}, {
+					id: 3,
+					name: 'Body 2',
+
+					x: 0,
+					y: 0,
+					angle: 0,
+					type: 'static',
+					mass: 0,
+					collisionResponse: true,
+					shapes: [{
+						id: 4,
+						name: 'Plane 3',
+
+						type: 'plane',
+						angle: 0,
+						x: 0,
+						y: -2,
+						collisionResponse: true,
+
+						// Circle
+						radius: 1,
+
+						// Box
+						width: 1,
+						height: 1,
+
+						// Convex
+						vertices: []
+					}],
+
+					velocityX: 0,
+					velocityY: 0,
+					angularVelocity: 0,
+
+					damping: 0,
+					angularDamping: 0,
+
+					fixedRotation: false,
+
+					enableSleep: false,
+
+					gravityScale: 1,
+					machines: []
+				}],
+			};
+		</script>
+		<script src="js/SceneCtrl.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta charset="utf-8">
+	</head>
+	<body>
+		<div class="menu-container">
+			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl">
+
+				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=false">
+					<div class="text">Control</div>
+				</span>
+				<div class="control content" ng-show="controlToggled">
+					<div class="form-group">
+						<label>playing</label>
+						<input type="checkbox" ng-model="playing" ng-change="updateAll()"/>
+					</div>
+				</div>
+
+				<span class="solver header" ng-click="solverToggled=!solverToggled" ng-init="solverToggled=false">
+					<div class="text">Solver</div>
+				</span>
+
+				<div class="solver content" ng-show="solverToggled">
+					<div class="form-group">
+						<label>iterations</label>
+						<input type="number" ng-model="solver.iterations" min="0"/>
+					</div>
+
+					<div class="form-group">
+						<label>stiffness</label>
+						<input type="number" ng-model="solver.stiffness" min="0"/>
+					</div>
+
+					<div class="form-group">
+						<label>relaxation</label>
+						<input type="number" ng-model="solver.relaxation" min="0"/>
+					</div>
+
+					<div class="form-group">
+						<label>tolerance</label>
+						<input type="number" ng-model="solver.tolerance" min ="0"/>
+					</div>
+				</div>
+
+				<span class="renderer header" ng-click="rendererToggled=!rendererToggled" ng-init="rendererToggled=false">
+					<div class="text">Renderer</div>
+				</span>
+
+				<div class="renderer content" ng-show="rendererToggled">
+					<div class="form-group">
+						<label>contacts</label>
+						<input type="checkbox" ng-model="renderer.contacts"/>
+					</div>
+
+					<div class="form-group">
+						<label>aabbs</label>
+						<input type="checkbox" ng-model="renderer.aabbs"/>
+					</div>
+
+					<div class="form-group">
+						<label>constraints</label>
+						<input type="checkbox" ng-model="renderer.constraints"/>
+					</div>
+				</div>
+
+				<span class="world header" ng-click="toggled=!toggled" ng-init="toggled=true">
+					<div class="text">World</div>
+				</span>
+
+				<div class="world content" ng-show="toggled">
+					<div class="form-group">
+						<label>gravity</label>
+						<input type="number" class="vec2 x" ng-model="gravityX"/>
+						<input type="number" class="vec2 y" ng-model="gravityY"/>
+					</div>
+
+					<div class="form-group">
+						<label>
+							Bodies <button ng-click="addBody()">+</button>
+						</label>
+					</div>
+					<ul class="bodies">
+						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
+							<span class="body header" ng-click="toggled=!toggled" ng-init="toggled=true">
+								<div class="text">{{body.name||'&nbsp;'}}</div>
+								<span class="rm" ng-click="removeBody(body)">X</span>
+							</span>
+
+							<div class="body content" ng-show="toggled">
+
+								<!-- name -->
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" ng-model="body.name" />
+								</div>
+
+								<!-- body type -->
+								<div class="form-group">
+									<label>Type</label>
+									<select ng-model="body.type">
+										<option>dynamic</option>
+										<option>static</option>
+										<option>kinematic</option>
+									</select>
+								</div>
+
+								<!-- mass -->
+								<div ng-show="body.type=='dynamic'" class="form-group">
+									<label>Mass</label>
+									<input type="number" step="any" min="0" ng-model="body.mass" />
+								</div>
+
+								<!-- sleep -->
+								<div ng-show="body.type=='dynamic'" class="form-group">
+									<label>Enable sleep</label>
+									<input type="checkbox" ng-model="body.enableSleep" />
+								</div>
+
+								<!-- gravityScale -->
+								<div ng-show="body.type=='dynamic'" class="form-group">
+									<label>gravity scale</label>
+									<input type="number" ng-model="body.gravityScale" />
+								</div>
+
+								<!-- Positions -->
+								<div class="form-group">
+									<label>position</label>
+									<input type="number" class="vec2 x" ng-model="body.x"/>
+									<input type="number" class="vec2 y" ng-model="body.y"/>
+								</div>
+
+								<div class="form-group">
+									<label>angle</label>
+									<input type="number" ng-model="body.angle"/>
+								</div>
+
+								<!-- Velocities -->
+								<div class="form-group">
+									<label>velocity</label>
+									<input type="number" class="vec2 x" ng-model="body.velocityX"/>
+									<input type="number" class="vec2 y" ng-model="body.velocityY"/>
+								</div>
+
+								<div class="form-group">
+									<label>angular velocity</label>
+									<input type="number" ng-model="body.angularVelocity"/>
+								</div>
+
+								<!-- damping -->
+								<div class="form-group">
+									<label>damping</label>
+									<input type="number" ng-model="body.damping" min="0"/>
+								</div>
+
+								<div class="form-group">
+									<label>angular damping</label>
+									<input type="number" ng-model="body.angularDamping" min="0"/>
+								</div>
+
+								<div class="form-group">
+									<label>fixed rotation</label>
+									<input type="checkbox" ng-model="body.fixedRotation"/>
+								</div>
+
+								<!-- Shapes -->
+								<div class="form-group">
+									<label>
+										Shapes <button ng-click="addShapeToBody(body)">+</button>
+									</label>
+								</div>
+								<ul class="shapes">
+									<li class="shape" ng-repeat="shape in body.shapes" ng-controller="ShapeCtrl">
+
+										<span class="shape header" ng-click="toggled=!toggled" ng-init="toggled=false">
+											<div class="text">{{shape.name||'&nbsp;'}}</div>
+											<span class="rm" ng-click="removeShape(body,shape)">X</span>
+										</span>
+
+										<div class="shape content" ng-show="toggled">
+
+											<div class="form-group">
+												<label>name</label>
+												<input type="text" ng-model="shape.name"/>
+											</div>
+
+											<div class="form-group">
+												<label>Type</label>
+												<select ng-model="shape.type">
+													<option>circle</option>
+													<option>box</option>
+													<option>plane</option>
+													<option>convex</option>
+												</select>
+											</div>
+
+											<div class="form-group">
+												<label>local position</label>
+												<input type="number" class="vec2 x" ng-model="shape.x"/>
+												<input type="number" class="vec2 y" ng-model="shape.y"/>
+											</div>
+
+											<div class="form-group">
+												<label>local angle</label>
+												<input type="number" ng-model="shape.angle"/>
+											</div>
+
+											<div class="form-group" ng-show="shape.type=='circle'">
+												<label>radius</label>
+												<input type="number" min="0" ng-model="shape.radius" required="required" />
+											</div>
+
+											<div class="form-group" ng-show="shape.type=='box'">
+												<label>width</label>
+												<input type="number" min="0" ng-model="shape.width"/>
+											</div>
+
+											<div class="form-group" ng-show="shape.type=='box'">
+												<label>height</label>
+												<input type="number" min="0" ng-model="shape.height"/>
+											</div>
+
+											<div class="form-group" ng-show="shape.type=='convex'">
+												<label>vertices</label>
+											</div>
+										</div>
+									</li>
+								</ul>
+								<!-- / Shapes -->
+
+								<!-- State machines -->
+								<div class="form-group">
+									<label>
+										State machines <button ng-click="addMachineToBody(body)">+</button>
+									</label>
+								</div>
+								<ul class="machines">
+									<li class="machine" ng-repeat="machine in body.machines" ng-controller="MachineCtrl">
+
+										<span class="machine header" ng-click="toggled=!toggled" ng-init="toggled=true">
+											<div class="text">{{machine.name||'&nbsp;'}}</div>
+											<span class="rm" ng-click="removeMachine(body,machine)">X</span>
+										</span>
+
+										<div class="machine content" ng-show="toggled">
+
+											<!-- name -->
+											<div class="form-group">
+												<label>Name</label>
+												<input type="text" ng-model="machine.name" />
+											</div>
+
+											<div class="form-group">
+												<label>log</label>
+												<input type="checkbox" ng-model="machine.log"/>
+											</div>
+
+											<!-- states -->
+											<div class="form-group">
+												<label>
+													States <button ng-click="addState(machine)">+</button>
+												</label>
+											</div>
+											<ul class="states">
+												<li class="state" ng-repeat="state in machine.states" ng-controller="StateCtrl">
+
+													<span class="state header" ng-click="toggled=!toggled" ng-init="toggled=true">
+														<div class="text">{{state.name||'&nbsp;'}}</div>
+														<span class="rm" ng-click="removeState(machine,state)">X</span>
+													</span>
+
+													<div class="state content" ng-show="toggled">
+
+														<!-- name -->
+														<div class="form-group">
+															<label>Name</label>
+															<input type="text" ng-model="state.name" />
+														</div>
+
+														<!-- actions -->
+														<div class="form-group">
+															<label>
+																Actions <button ng-click="addAction(state)">+</button>
+															</label>
+														</div>
+														<ul class="actions">
+															<li class="action" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
+
+																<span class="action header" ng-click="toggled=!toggled" ng-init="toggled=true">
+																	<div class="text">action</div>
+																	<span class="rm" ng-click="removeAction(state,action)">X</span>
+																</span>
+
+																<div class="action content" ng-show="toggled">
+																	<div class="form-group">
+																		<div class="form-group">
+																			<label>Type</label>
+																			<select ng-model="action.type">
+																				<option>wait</option>
+																			</select>
+																		</div>
+
+																		<!-- time -->
+																		<div ng-show="action.type=='wait'" class="form-group">
+																			<label>time</label>
+																			<input type="number" step="any" min="0" ng-model="action.time" />
+																		</div>
+
+																		<!-- to -->
+																		<div ng-show="action.type=='wait'" class="form-group">
+																			<label>to</label>
+																			<select ng-model="action.to">
+																				<option ng-repeat="toState in machine.states" ng-if="toState!=state">State</option>
+																			</select>
+																		</div>
+
+																	</div>
+																</div>
+															</li>
+														</ul>
+														<!-- / actions -->
+
+													</div>
+												</li>
+											</ul>
+											<!-- / states -->
+
+										</div>
+									</li>
+								</ul>
+								<!-- / State machines -->
+
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
