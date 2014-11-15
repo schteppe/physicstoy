@@ -24,6 +24,7 @@ app.all('*', Middleware.id());
 app.get ('/', routes.index);
 app.get (/^\/(\d+)$/, routes.view);
 app.get (/^\/(\d+)\/edit$/, routes.edit);
+app.post(/^\/(\d+)\/edit$/, routes.save);
 
 app.listen(port, function() {
 	console.log("Listening on port " + port + " ("+app.get('env')+")");

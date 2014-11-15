@@ -17,6 +17,13 @@
 						<label>playing</label>
 						<input type="checkbox" ng-model="playing"/>
 					</div>
+					<div class="form-group">
+						<form method="POST" novalidate id="form">
+							<label>save</label>
+							<input id="sceneData" name="scene" type="hidden" />
+							<input id="saveButton" type="submit" value="Save"/>
+						</form>
+					</div>
 				</div>
 
 				<span class="solver header" ng-click="solverToggled=!solverToggled" ng-init="solverToggled=false">
@@ -73,8 +80,8 @@
 				<div class="world content" ng-show="toggled">
 					<div class="form-group">
 						<label>gravity</label>
-						<input type="number" class="vec2 x" ng-model="gravityX"/>
-						<input type="number" class="vec2 y" ng-model="gravityY"/>
+						<input type="number" class="vec2 x" ng-model="world.gravityX"/>
+						<input type="number" class="vec2 y" ng-model="world.gravityY"/>
 					</div>
 
 					<div class="form-group">
@@ -214,7 +221,7 @@
 
 											<div class="form-group" ng-show="shape.type=='circle'">
 												<label>radius</label>
-												<input type="number" min="0" ng-model="shape.radius" required="required" />
+												<input type="number" min="0" ng-model="shape.radius" />
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='box'">
@@ -343,6 +350,15 @@
 				</div>
 			</div>
 		</div>
+
+		<% if(typeof(errors) !== 'undefined'){ %>
+			<script>
+				var errors = JSON.parse('<%-JSON.stringify(errors)%>');
+				if(errors && errors.length){
+					alert(errors.join('\n'))
+				}
+			</script>
+		<% } %>
 
 		<script>
 			window.scene = JSON.parse('<%-scene%>');

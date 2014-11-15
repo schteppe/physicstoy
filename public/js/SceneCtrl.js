@@ -7,12 +7,15 @@ angular.module('physicsApp', [])
 	renderer.state = renderer.defaultState = Renderer.PANZOOM;
 	worldHandler = new WorldHandler(world,renderer);
 
-	$scope.gravityX = 0;
-	$scope.gravityY = 0;
-	$scope.fps = 60;
-	$scope.maxSubSteps = 3;
 	$scope.playing = false;
-	$scope.sleepMode = "NO_SLEEPING";
+
+	$scope.world = {
+		gravityX: 0,
+		gravityY: 0,
+		fps: 60,
+		maxSubSteps: 3,
+		sleepMode: "NO_SLEEPING"
+	};
 
 	$scope.renderer = {
 		contacts: false,
@@ -29,11 +32,14 @@ angular.module('physicsApp', [])
 
 	$scope.bodies = [];
 
+	var scene;
 	if(window.scene){
-		var scene = window.scene;
-		for(var key in scene){
-			$scope[key] = scene[key];
-		}
+		scene = window.scene;
+	} else {
+		scene = worldHandler.createWorld();
+	}
+	for(var key in scene){
+		$scope[key] = scene[key];
 	}
 
 	$scope.updateAll = function () {
@@ -110,6 +116,22 @@ angular.module('physicsApp', [])
 		$scope.$apply();
 	});
 
+	document.getElementById('saveButton').addEventListener('click', function (evt){
+		var vars = Object.keys($scope).filter(function(v){ return v[0] !== '$'; });
+		var data = {};
+		for (var i = 0; i < vars.length; i++) {
+			data[vars[i]] = $scope[vars[i]];
+		}
+		data = {
+			world: JSON.parse(angular.toJson($scope.world)),
+			solver: JSON.parse(angular.toJson($scope.solver)),
+			renderer: JSON.parse(angular.toJson($scope.renderer)),
+			bodies: JSON.parse(angular.toJson($scope.bodies)),
+		};
+		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
+		document.getElementById('form').submit();
+	}, true);
+
 	$scope.$watch('playing', function (nv, ov){
 		renderer.paused = !nv;
 		if(renderer.paused){
@@ -121,10 +143,10 @@ angular.module('physicsApp', [])
 	});
 
 	watchMany($scope, [
-		'gravityX',
-		'gravityY'
+		'world.gravityX',
+		'world.gravityY'
 	], function () {
-		worldHandler.updateWorld($scope);
+		worldHandler.updateWorld($scope.world);
 	});
 })
 

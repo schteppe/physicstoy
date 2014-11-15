@@ -217,6 +217,31 @@ WorldHandler.prototype.createShape = function(){
 	};
 };
 
+WorldHandler.prototype.createWorld = function(){
+	return {
+		world: {
+			gravityX: 0,
+			gravityY: 0,
+			fps: 60,
+			maxSubSteps: 3,
+			playing: false,
+			sleepMode: "NO_SLEEPING"
+		},
+		renderer: {
+			contacts: false,
+			aabbs: false,
+			constraints: false
+		},
+		solver: {
+			iterations: 10,
+			stiffness: 1000000,
+			relaxation: 4,
+			tolerance: 0.0001
+		},
+		bodies: []
+	};
+};
+
 WorldHandler.prototype.createMachine = function(){
 	return {
 		id: idCounter++,
