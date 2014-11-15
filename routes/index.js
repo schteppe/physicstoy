@@ -52,6 +52,7 @@ scene = {
 			name: 'Circle 2',
 
 			type: 'circle',
+			color:'#ffaaaa',
 			angle: 0,
 			x: 0,
 			y: 0,
@@ -96,6 +97,7 @@ scene = {
 			name: 'Plane 3',
 
 			type: 'plane',
+			color:'#aaffaa',
 			angle: 0,
 			x: 0,
 			y: -2,

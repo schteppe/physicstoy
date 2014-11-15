@@ -766,23 +766,23 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
                 angle = angle || 0;
 
                 if(child instanceof p2.Circle){
-                    this.drawCircle(graphics, offset[0], offset[1], angle, child.radius,color,lw,isSleeping);
+                    this.drawCircle(graphics, offset[0], offset[1], angle, child.radius,child.color,lw,isSleeping);
 
                 } else if(child instanceof p2.Particle){
                     this.drawCircle(graphics, offset[0], offset[1], angle, 2*lw, lineColor, 0);
 
                 } else if(child instanceof p2.Plane){
                     // TODO use shape angle
-                    WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], color, lineColor, lw, lw*10, lw*10, 100);
+                    WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 100);
 
                 } else if(child instanceof p2.Line){
                     WebGLRenderer.drawLine(graphics, offset, angle, child.length, lineColor, lw);
 
                 } else if(child instanceof p2.Rectangle){
-                    this.drawRectangle(graphics, offset[0], offset[1], angle, child.width, child.height, lineColor, color, lw, isSleeping);
+                    this.drawRectangle(graphics, offset[0], offset[1], angle, child.width, child.height, lineColor, child.color, lw, isSleeping);
 
                 } else if(child instanceof p2.Capsule){
-                    this.drawCapsule(graphics, offset[0], offset[1], angle, child.length, child.radius, lineColor, color, lw, isSleeping);
+                    this.drawCapsule(graphics, offset[0], offset[1], angle, child.length, child.radius, lineColor, child.color, lw, isSleeping);
 
                 } else if(child instanceof p2.Convex){
                     // Scale verts
@@ -793,7 +793,7 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
                         p2.vec2.rotate(vrot, v, angle);
                         verts.push([(vrot[0]+offset[0]), (vrot[1]+offset[1])]);
                     }
-                    this.drawConvex(graphics, verts, child.triangles, lineColor, color, lw, this.debugPolygons,[offset[0],-offset[1]], isSleeping);
+                    this.drawConvex(graphics, verts, child.triangles, lineColor, child.color, lw, this.debugPolygons,[offset[0],-offset[1]], isSleeping);
 
                 } else if(child instanceof p2.Heightfield){
                     var path = [[0,-100]];
@@ -802,7 +802,7 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
                         path.push([j*child.elementWidth, v]);
                     }
                     path.push([child.data.length*child.elementWidth,-100]);
-                    this.drawPath(graphics, path, lineColor, color, lw, isSleeping);
+                    this.drawPath(graphics, path, lineColor, child.color, lw, isSleeping);
 
                 }
             }

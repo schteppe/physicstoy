@@ -1,3 +1,6 @@
+/**
+ * @class Color
+ */
 function Color(){
 
 }
@@ -8,11 +11,21 @@ Color.componentToHex = function(c) {
     return hex.length === 1 ? "0" + hex : hex;
 };
 
+/**
+ * Returns a string HEX code, for example "FF0000"
+ * @param  {number} r A number between 0 and 255
+ * @param  {number} g
+ * @param  {number} b
+ * @return {string}
+ */
 Color.rgbToHex = function(r, g, b) {
     return Color.componentToHex(r) + Color.componentToHex(g) + Color.componentToHex(b);
 };
 
-//http://stackoverflow.com/questions/43044/algorithm-to-randomly-generate-an-aesthetically-pleasing-color-palette
+/**
+ * http://stackoverflow.com/questions/43044/algorithm-to-randomly-generate-an-aesthetically-pleasing-color-palette
+ * @return {string}
+ */
 Color.randomPastelHex = function(){
     var mix = [255,255,255];
     var red =   Math.floor(Math.random()*256);

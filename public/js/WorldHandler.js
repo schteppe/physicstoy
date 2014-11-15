@@ -112,6 +112,9 @@ WorldHandler.prototype.updateShape = function(bodyId, config){
 		break;
 	}
 
+	// Hack in the color
+	shape.color = parseInt(config.color.replace('#',''), 16);
+
 	body.shapeOffsets[i].set([config.x, config.y]);
 	body.shapeAngles[i] = config.angle;
 
@@ -196,7 +199,7 @@ WorldHandler.prototype.createShape = function(){
 		name: 'Circle ' + (idCounter - 1),
 
 		type: 'circle',
-		color: Color.randomPastelHex(),
+		color: '#' + Color.randomPastelHex(),
 		angle: 0,
 		x: 0,
 		y: 0,
