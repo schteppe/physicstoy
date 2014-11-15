@@ -5,8 +5,14 @@ var validate = require('../src/Validator').validate;
 var scene;
 
 // GET /
-exports.index = function(req, res){
-	res.render('index');
+exports.index = function(req, res, next){
+	db.query('SELECT * FROM pt_scenes ORDER BY id DESC OFFSET 0 LIMIT 10', [], function (err, result){
+		if(err) return next(err);
+
+		res.render('index', {
+			scenes: result.rows
+		});
+	});
 };
 
 // GET /new

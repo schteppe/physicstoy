@@ -6,8 +6,28 @@
 	<body>
 		<h1>Physics Toy</h1>
 		<p>
-			Physics Toy is a tool for creating simple 2D physics scenes.
+			Physics Toy is a tool for creating simple 2D physics scenes. It's is a small side project made by <a href="http://twitter.com/schteppe">Stefan Hedman</a>.
 		</p>
+
+		<h2>Instructions</h2>
+		<p>
+			Open a scene, modify its initial state via the menu to the right. Save it via the "control" menu. Share or keep modifying your scene.
+		</p>
+
+		<h2>Latest scenes</h2>
+		<ul>
+			<% for (var i = 0; i < scenes.length; i++) { %>
+				<li>
+					<a href="/<%=scenes[i].id%>">Scene <%=scenes[i].id%></a>
+					<a href="/<%=scenes[i].id%>/edit">(edit)</a>
+				</li>
+			<% } %>
+		</ul>
+
+		<p>
+			<a href="/new">Create new scene</a>
+		</p>
+
 		<% include ga %>
 	</body>
 </html>
