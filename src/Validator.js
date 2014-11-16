@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 2;
+Validator.CURRENT_VERSION = 3;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -33,6 +33,10 @@ Validator.upgrade = function(obj){
 		obj.version = 2;
 		break;
 	case 2:
+		obj.springs = [];
+		obj.version = 3;
+		break;
+	case 3:
 		break;
 	default:
 		return false;
@@ -53,7 +57,7 @@ Validator.upgrade = function(obj){
 
 var num = { type: "number", required: true };
 var integer = { type: "integer", required: true };
-var id = { type: "integer", minimum: 1, required: true };
+var id = { type: "integer", minimum: 0, required: true };
 var str = { type: "string", required: true, maxLength: 1000 };
 var bool = { type: "boolean", required: true };
 
@@ -103,6 +107,35 @@ schema = {
 				stiffness: num,
 				relaxation: num,
 				tolerance: num,
+			}
+		},
+
+		springs: {
+			type: "array",
+			required: true,
+			minItems: 0,
+			maxItems: 999,
+			items: {
+				type: "object",
+				required: true,
+				additionalProperties: false,
+				properties: {
+					id: id,
+					bodyA: id,
+					bodyB: id,
+					type: str,
+					name: str,
+					stiffness: num,
+					damping: num,
+					useInitialRestLength: bool,
+					restLength: num, // Both linear and angular
+
+					// Linear
+					localAnchorAX: num,
+					localAnchorAY: num,
+					localAnchorBX: num,
+					localAnchorBY: num
+				}
 			}
 		},
 

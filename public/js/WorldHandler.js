@@ -7,6 +7,7 @@ function WorldHandler(world,renderer){
 	this.shapes = {};
 	this.machines = {};
 	this.actions = {};
+	this.springs = {};
 }
 
 WorldHandler.prototype.updateAll = function(config){
@@ -16,6 +17,10 @@ WorldHandler.prototype.updateAll = function(config){
 		for (var j = 0; j < bodyConfig.shapes.length; j++) {
 			this.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
 		}
+	}
+	for (var i = 0; i < config.springs.length; i++) {
+		var springConfig = config.springs[i];
+		this.updateSpring(springConfig);
 	}
 };
 
@@ -141,6 +146,7 @@ WorldHandler.prototype.removeShape = function(bodyId, config){
 	var body = this.bodies[bodyId];
 	body.removeShape(shape);
 	this.bodyChanged(body);
+	delete this.shapes[config.id];
 };
 
 // Call when need to rerender body and stuff
@@ -231,7 +237,8 @@ WorldHandler.prototype.createWorld = function(){
 			relaxation: 4,
 			tolerance: 0.0001
 		},
-		bodies: []
+		bodies: [],
+		springs: []
 	};
 };
 
@@ -259,3 +266,74 @@ WorldHandler.prototype.createAction = function(){
 		time: 1
 	};
 };
+
+WorldHandler.prototype.createSpring = function(){
+	return {
+		id: idCounter++,
+		type: 'linear',
+		name: 'Spring ' + (idCounter - 1),
+		stiffness: 100,
+		damping: 1,
+		bodyA: 0,
+		bodyB: 0,
+		useInitialRestLength: true,
+		restLength: 0,
+
+		// Linear
+		localAnchorAX: 0,
+		localAnchorAY: 0,
+		localAnchorBX: 0,
+		localAnchorBY: 0
+	};
+};
+
+WorldHandler.prototype.updateSpring = function(config){
+	var bodyA = this.bodies[config.bodyA];
+	var bodyB = this.bodies[config.bodyB];
+
+	var spring = this.springs[config.id];
+	if(spring){
+		this.renderer.removeVisual(spring);
+		this.world.removeSpring(spring);
+	}
+
+	if(!bodyA || !bodyB) return;
+
+	switch(config.type){
+	case 'linear':
+		spring = new p2.LinearSpring(bodyA, bodyB, {
+			restLength: config.restLength,
+			stiffness: config.stiffness,
+			damping: config.damping,
+			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
+			localAnchorB: [config.localAnchorBX, config.localAnchorBY]
+		});
+		break;
+	case 'rotational':
+		spring = new p2.RotationalSpring(bodyA, bodyB, {
+			restLength: config.restLength,
+			stiffness: config.stiffness,
+			damping: config.damping
+		});
+		break;
+	}
+	this.world.addSpring(spring);
+	this.springs[config.id] = spring;
+	this.renderer.addVisual(spring);
+};
+
+WorldHandler.prototype.removeSpring = function(config){
+	var spring = this.springs[config.id];
+	var bodyA = this.bodies[config.bodyA];
+	var bodyB = this.bodies[config.bodyB];
+	body.removeSpring(spring);
+	delete this.springs[config.id];
+};
+
+WorldHandler.prototype.addSpring = function(config){
+	if(this.springs[config.id]){
+		return;
+	}
+	this.updateSpring(config);
+};
+

@@ -550,14 +550,12 @@ Renderer.prototype.updateStats = function(){
  * @param  {mixed} obj Either Body or Spring
  */
 Renderer.prototype.addVisual = function(obj){
-    if(obj instanceof p2.LinearSpring){
+    if(obj instanceof p2.LinearSpring && this.springs.indexOf(obj) === -1){
         this.springs.push(obj);
         this.addRenderable(obj);
-    } else if(obj instanceof p2.Body){
-        if(obj.shapes.length){ // Only draw things that can be seen
-            this.bodies.push(obj);
-            this.addRenderable(obj);
-        }
+    } else if(obj instanceof p2.Body && this.bodies.indexOf(obj) === -1 && obj.shapes.length){
+        this.bodies.push(obj);
+        this.addRenderable(obj);
     }
 };
 

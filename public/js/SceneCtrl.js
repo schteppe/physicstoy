@@ -31,10 +31,6 @@ angular.module('physicsApp', [])
 		}
 	};
 
-	$scope.getTotalBodies = function () {
-		return $scope.bodies.length;
-	};
-
 	$scope.addBody = function () {
 		var bodyConfig = worldHandler.createBody();
 		$scope.bodies.push(bodyConfig);
@@ -87,6 +83,18 @@ angular.module('physicsApp', [])
 		state.actions.splice(idx, 1);
 	};
 
+	$scope.addSpring = function () {
+		var config = worldHandler.createSpring();
+		$scope.springs.push(config);
+		worldHandler.addSpring(config);
+	};
+
+	$scope.removeSpring = function (config) {
+		var idx = $scope.springs.indexOf(config);
+		$scope.springs.splice(idx, 1);
+		worldHandler.removeSpring(config);
+	};
+
 	window.addEventListener('keyup', function (evt) {
 		switch(evt.keyCode){
 		case 32:
@@ -102,11 +110,12 @@ angular.module('physicsApp', [])
 			data[vars[i]] = $scope[vars[i]];
 		}
 		data = {
-			version: 2,
+			version: 3,
 			world: JSON.parse(angular.toJson($scope.world)),
 			solver: JSON.parse(angular.toJson($scope.solver)),
 			renderer: JSON.parse(angular.toJson($scope.renderer)),
 			bodies: JSON.parse(angular.toJson($scope.bodies)),
+			springs: JSON.parse(angular.toJson($scope.springs))
 		};
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
@@ -147,6 +156,22 @@ angular.module('physicsApp', [])
 })
 
 .controller('MachineCtrl', function ($scope, $rootScope) {
+})
+
+.controller('SpringCtrl', function ($scope, $rootScope) {
+
+	$scope.$watch('spring.bodyA', function(nv, ov){
+		$scope.spring.bodyA = parseInt(nv, 10);
+	});
+	$scope.$watch('spring.bodyB', function(nv, ov){
+		$scope.spring.bodyB = parseInt(nv, 10);
+	});
+
+	var vars = Object.keys(worldHandler.createSpring()).map(function(v){ return 'spring.' + v; });
+	watchMany($scope, vars, function(){
+		worldHandler.updateSpring($scope.spring);
+	});
+
 })
 
 .controller('StateCtrl', function ($scope, $rootScope) {

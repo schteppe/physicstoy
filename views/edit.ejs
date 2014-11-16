@@ -358,6 +358,91 @@
 							</div>
 						</li>
 					</ul>
+
+					<div class="form-group">
+						<label>
+							Springs <button ng-click="addSpring()">+</button>
+						</label>
+					</div>
+					<ul class="springs">
+						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
+							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=true">
+								<div class="text">{{spring.name||'&nbsp;'}}</div>
+								<span class="rm" ng-click="removeSpring(spring)">X</span>
+							</span>
+
+							<div class="spring content" ng-show="toggled">
+
+								<!-- name -->
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" ng-model="spring.name" />
+								</div>
+
+								<!-- type -->
+								<div class="form-group">
+									<label>Type</label>
+									<select ng-model="spring.type">
+										<option>linear</option>
+										<option>rotational</option>
+									</select>
+								</div>
+
+								<!-- stiffness -->
+								<div class="form-group">
+									<label>stiffness</label>
+									<input type="number" ng-model="spring.stiffness" />
+								</div>
+
+								<!-- damping -->
+								<div class="form-group">
+									<label>damping</label>
+									<input type="number" ng-model="spring.damping" />
+								</div>
+
+								<!-- useInitialRestLength -->
+								<div class="form-group">
+									<label>use initial rest length</label>
+									<input type="checkbox" ng-model="spring.useInitialRestLength" />
+								</div>
+
+								<!-- restLength -->
+								<div class="form-group" ng-show="!spring.useInitialRestLength">
+									<label>rest length</label>
+									<input type="number" ng-model="spring.restLength" />
+								</div>
+
+								<!-- bodyA -->
+								<div class="form-group">
+									<label>body A</label>
+									<select ng-model="spring.bodyA" ng-options="springBodyA.id as springBodyA.name for springBodyA in bodies">
+									</select>
+								</div>
+
+								<!-- bodyB -->
+								<div class="form-group">
+									<label>body B</label>
+									<select ng-model="spring.bodyB" ng-options="springBodyB.id as springBodyB.name for springBodyB in bodies">
+									</select>
+								</div>
+
+								<!-- localAnchorA -->
+								<div class="form-group">
+									<label>local anchor A</label>
+									<input type="number" class="vec2 x" ng-model="spring.localAnchorAX"/>
+									<input type="number" class="vec2 y" ng-model="spring.localAnchorAY"/>
+								</div>
+
+								<!-- localAnchorB -->
+								<div class="form-group">
+									<label>local anchor B</label>
+									<input type="number" class="vec2 x" ng-model="spring.localAnchorBX"/>
+									<input type="number" class="vec2 y" ng-model="spring.localAnchorBY"/>
+								</div>
+
+							</div>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
