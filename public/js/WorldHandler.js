@@ -22,6 +22,7 @@ WorldHandler.prototype.updateAll = function(config){
 WorldHandler.prototype.updateWorld = function(config){
 	var world = this.world;
 	world.gravity.set([config.gravityX, config.gravityY]);
+	this.renderer.maxSubSteps = config.maxSubSteps;
 };
 
 

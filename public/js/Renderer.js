@@ -43,6 +43,7 @@ function Renderer(world, options){
     this.timeStep = 1/60;
     this.relaxation = p2.Equation.DEFAULT_RELAXATION;
     this.stiffness = p2.Equation.DEFAULT_STIFFNESS;
+    this.maxSubSteps = 3;
 
     this.mouseConstraint = null;
     this.nullBody = new p2.Body();
@@ -299,7 +300,7 @@ Renderer.prototype.startRenderingLoop = function(){
             var now = Date.now() / 1000,
                 timeSinceLastCall = now-lastCallTime;
             lastCallTime = now;
-            that.world.step(that.timeStep, timeSinceLastCall, that.settings.maxSubSteps);
+            that.world.step(that.timeStep, timeSinceLastCall, that.maxSubSteps);
         }
         that.render();
         requestAnimFrame(update);
