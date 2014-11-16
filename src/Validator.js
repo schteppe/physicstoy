@@ -54,7 +54,7 @@ Validator.upgrade = function(obj){
 var num = { type: "number", required: true };
 var integer = { type: "integer", required: true };
 var id = { type: "integer", minimum: 1, required: true };
-var str = { type: "string", required: true };
+var str = { type: "string", required: true, maxLength: 1000 };
 var bool = { type: "boolean", required: true };
 
 schema = {
