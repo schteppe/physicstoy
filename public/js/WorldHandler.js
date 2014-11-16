@@ -233,6 +233,16 @@ WorldHandler.prototype.createSolver = function(){
 
 WorldHandler.prototype.createWorld = function(){
 	return {
+		gravityX: 0,
+		gravityY: -10,
+		fps: 60,
+		maxSubSteps: 3,
+		sleepMode: "NO_SLEEPING"
+	};
+};
+
+WorldHandler.prototype.createDefaultScene = function(){
+	return {
 		world: {
 			gravityX: 0,
 			gravityY: -10,

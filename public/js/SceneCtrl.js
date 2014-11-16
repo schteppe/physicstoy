@@ -13,7 +13,7 @@ angular.module('physicsApp', [])
 	if(window.scene){
 		scene = window.scene;
 	} else {
-		scene = worldHandler.createWorld();
+		scene = worldHandler.createDefaultScene();
 	}
 
 	// Extend the scope with the scene data
@@ -131,12 +131,8 @@ angular.module('physicsApp', [])
 		worldHandler.updateAll($scope);
 	});
 
-	watchMany($scope, [
-		'world.gravityX',
-		'world.gravityY',
-		'world.maxSubSteps',
-		'world.fps'
-	], function () {
+	var vars = Object.keys(worldHandler.createWorld()).map(function(v){ return 'world.' + v; });
+	watchMany($scope, vars, function() {
 		worldHandler.updateWorld($scope.world);
 	});
 })
