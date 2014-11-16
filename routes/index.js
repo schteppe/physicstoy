@@ -51,8 +51,15 @@ exports.edit = function(req, res){
 			return res.status(404).render('error');
 		}
 
+		var scene = result.rows[0].scene;
+
+		var upgradedScene = Validator.upgrade(scene);
+		if(!upgradedScene){
+			return res.status(500).render('error');
+		}
+
 		res.render('edit', {
-			scene: JSON.stringify(result.rows[0].scene)
+			scene: JSON.stringify(upgradedScene)
 		});
 	});
 };
