@@ -15,7 +15,7 @@ exports.index = function(req, res, next){
 };
 
 // GET /new
-exports.new = function(req, res){
+exports.new = function(req, res, next){
 	res.render('edit');
 };
 
@@ -41,7 +41,7 @@ exports.view = function(req, res){
 };
 
 // GET /:id/edit
-exports.edit = function(req, res){
+exports.edit = function(req, res, next){
 	Scene.getById(req.id, function (err, scene){
 		if(err) return next(err);
 
@@ -62,7 +62,7 @@ exports.edit = function(req, res){
 };
 
 // POST /:id/edit
-exports.save = function(req, res){
+exports.save = function(req, res, next){
 	var obj;
 	var errors = [];
 	try {
