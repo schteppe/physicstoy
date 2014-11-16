@@ -356,14 +356,15 @@
 			<script>
 				var errors = JSON.parse('<%-JSON.stringify(errors)%>');
 				if(errors && errors.length){
-					alert(errors.join('\n'))
+					alert(errors.join('\n'));
 				}
 			</script>
 		<% } %>
 
 		<% if(typeof(scene) !== 'undefined'){ %>
+			<script id="loadedSceneData" type="application/json"><%-scene%></script>
 			<script>
-				window.scene = JSON.parse('<%-scene%>');
+				window.scene = JSON.parse(document.getElementById('loadedSceneData').innerHTML);
 			</script>
 		<% } %>
 
