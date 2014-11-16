@@ -52,6 +52,7 @@ function Renderer(world, options){
     this.useInterpolatedPositions = false;
 
     this.drawPoints = [];
+    this.drawAABBs = false;
     this.drawPointsChangeEvent = { type : "drawPointsChange" };
     this.drawCircleCenter = p2.vec2.create();
     this.drawCirclePoint = p2.vec2.create();
@@ -159,15 +160,6 @@ Object.defineProperty(Renderer.prototype, 'drawContacts', {
     },
     set: function(value) {
         this.settings['drawContacts [c]'] = value;
-    }
-});
-
-Object.defineProperty(Renderer.prototype, 'drawAABBs', {
-    get: function() {
-        return this.settings['drawAABBs [t]'];
-    },
-    set: function(value) {
-        this.settings['drawAABBs [t]'] = value;
     }
 });
 

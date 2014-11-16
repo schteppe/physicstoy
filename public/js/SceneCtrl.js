@@ -5,7 +5,7 @@ angular.module('physicsApp', [])
 	var world = new p2.World();
 	var renderer = new WebGLRenderer(world);
 	renderer.state = renderer.defaultState = Renderer.PANZOOM;
-	worldHandler = new WorldHandler(world,renderer);
+	sceneHandler = new SceneHandler(world,renderer);
 
 	$scope.playing = false;
 
@@ -13,7 +13,7 @@ angular.module('physicsApp', [])
 	if(window.scene){
 		scene = window.scene;
 	} else {
-		scene = worldHandler.createDefaultScene();
+		scene = sceneHandler.createDefaultScene();
 	}
 
 	// Extend the scope with the scene data
@@ -24,40 +24,40 @@ angular.module('physicsApp', [])
 	$scope.updateAll = function () {
 		for (var i = 0; i < $scope.bodies.length; i++) {
 			var bodyConfig = $scope.bodies[i];
-			worldHandler.updateBody(bodyConfig);
+			sceneHandler.updateBody(bodyConfig);
 			for (var j = 0; j < bodyConfig.shapes.length; j++) {
-				worldHandler.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
+				sceneHandler.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
 			}
 		}
 	};
 
 	$scope.addBody = function () {
-		var bodyConfig = worldHandler.createBody();
+		var bodyConfig = sceneHandler.createBody();
 		$scope.bodies.push(bodyConfig);
-		worldHandler.addBody(bodyConfig);
+		sceneHandler.addBody(bodyConfig);
 	};
 
 	$scope.removeBody = function (body) {
 		var idx = $scope.bodies.indexOf(body);
 		if(idx !== -1)
 			$scope.bodies.splice(idx, 1);
-		worldHandler.removeBody(body);
+		sceneHandler.removeBody(body);
 	};
 
 	$scope.addShapeToBody = function (body) {
-		var config = worldHandler.createShape();
+		var config = sceneHandler.createShape();
 		body.shapes.push(config);
-		worldHandler.addShape(body.id, config);
+		sceneHandler.addShape(body.id, config);
 	};
 
 	$scope.removeShape = function(body, shape){
 		var idx = body.shapes.indexOf(shape);
 		body.shapes.splice(idx, 1);
-		worldHandler.removeShape(body.id, shape);
+		sceneHandler.removeShape(body.id, shape);
 	};
 
 	$scope.addMachineToBody = function (body) {
-		body.machines.push(worldHandler.createMachine());
+		body.machines.push(sceneHandler.createMachine());
 	};
 
 	$scope.removeMachine = function (body, machine) {
@@ -66,7 +66,7 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addState = function (machine) {
-		machine.states.push(worldHandler.createState());
+		machine.states.push(sceneHandler.createState());
 	};
 
 	$scope.removeState = function (machine, state) {
@@ -75,7 +75,7 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addAction = function (state) {
-		state.actions.push(worldHandler.createAction());
+		state.actions.push(sceneHandler.createAction());
 	};
 
 	$scope.removeAction = function (state,action) {
@@ -84,15 +84,15 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addSpring = function () {
-		var config = worldHandler.createSpring();
+		var config = sceneHandler.createSpring();
 		$scope.springs.push(config);
-		worldHandler.addSpring(config);
+		sceneHandler.addSpring(config);
 	};
 
 	$scope.removeSpring = function (config) {
 		var idx = $scope.springs.indexOf(config);
 		$scope.springs.splice(idx, 1);
-		worldHandler.removeSpring(config);
+		sceneHandler.removeSpring(config);
 	};
 
 	window.addEventListener('keyup', function (evt) {
@@ -128,26 +128,26 @@ angular.module('physicsApp', [])
 		} else {
 			renderer.state = renderer.defaultState = Renderer.DEFAULT;
 		}
-		worldHandler.updateAll($scope);
+		sceneHandler.updateAll($scope);
 	});
 
-	var vars = Object.keys(worldHandler.createWorld()).map(function(v){ return 'world.' + v; });
+	var vars = Object.keys(sceneHandler.createWorld()).map(function(v){ return 'world.' + v; });
 	watchMany($scope, vars, function() {
-		worldHandler.updateWorld($scope.world);
+		sceneHandler.updateWorld($scope.world);
 	});
 })
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(worldHandler.createShape()).map(function(v){ return 'shape.' + v; });
+	var vars = Object.keys(sceneHandler.createShape()).map(function(v){ return 'shape.' + v; });
 	watchMany($scope, vars, function() {
-		worldHandler.updateShape($scope.body.id, $scope.shape);
+		sceneHandler.updateShape($scope.body.id, $scope.shape);
    });
 })
 
 .controller('BodyCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(worldHandler.createBody()).map(function(v){ return 'body.' + v; });
+	var vars = Object.keys(sceneHandler.createBody()).map(function(v){ return 'body.' + v; });
 	watchMany($scope, vars, function(){
-		worldHandler.updateBody($scope.body);
+		sceneHandler.updateBody($scope.body);
 	});
 })
 
@@ -163,9 +163,9 @@ angular.module('physicsApp', [])
 		$scope.spring.bodyB = parseInt(nv, 10);
 	});
 
-	var vars = Object.keys(worldHandler.createSpring()).map(function(v){ return 'spring.' + v; });
+	var vars = Object.keys(sceneHandler.createSpring()).map(function(v){ return 'spring.' + v; });
 	watchMany($scope, vars, function(){
-		worldHandler.updateSpring($scope.spring);
+		sceneHandler.updateSpring($scope.spring);
 	});
 
 })
@@ -176,10 +176,17 @@ angular.module('physicsApp', [])
 .controller('ActionCtrl', function ($scope, $rootScope) {
 })
 
-.controller('SolverCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(worldHandler.createSolver()).map(function(v){ return 'solver.' + v; });
+.controller('RendererCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.createRenderer()).map(function(v){ return 'renderer.' + v; });
 	watchMany($scope, vars, function(){
-		worldHandler.updateSolver($scope.solver);
+		sceneHandler.updateRenderer($scope.renderer);
+	});
+})
+
+.controller('SolverCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.createSolver()).map(function(v){ return 'solver.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.updateSolver($scope.solver);
 	});
 });
 

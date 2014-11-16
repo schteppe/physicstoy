@@ -11,14 +11,14 @@
 		<script src="/js/Color.js"></script>
 		<script src="/js/Renderer.js"></script>
 		<script src="/js/WebGLRenderer.js"></script>
-		<script src="/js/WorldHandler.js"></script>
+		<script src="/js/SceneHandler.js"></script>
 		<script src="/js/Machine.js"></script>
 		<script id="loadedSceneData" type="application/json"><%-scene%></script>
 		<script>
 			var scene = JSON.parse(document.getElementById('loadedSceneData').innerHTML);
 			var world = new p2.World();
 			var renderer = new WebGLRenderer(world);
-			var handler = new WorldHandler(world,renderer);
+			var handler = new SceneHandler(world,renderer);
 			handler.updateAll(scene);
 			renderer.paused = false;
 		</script>

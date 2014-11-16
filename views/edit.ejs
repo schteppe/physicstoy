@@ -47,7 +47,7 @@
 					<div class="text">Renderer</div>
 				</span>
 
-				<div class="renderer content" ng-show="rendererToggled">
+				<div class="renderer content" ng-show="rendererToggled" ng-controller="RendererCtrl">
 					<div class="form-group">
 						<label>contacts</label>
 						<input type="checkbox" ng-model="renderer.contacts"/>
@@ -466,7 +466,7 @@
 		<script src="/js/SceneCtrl.js"></script>
 		<script src="/js/Renderer.js"></script>
 		<script src="/js/WebGLRenderer.js"></script>
-		<script src="/js/WorldHandler.js"></script>
+		<script src="/js/SceneHandler.js"></script>
 		<script src="/js/Machine.js"></script>
 		<% include ga %>
 	</body>
