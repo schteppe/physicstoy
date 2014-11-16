@@ -43,6 +43,7 @@ html,body {
 }
 .menu li {
 	border-left: 1px solid black;
+	border-bottom: 1px solid black;
 }
 .menu .header {
 	display:block;
@@ -85,17 +86,14 @@ html,body {
 .menu .content {
 	padding-bottom: 10px;
 }
-.menu ul li:last-child > .content {
-	border-bottom: 1px solid black;
-}
-.menu ul li > .content {
-	border-bottom: 1px solid black;
-}
-.menu ul li:last-child > .content {
-	border-bottom: 1px solid black;
-}
 .menu > .header, .menu ul li:first-child > .header {
 	border-top: 1px solid black;
+}
+.menu > .header:first-child {
+	border-top: 0;
+}
+.menu .header.closed {
+	border-bottom: 0;
 }
 .menu .header.world { background-color: #afa; }
 .menu .content.world { background-color: #dfd; }

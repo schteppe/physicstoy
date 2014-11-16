@@ -10,7 +10,7 @@
 		<div class="menu-container">
 			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl">
 
-				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=false">
+				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=false" ng-class="controlToggled ? 'open' : 'closed'">
 					<div class="text">Control</div>
 				</span>
 				<div class="control content" ng-show="controlToggled">
@@ -27,7 +27,7 @@
 					</div>
 				</div>
 
-				<span class="solver header" ng-click="solverToggled=!solverToggled" ng-init="solverToggled=false">
+				<span class="solver header" ng-click="solverToggled=!solverToggled" ng-init="solverToggled=false" ng-class="solverToggled ? 'open' : 'closed'">
 					<div class="text">Solver</div>
 				</span>
 
@@ -43,7 +43,7 @@
 					</div>
 				</div>
 
-				<span class="renderer header" ng-click="rendererToggled=!rendererToggled" ng-init="rendererToggled=false">
+				<span class="renderer header" ng-click="rendererToggled=!rendererToggled" ng-init="rendererToggled=false" ng-class="rendererToggled ? 'open' : 'closed'">
 					<div class="text">Renderer</div>
 				</span>
 
@@ -64,7 +64,7 @@
 					</div>
 				</div>
 
-				<span class="world header" ng-click="toggled=!toggled" ng-init="toggled=true">
+				<span class="world header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 					<div class="text">World</div>
 				</span>
 
@@ -92,7 +92,7 @@
 					</div>
 					<ul class="bodies">
 						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
-							<span class="body header" ng-click="toggled=!toggled" ng-init="toggled=false">
+							<span class="body header" ng-class="toggled ? 'open' : 'closed'" ng-click="toggled=!toggled" ng-init="toggled=false">
 								<div class="text">{{body.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeBody(body)">X</span>
 							</span>
@@ -182,7 +182,7 @@
 								<ul class="shapes">
 									<li class="shape" ng-repeat="shape in body.shapes" ng-controller="ShapeCtrl">
 
-										<span class="shape header" ng-click="toggled=!toggled" ng-init="toggled=false">
+										<span class="shape header" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
 											<div class="text">{{shape.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeShape(body,shape)">X</span>
 										</span>
@@ -252,7 +252,7 @@
 								<ul class="machines">
 									<li class="machine" ng-repeat="machine in body.machines" ng-controller="MachineCtrl">
 
-										<span class="machine header" ng-click="toggled=!toggled" ng-init="toggled=true">
+										<span class="machine header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 											<div class="text">{{machine.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeMachine(body,machine)">X</span>
 										</span>
@@ -279,7 +279,7 @@
 											<ul class="states">
 												<li class="state" ng-repeat="state in machine.states" ng-controller="StateCtrl">
 
-													<span class="state header" ng-click="toggled=!toggled" ng-init="toggled=true">
+													<span class="state header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 														<div class="text">{{state.name||'&nbsp;'}}</div>
 														<span class="rm" ng-click="removeState(machine,state)">X</span>
 													</span>
@@ -301,7 +301,7 @@
 														<ul class="actions">
 															<li class="action" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
 
-																<span class="action header" ng-click="toggled=!toggled" ng-init="toggled=true">
+																<span class="action header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 																	<div class="text">action</div>
 																	<span class="rm" ng-click="removeAction(state,action)">X</span>
 																</span>
@@ -356,7 +356,7 @@
 					</div>
 					<ul class="springs">
 						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
-							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=false">
+							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
 								<div class="text">{{spring.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeSpring(spring)">X</span>
 							</span>
