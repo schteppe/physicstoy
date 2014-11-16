@@ -178,6 +178,13 @@ angular.module('physicsApp', [])
 })
 
 .controller('ActionCtrl', function ($scope, $rootScope) {
+})
+
+.controller('SolverCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(worldHandler.createSolver()).map(function(v){ return 'solver.' + v; });
+	watchMany($scope, vars, function(){
+		worldHandler.updateSolver($scope.solver);
+	});
 });
 
 function watchMany(scope, vars, listener){

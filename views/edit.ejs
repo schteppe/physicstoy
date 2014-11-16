@@ -31,20 +31,10 @@
 					<div class="text">Solver</div>
 				</span>
 
-				<div class="solver content" ng-show="solverToggled">
+				<div class="solver content" ng-show="solverToggled" ng-controller="SolverCtrl">
 					<div class="form-group">
-						<label>iterations</label>
+						<label>max iterations</label>
 						<input type="number" ng-model="solver.iterations" min="0"/>
-					</div>
-
-					<div class="form-group">
-						<label>stiffness</label>
-						<input type="number" ng-model="solver.stiffness" min="0"/>
-					</div>
-
-					<div class="form-group">
-						<label>relaxation</label>
-						<input type="number" ng-model="solver.relaxation" min="0"/>
 					</div>
 
 					<div class="form-group">

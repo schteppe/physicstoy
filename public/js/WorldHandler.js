@@ -31,6 +31,11 @@ WorldHandler.prototype.updateWorld = function(config){
 	this.renderer.timeStep = 1 / config.fps;
 };
 
+WorldHandler.prototype.updateSolver = function(config){
+	var world = this.world;
+	world.solver.iterations = config.iterations;
+	world.solver.tolerance = config.tolerance;
+};
 
 WorldHandler.prototype.updateBody = function(config){
 	var body = this.bodies[config.id];
@@ -214,6 +219,15 @@ WorldHandler.prototype.createShape = function(){
 
 		// Convex
 		vertices: []
+	};
+};
+
+WorldHandler.prototype.createSolver = function(){
+	return {
+		iterations: 10,
+		stiffness: 1000000,
+		relaxation: 4,
+		tolerance: 0.0001
 	};
 };
 
