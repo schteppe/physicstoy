@@ -625,40 +625,42 @@ WebGLRenderer.prototype.render = function(){
             bA = s.bodyA,
             bB = s.bodyB;
 
-        if(this.useInterpolatedPositions){
-            p2.vec2.toGlobalFrame(worldAnchorA, s.localAnchorA, bA.interpolatedPosition, bA.interpolatedAngle);
-            p2.vec2.toGlobalFrame(worldAnchorB, s.localAnchorB, bB.interpolatedPosition, bB.interpolatedAngle);
-        } else {
-            s.getWorldAnchorA(worldAnchorA);
-            s.getWorldAnchorB(worldAnchorB);
+        if(s instanceof p2.LinearSpring){
+            if(this.useInterpolatedPositions){
+                p2.vec2.toGlobalFrame(worldAnchorA, s.localAnchorA, bA.interpolatedPosition, bA.interpolatedAngle);
+                p2.vec2.toGlobalFrame(worldAnchorB, s.localAnchorB, bB.interpolatedPosition, bB.interpolatedAngle);
+            } else {
+                s.getWorldAnchorA(worldAnchorA);
+                s.getWorldAnchorB(worldAnchorB);
+            }
+
+            sprite.scale.y = 1;
+            if(worldAnchorA[1] < worldAnchorB[1]){
+                var tmp = worldAnchorA;
+                worldAnchorA = worldAnchorB;
+                worldAnchorB = tmp;
+                sprite.scale.y = -1;
+            }
+
+            var sxA = worldAnchorA[0],
+                syA = worldAnchorA[1],
+                sxB = worldAnchorB[0],
+                syB = worldAnchorB[1];
+
+            // Spring position is the mean point between the anchors
+            sprite.position.x = ( sxA + sxB ) / 2;
+            sprite.position.y = ( syA + syB ) / 2;
+
+            // Compute distance vector between anchors, in screen coords
+            distVec[0] = sxA - sxB;
+            distVec[1] = syA - syB;
+
+            // Compute angle
+            sprite.rotation = Math.acos( p2.vec2.dot(X, distVec) / p2.vec2.length(distVec) );
+
+            // And scale
+            sprite.scale.x = p2.vec2.length(distVec) / s.restLength;
         }
-
-        sprite.scale.y = 1;
-        if(worldAnchorA[1] < worldAnchorB[1]){
-            var tmp = worldAnchorA;
-            worldAnchorA = worldAnchorB;
-            worldAnchorB = tmp;
-            sprite.scale.y = -1;
-        }
-
-        var sxA = worldAnchorA[0],
-            syA = worldAnchorA[1],
-            sxB = worldAnchorB[0],
-            syB = worldAnchorB[1];
-
-        // Spring position is the mean point between the anchors
-        sprite.position.x = ( sxA + sxB ) / 2;
-        sprite.position.y = ( syA + syB ) / 2;
-
-        // Compute distance vector between anchors, in screen coords
-        distVec[0] = sxA - sxB;
-        distVec[1] = syA - syB;
-
-        // Compute angle
-        sprite.rotation = Math.acos( p2.vec2.dot(X, distVec) / p2.vec2.length(distVec) );
-
-        // And scale
-        sprite.scale.x = p2.vec2.length(distVec) / s.restLength;
     }
 
     // Clear contacts
@@ -808,7 +810,7 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
             }
         }
 
-    } else if(obj instanceof p2.Spring){
+    } else if(obj instanceof p2.LinearSpring){
         var restLengthPixels = obj.restLength;
         WebGLRenderer.drawSpring(graphics,restLengthPixels,0x000000,lw);
     }

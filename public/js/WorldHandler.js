@@ -301,20 +301,26 @@ WorldHandler.prototype.updateSpring = function(config){
 
 	switch(config.type){
 	case 'linear':
-		spring = new p2.LinearSpring(bodyA, bodyB, {
-			restLength: config.restLength,
+		var opts = {
 			stiffness: config.stiffness,
 			damping: config.damping,
 			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
 			localAnchorB: [config.localAnchorBX, config.localAnchorBY]
-		});
+		};
+		if(!config.useInitialRestLength){
+			opts.restLength = config.restLength;
+		}
+		spring = new p2.LinearSpring(bodyA, bodyB, opts);
 		break;
 	case 'rotational':
-		spring = new p2.RotationalSpring(bodyA, bodyB, {
-			restLength: config.restLength,
+		var opts = {
 			stiffness: config.stiffness,
 			damping: config.damping
-		});
+		};
+		if(!config.useInitialRestLength){
+			opts.restAngle = config.restLength;
+		}
+		spring = new p2.RotationalSpring(bodyA, bodyB, opts);
 		break;
 	}
 	this.world.addSpring(spring);
@@ -326,7 +332,10 @@ WorldHandler.prototype.removeSpring = function(config){
 	var spring = this.springs[config.id];
 	var bodyA = this.bodies[config.bodyA];
 	var bodyB = this.bodies[config.bodyB];
-	body.removeSpring(spring);
+	if(spring){
+		this.renderer.removeVisual(spring);
+		this.world.removeSpring(spring);
+	}
 	delete this.springs[config.id];
 };
 

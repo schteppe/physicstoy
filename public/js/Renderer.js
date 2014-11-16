@@ -550,7 +550,7 @@ Renderer.prototype.updateStats = function(){
  * @param  {mixed} obj Either Body or Spring
  */
 Renderer.prototype.addVisual = function(obj){
-    if(obj instanceof p2.LinearSpring && this.springs.indexOf(obj) === -1){
+    if(obj instanceof p2.Spring && this.springs.indexOf(obj) === -1){
         this.springs.push(obj);
         this.addRenderable(obj);
     } else if(obj instanceof p2.Body && this.bodies.indexOf(obj) === -1 && obj.shapes.length){
@@ -579,7 +579,7 @@ Renderer.prototype.removeAllVisuals = function(){
  */
 Renderer.prototype.removeVisual = function(obj){
     this.removeRenderable(obj);
-    if(obj instanceof p2.LinearSpring){
+    if(obj instanceof p2.Spring){
         var idx = this.springs.indexOf(obj);
         if(idx !== -1){
             this.springs.splice(idx,1);
@@ -590,7 +590,7 @@ Renderer.prototype.removeVisual = function(obj){
             this.bodies.splice(idx,1);
         }
     } else {
-        console.error("Visual type not recognized...");
+        console.warn("Renderer.prototype.removeVisual: Visual type not recognized...");
     }
 };
 

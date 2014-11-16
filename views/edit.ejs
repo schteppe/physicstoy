@@ -102,7 +102,7 @@
 					</div>
 					<ul class="bodies">
 						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
-							<span class="body header" ng-click="toggled=!toggled" ng-init="toggled=true">
+							<span class="body header" ng-click="toggled=!toggled" ng-init="toggled=false">
 								<div class="text">{{body.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeBody(body)">X</span>
 							</span>
@@ -366,7 +366,7 @@
 					</div>
 					<ul class="springs">
 						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
-							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=true">
+							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=false">
 								<div class="text">{{spring.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeSpring(spring)">X</span>
 							</span>
@@ -402,13 +402,15 @@
 
 								<!-- useInitialRestLength -->
 								<div class="form-group">
-									<label>use initial rest length</label>
+									<label ng-show="spring.type=='linear'">use initial rest length</label>
+									<label ng-show="spring.type=='rotational'">use initial rest angle</label>
 									<input type="checkbox" ng-model="spring.useInitialRestLength" />
 								</div>
 
 								<!-- restLength -->
 								<div class="form-group" ng-show="!spring.useInitialRestLength">
-									<label>rest length</label>
+									<label ng-show="spring.type=='linear'">rest length</label>
+									<label ng-show="spring.type=='rotational'">rest angle</label>
 									<input type="number" ng-model="spring.restLength" />
 								</div>
 
@@ -427,14 +429,14 @@
 								</div>
 
 								<!-- localAnchorA -->
-								<div class="form-group">
+								<div class="form-group" ng-show="spring.type=='linear'">
 									<label>local anchor A</label>
 									<input type="number" class="vec2 x" ng-model="spring.localAnchorAX"/>
 									<input type="number" class="vec2 y" ng-model="spring.localAnchorAY"/>
 								</div>
 
 								<!-- localAnchorB -->
-								<div class="form-group">
+								<div class="form-group" ng-show="spring.type=='linear'">
 									<label>local anchor B</label>
 									<input type="number" class="vec2 x" ng-model="spring.localAnchorBX"/>
 									<input type="number" class="vec2 y" ng-model="spring.localAnchorBY"/>
