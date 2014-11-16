@@ -1,5 +1,6 @@
 var path = require('path');
 var db = require(path.join(__dirname, '..', 'src', 'Database'));
+var Scene = require(path.join(__dirname, '..', 'src', 'Scene'));
 var Validator = require('../src/Validator');
 
 var scene;
@@ -22,14 +23,12 @@ exports.new = function(req, res){
 
 // GET /:id
 exports.view = function(req, res){
-	db.query('SELECT * FROM pt_scenes WHERE id=$1', [req.id], function (err, result){
+	Scene.getById(req.id, function (err, scene){
 		if(err) return next(err);
 
-		if(!result.rows.length){
+		if(!scene){
 			return res.status(404).render('error');
 		}
-
-		var scene = result.rows[0].scene;
 
 		var upgradedScene = Validator.upgrade(scene);
 		if(!upgradedScene){
@@ -45,14 +44,12 @@ exports.view = function(req, res){
 
 // GET /:id/edit
 exports.edit = function(req, res){
-	db.query('SELECT * FROM pt_scenes WHERE id=$1', [req.id], function (err, result){
+	Scene.getById(req.id, function (err, scene){
 		if(err) return next(err);
 
-		if(!result.rows.length){
+		if(!scene){
 			return res.status(404).render('error');
 		}
-
-		var scene = result.rows[0].scene;
 
 		var upgradedScene = Validator.upgrade(scene);
 		if(!upgradedScene){
