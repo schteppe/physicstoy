@@ -104,3 +104,7 @@ html,body {
 .menu .content.state { background-color: #dfd; }
 .menu .header.action { background-color: #faa; }
 .menu .content.action { background-color: #fdd; }
+
+.ng-invalid {
+	background-color: red;
+}
