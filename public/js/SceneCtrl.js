@@ -125,7 +125,8 @@ angular.module('physicsApp', [])
 	watchMany($scope, [
 		'world.gravityX',
 		'world.gravityY',
-		'world.maxSubSteps'
+		'world.maxSubSteps',
+		'world.fps'
 	], function () {
 		worldHandler.updateWorld($scope.world);
 	});
