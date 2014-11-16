@@ -177,16 +177,16 @@ angular.module('physicsApp', [])
 })
 
 .controller('RendererCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(sceneHandler.createRenderer()).map(function(v){ return 'renderer.' + v; });
+	var vars = Object.keys(sceneHandler.rendererHandler.create()).map(function(v){ return 'renderer.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.updateRenderer($scope.renderer);
+		sceneHandler.rendererHandler.update($scope.renderer);
 	});
 })
 
 .controller('SolverCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(sceneHandler.createSolver()).map(function(v){ return 'solver.' + v; });
+	var vars = Object.keys(sceneHandler.solverHandler.create()).map(function(v){ return 'solver.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.updateSolver($scope.solver);
+		sceneHandler.solverHandler.update($scope.solver);
 	});
 });
 

@@ -8,7 +8,16 @@ function SceneHandler(world,renderer){
 	this.machines = {};
 	this.actions = {};
 	this.springs = {};
+
+	this.rendererHandler = new RendererHandler(renderer);
+	this.solverHandler = new SolverHandler(world);
+
+	this.idCounter = 1;
 }
+
+SceneHandler.prototype.createId = function(){
+	return this.idCounter++;
+};
 
 SceneHandler.prototype.updateAll = function(config){
 	for (var i = 0; i < config.bodies.length; i++) {
@@ -22,7 +31,7 @@ SceneHandler.prototype.updateAll = function(config){
 		var springConfig = config.springs[i];
 		this.updateSpring(springConfig);
 	}
-	this.updateRenderer(config.renderer);
+	this.rendererHandler.update(config.renderer);
 	this.updateWorld(config.world);
 };
 
@@ -31,25 +40,6 @@ SceneHandler.prototype.updateWorld = function(config){
 	world.gravity.set([config.gravityX, config.gravityY]);
 	this.renderer.maxSubSteps = config.maxSubSteps;
 	this.renderer.timeStep = 1 / config.fps;
-};
-
-SceneHandler.prototype.createRenderer = function(){
-	return {
-		contacts: false,
-		aabbs: false,
-		constraints: false
-	};
-};
-
-SceneHandler.prototype.updateRenderer = function(config){
-	var renderer = this.renderer;
-	renderer.drawAABBs = config.aabbs;
-};
-
-SceneHandler.prototype.updateSolver = function(config){
-	var world = this.world;
-	world.solver.iterations = config.iterations;
-	world.solver.tolerance = config.tolerance;
 };
 
 SceneHandler.prototype.updateBody = function(config){
@@ -181,11 +171,11 @@ SceneHandler.prototype.bodyChanged = function(body){
 	this.renderer.addVisual(body);
 };
 
-var idCounter = 1;
 SceneHandler.prototype.createBody = function(){
+	var id = this.createId();
 	var bodyConfig = {
-		id: idCounter++,
-		name: 'Body ' + (idCounter - 1),
+		id: id,
+		name: 'Body ' + id,
 
 		x: 0,
 		y: 0,
@@ -214,9 +204,10 @@ SceneHandler.prototype.createBody = function(){
 };
 
 SceneHandler.prototype.createShape = function(){
+	var id = this.createId();
 	return {
-		id: idCounter++,
-		name: 'Circle ' + (idCounter - 1),
+		id: id,
+		name: 'Circle ' + id,
 
 		type: 'circle',
 		color: '#' + Color.randomPastelHex(),
@@ -234,15 +225,6 @@ SceneHandler.prototype.createShape = function(){
 
 		// Convex
 		vertices: []
-	};
-};
-
-SceneHandler.prototype.createSolver = function(){
-	return {
-		iterations: 10,
-		stiffness: 1000000,
-		relaxation: 4,
-		tolerance: 0.0001
 	};
 };
 
@@ -265,48 +247,47 @@ SceneHandler.prototype.createDefaultScene = function(){
 			maxSubSteps: 3,
 			sleepMode: "NO_SLEEPING"
 		},
-		renderer: this.createRenderer(),
-		solver: {
-			iterations: 10,
-			stiffness: 1000000,
-			relaxation: 4,
-			tolerance: 0.0001
-		},
+		renderer: this.rendererHandler.create(),
+		solver: this.solverHandler.create(),
 		bodies: [],
 		springs: []
 	};
 };
 
 SceneHandler.prototype.createMachine = function(){
+	var id = this.createId();
 	return {
-		id: idCounter++,
-		name: 'State machine ' + (idCounter - 1),
+		id: id,
+		name: 'State machine ' + id,
 
 		states: [this.createState()]
 	};
 };
 
 SceneHandler.prototype.createState = function(){
+	var id = this.createId();
 	return {
-		id: idCounter++,
-		name: 'State ' + (idCounter - 1),
+		id: id,
+		name: 'State ' + id,
 		actions: []
 	};
 };
 
 SceneHandler.prototype.createAction = function(){
+	var id = this.createId();
 	return {
-		id: idCounter++,
+		id: id,
 		type: 'wait',
 		time: 1
 	};
 };
 
 SceneHandler.prototype.createSpring = function(){
+	var id = this.createId();
 	return {
-		id: idCounter++,
+		id: id,
 		type: 'linear',
-		name: 'Spring ' + (idCounter - 1),
+		name: 'Spring ' + id,
 		stiffness: 100,
 		damping: 1,
 		bodyA: 0,
