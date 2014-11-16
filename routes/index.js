@@ -33,6 +33,7 @@ exports.view = function(req, res){
 
 		var upgradedScene = Validator.upgrade(scene);
 		if(!upgradedScene){
+			console.error('Scene ' + req.id + ' could not be upgraded:\n' + Validator.result);
 			return res.status(500).render('error');
 		}
 
@@ -55,6 +56,7 @@ exports.edit = function(req, res){
 
 		var upgradedScene = Validator.upgrade(scene);
 		if(!upgradedScene){
+			console.error('Scene ' + req.id + ' could not be upgraded:\n' + Validator.result);
 			return res.status(500).render('error');
 		}
 

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>PhysicsToy - Error</title>
+		<% include meta %>
+	</head>
+	<body>
+		<h1><%=STATUS_CODES[res.statusCode]%></h1>
+		<p>
+			<%=typeof(message)!=='undefined' ? message : 'An error occurred while processing your request. Try again later.'%>
+		</p>
+
+		<% include ga %>
+	</body>
+</html>

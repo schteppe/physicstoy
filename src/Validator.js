@@ -32,10 +32,19 @@ Validator.upgrade = function(obj){
 	case 1:
 		obj.version = 2;
 		break;
+	case 2:
+		break;
+	default:
+		return false;
 	}
 
 	// Are we done?
 	if(version === Validator.CURRENT_VERSION){
+		var result = Validator.validate(obj);
+		Validator.result = result;
+		if(!result.valid){
+			return false;
+		}
 		return obj;
 	} else {
 		return Validator.upgrade(obj);
@@ -43,6 +52,8 @@ Validator.upgrade = function(obj){
 };
 
 var num = { type: "number", required: true };
+var integer = { type: "integer", required: true };
+var id = { type: "integer", minimum: 1, required: true };
 var str = { type: "string", required: true };
 var bool = { type: "boolean", required: true };
 
@@ -52,10 +63,10 @@ schema = {
 	required: true,
 	properties: {
 		version: {
-			type: "number",
+			type: "integer",
 			required: true,
-			min: Validator.CURRENT_VERSION,
-			max: Validator.CURRENT_VERSION
+			minimum: Validator.CURRENT_VERSION,
+			maximum: Validator.CURRENT_VERSION
 		},
 
 		world: {
@@ -66,8 +77,8 @@ schema = {
 				gravityX: num,
 				gravityY: num,
 
-				fps : num,
-				maxSubSteps : num,
+				fps : integer,
+				maxSubSteps : integer,
 				sleepMode : str,
 			}
 		},
@@ -88,7 +99,7 @@ schema = {
 			required: true,
 			additionalProperties: false,
 			properties: {
-				iterations: num,
+				iterations: { type: "integer", minimum: 0, required: true },
 				stiffness: num,
 				relaxation: num,
 				tolerance: num,
@@ -105,7 +116,7 @@ schema = {
 				required: true,
 				additionalProperties: false,
 				properties: {
-					id: num,
+					id: id,
 					name: str,
 					x: num,
 					y: num,
@@ -137,7 +148,7 @@ schema = {
 							required: true,
 							additionalProperties: false,
 							properties: {
-								id: num,
+								id: id,
 								name: str,
 								type: str,
 								color: str,
