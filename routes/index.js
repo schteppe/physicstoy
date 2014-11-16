@@ -1,6 +1,6 @@
 var path = require('path');
 var db = require(path.join(__dirname, '..', 'src', 'Database'));
-var validate = require('../src/Validator').validate;
+var Validator = require('../src/Validator');
 
 var scene;
 
@@ -29,8 +29,15 @@ exports.view = function(req, res){
 			return res.status(404).render('error');
 		}
 
+		var scene = result.rows[0].scene;
+
+		var upgradedScene = Validator.upgrade(scene);
+		if(!upgradedScene){
+			return res.status(500).render('error');
+		}
+
 		res.render('view', {
-			scene: JSON.stringify(result.rows[0].scene)
+			scene: JSON.stringify(upgradedScene)
 		});
 	});
 };
@@ -63,7 +70,7 @@ exports.save = function(req, res){
 	if(!obj){
 		errors.push('Could not parse JSON.');
 	} else {
-		var result = validate(obj);
+		var result = Validator.validate(obj);
 		if(!result.valid){
 			var errs = result.errors.map(function(err){ return err.stack; }).join(', ');
 			errors.push('Sorry, the scene data was not valid: ' + errs);
@@ -76,8 +83,7 @@ exports.save = function(req, res){
 			scene: req.body.scene
 		});
 	} else {
-
-		db.query('INSERT INTO pt_scenes (scene) VALUES($1) RETURNING id', [obj], function (err, result){
+		db.query('INSERT INTO pt_scenes (scene,version) VALUES($1,$2) RETURNING id', [obj,Validator.CURRENT_VERSION], function (err, result){
 			if(err) return next(err);
 
 			var insertId = result.rows[0].id;
