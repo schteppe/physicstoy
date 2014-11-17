@@ -1,6 +1,7 @@
-function BodyHandler(world, renderer){
+function BodyHandler(sceneHandler, world, renderer){
 	this.world = world;
 	this.renderer = renderer;
+	this.sceneHandler = sceneHandler;
 	this.bodies = {};
 }
 
@@ -60,4 +61,36 @@ BodyHandler.prototype.remove = function(config){
 	this.world.removeBody(body);
 	//this.renderer.removeVisual(body);
 	delete this.bodies[config.id];
+};
+
+BodyHandler.prototype.create = function(){
+	var id = this.sceneHandler.createId();
+	var bodyConfig = {
+		id: id,
+		name: 'Body ' + id,
+
+		x: 0,
+		y: 0,
+		angle: 0,
+		type: 'dynamic',
+		mass: 1,
+		collisionResponse: true,
+		shapes: [],
+
+		velocityX: 0,
+		velocityY: 0,
+		angularVelocity: 0,
+
+		damping: 0,
+		angularDamping: 0,
+
+		fixedRotation: false,
+
+		enableSleep: false,
+
+		gravityScale: 1,
+		machines: []
+	};
+
+	return bodyConfig;
 };

@@ -22,6 +22,8 @@ angular.module('physicsApp', [])
 	}
 
 	$scope.updateAll = function () {
+		sceneHandler.updateAll();
+		/*
 		for (var i = 0; i < $scope.bodies.length; i++) {
 			var bodyConfig = $scope.bodies[i];
 			sceneHandler.updateBody(bodyConfig);
@@ -29,31 +31,32 @@ angular.module('physicsApp', [])
 				sceneHandler.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
 			}
 		}
+		*/
 	};
 
 	$scope.addBody = function () {
-		var bodyConfig = sceneHandler.createBody();
+		var bodyConfig = sceneHandler.bodyHandler.create();
 		$scope.bodies.push(bodyConfig);
-		sceneHandler.addBody(bodyConfig);
+		sceneHandler.bodyHandler.add(bodyConfig);
 	};
 
 	$scope.removeBody = function (body) {
 		var idx = $scope.bodies.indexOf(body);
 		if(idx !== -1)
 			$scope.bodies.splice(idx, 1);
-		sceneHandler.removeBody(body);
+		sceneHandler.bodyHandler.remove(body);
 	};
 
 	$scope.addShapeToBody = function (body) {
-		var config = sceneHandler.createShape();
+		var config = sceneHandler.shapeHandler.create();
 		body.shapes.push(config);
-		sceneHandler.addShape(body.id, config);
+		sceneHandler.shapeHandler.add(body.id, config);
 	};
 
 	$scope.removeShape = function(body, shape){
 		var idx = body.shapes.indexOf(shape);
 		body.shapes.splice(idx, 1);
-		sceneHandler.removeShape(body.id, shape);
+		sceneHandler.shapeHandler.remove(body.id, shape);
 	};
 
 	$scope.addMachineToBody = function (body) {
@@ -96,6 +99,9 @@ angular.module('physicsApp', [])
 	};
 
 	window.addEventListener('keyup', function (evt) {
+		if(['CANVAS','BODY'].indexOf(document.activeElement.nodeName) === -1){
+			return;
+		}
 		switch(evt.keyCode){
 		case 32:
 			$scope.playing = !$scope.playing;
@@ -138,16 +144,16 @@ angular.module('physicsApp', [])
 })
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(sceneHandler.createShape()).map(function(v){ return 'shape.' + v; });
+	var vars = Object.keys(sceneHandler.shapeHandler.create()).map(function(v){ return 'shape.' + v; });
 	watchMany($scope, vars, function() {
-		sceneHandler.updateShape($scope.body.id, $scope.shape);
+		sceneHandler.shapeHandler.update($scope.body.id, $scope.shape);
    });
 })
 
 .controller('BodyCtrl', function ($scope, $rootScope) {
-	var vars = Object.keys(sceneHandler.createBody()).map(function(v){ return 'body.' + v; });
+	var vars = Object.keys(sceneHandler.bodyHandler.create()).map(function(v){ return 'body.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.updateBody($scope.body);
+		sceneHandler.bodyHandler.update($scope.body);
 	});
 })
 

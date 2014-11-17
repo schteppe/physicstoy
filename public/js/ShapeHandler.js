@@ -11,7 +11,7 @@ ShapeHandler.prototype.getById = function(id){
 };
 
 ShapeHandler.prototype.update = function(bodyId, config){
-	var body = this.bodies[bodyId];
+	var body = this.sceneHandler.getById(bodyId);
 
 	var shape = this.shapes[config.id];
 	if(!shape){
@@ -63,7 +63,7 @@ ShapeHandler.prototype.add = function(bodyId, config){
 
 	this.shapes[config.id] = shape;
 	body.addShape(shape, [config.x, config.y], config.angle);
-	this.updateShape(bodyId, config);
+	this.update(bodyId, config);
 };
 
 ShapeHandler.prototype.remove = function(bodyId, config){
@@ -75,7 +75,7 @@ ShapeHandler.prototype.remove = function(bodyId, config){
 };
 
 // Call when need to rerender body and stuff
-SceneHandler.prototype.bodyChanged = function(body){
+ShapeHandler.prototype.bodyChanged = function(body){
 
 	// Update body properties
 	body.updateMassProperties();
@@ -84,4 +84,29 @@ SceneHandler.prototype.bodyChanged = function(body){
 	// Update visuals
 	this.renderer.removeVisual(body);
 	this.renderer.addVisual(body);
+};
+
+ShapeHandler.prototype.create = function(){
+	var id = this.sceneHandler.createId();
+	return {
+		id: id,
+		name: 'Circle ' + id,
+
+		type: 'circle',
+		color: '#' + Color.randomPastelHex(),
+		angle: 0,
+		x: 0,
+		y: 0,
+		collisionResponse: true,
+
+		// Circle
+		radius: 1,
+
+		// Box
+		width: 1,
+		height: 1,
+
+		// Convex
+		vertices: []
+	};
 };

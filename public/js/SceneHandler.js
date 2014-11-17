@@ -3,17 +3,23 @@ function SceneHandler(world,renderer){
 	this.renderer = renderer;
 
 	// Maps, id to object
-	this.bodies = {};
-	this.shapes = {};
+	//this.bodies = {};
+	//this.shapes = {};
 	this.machines = {};
 	this.actions = {};
 	this.springs = {};
 
 	this.rendererHandler = new RendererHandler(renderer);
 	this.solverHandler = new SolverHandler(world);
+	this.bodyHandler = new BodyHandler(this, world, renderer);
+	this.shapeHandler = new ShapeHandler(this, world, renderer);
 
 	this.idCounter = 1;
 }
+
+SceneHandler.prototype.getById = function(id){
+	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id);
+};
 
 SceneHandler.prototype.createId = function(){
 	return this.idCounter++;
@@ -22,9 +28,9 @@ SceneHandler.prototype.createId = function(){
 SceneHandler.prototype.updateAll = function(config){
 	for (var i = 0; i < config.bodies.length; i++) {
 		var bodyConfig = config.bodies[i];
-		this.updateBody(bodyConfig);
+		this.bodyHandler.update(bodyConfig);
 		for (var j = 0; j < bodyConfig.shapes.length; j++) {
-			this.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
+			this.shapeHandler.update(bodyConfig.id, bodyConfig.shapes[j]);
 		}
 	}
 	for (i = 0; i < config.springs.length; i++) {
@@ -32,6 +38,7 @@ SceneHandler.prototype.updateAll = function(config){
 		this.updateSpring(springConfig);
 	}
 	this.rendererHandler.update(config.renderer);
+	this.solverHandler.update(config.solver);
 	this.updateWorld(config.world);
 };
 
@@ -42,6 +49,7 @@ SceneHandler.prototype.updateWorld = function(config){
 	this.renderer.timeStep = 1 / config.fps;
 };
 
+/*
 SceneHandler.prototype.updateBody = function(config){
 	var body = this.bodies[config.id];
 	if(!body){
@@ -94,7 +102,9 @@ SceneHandler.prototype.removeBody = function(config){
 	//this.renderer.removeVisual(body);
 	delete this.bodies[config.id];
 };
+*/
 
+/*
 SceneHandler.prototype.updateShape = function(bodyId, config){
 	var body = this.bodies[bodyId];
 
@@ -227,6 +237,7 @@ SceneHandler.prototype.createShape = function(){
 		vertices: []
 	};
 };
+*/
 
 SceneHandler.prototype.createWorld = function(){
 	return {
@@ -304,8 +315,8 @@ SceneHandler.prototype.createSpring = function(){
 };
 
 SceneHandler.prototype.updateSpring = function(config){
-	var bodyA = this.bodies[config.bodyA];
-	var bodyB = this.bodies[config.bodyB];
+	var bodyA = this.getById(config.bodyA);
+	var bodyB = this.getById(config.bodyB);
 
 	var spring = this.springs[config.id];
 	if(spring){
@@ -346,8 +357,8 @@ SceneHandler.prototype.updateSpring = function(config){
 
 SceneHandler.prototype.removeSpring = function(config){
 	var spring = this.springs[config.id];
-	var bodyA = this.bodies[config.bodyA];
-	var bodyB = this.bodies[config.bodyB];
+	var bodyA = this.getById(config.bodyA);
+	var bodyB = this.getById(config.bodyB);
 	if(spring){
 		this.renderer.removeVisual(spring);
 		this.world.removeSpring(spring);
