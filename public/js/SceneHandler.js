@@ -2,10 +2,6 @@ function SceneHandler(world,renderer){
 	this.world = world;
 	this.renderer = renderer;
 
-	// Maps, id to object
-	this.machines = {};
-	this.actions = {};
-
 	this.rendererHandler = new RendererHandler(renderer);
 	this.solverHandler = new SolverHandler(world);
 	this.bodyHandler = new BodyHandler(this, world, renderer);
@@ -15,16 +11,10 @@ function SceneHandler(world,renderer){
 	this.machineHandler = new MachineHandler(this, world, renderer);
 	this.stateHandler = new StateHandler(this, world, renderer);
 	this.actionHandler = new ActionHandler(this, world, renderer);
-
-	this.idCounter = 1;
 }
 
 SceneHandler.prototype.getById = function(id){
 	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id);
-};
-
-SceneHandler.prototype.createId = function(){
-	return this.idCounter++;
 };
 
 SceneHandler.prototype.updateAll = function(config){

@@ -1,16 +1,13 @@
 function MachineHandler(sceneHandler, world, renderer){
+	Handler.call(this);
 	this.sceneHandler = sceneHandler;
 	this.world = world;
 	this.renderer = renderer;
-	this.objects = {};
 }
-
-MachineHandler.prototype.getById = function(id){
-	return this.objects[id];
-};
+MachineHandler.prototype = Object.create(Handler.prototype);
 
 MachineHandler.prototype.create = function(){
-	var id = this.sceneHandler.createId();
+	var id = this.createId();
 	return {
 		id: id,
 		name: 'State machine ' + id,

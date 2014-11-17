@@ -1,22 +1,20 @@
 function ShapeHandler(sceneHandler, world, renderer){
+	Handler.call(this);
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
 
-	this.shapes = {};
+	this.objects = {};
 }
-
-ShapeHandler.prototype.getById = function(id){
-	return this.shapes[id];
-};
+ShapeHandler.prototype = Object.create(Handler.prototype);
 
 ShapeHandler.prototype.update = function(bodyId, config){
 	var body = this.sceneHandler.getById(bodyId);
 
-	var shape = this.shapes[config.id];
+	var shape = this.objects[config.id];
 	if(!shape){
 		this.add(bodyId, config);
-		shape = this.shapes[config.id];
+		shape = this.objects[config.id];
 	}
 
 	var i = body.shapes.indexOf(shape);
@@ -33,7 +31,7 @@ ShapeHandler.prototype.update = function(bodyId, config){
 		shape = new p2.Plane();
 		break;
 	}
-	this.shapes[config.id] = body.shapes[i] = shape;
+	this.objects[config.id] = body.shapes[i] = shape;
 	shape.color = oldColor;
 
 	// Hack in the color
@@ -61,17 +59,17 @@ ShapeHandler.prototype.add = function(bodyId, config){
 		break;
 	}
 
-	this.shapes[config.id] = shape;
+	this.objects[config.id] = shape;
 	body.addShape(shape, [config.x, config.y], config.angle);
 	this.update(bodyId, config);
 };
 
 ShapeHandler.prototype.remove = function(bodyId, config){
-	var shape = this.shapes[config.id];
+	var shape = this.objects[config.id];
 	var body = this.sceneHandler.getById(bodyId);
 	body.removeShape(shape);
 	this.bodyChanged(body);
-	delete this.shapes[config.id];
+	delete this.objects[config.id];
 };
 
 // Call when need to rerender body and stuff
@@ -87,7 +85,7 @@ ShapeHandler.prototype.bodyChanged = function(body){
 };
 
 ShapeHandler.prototype.create = function(){
-	var id = this.sceneHandler.createId();
+	var id = this.createId();
 	return {
 		id: id,
 		name: 'Circle ' + id,

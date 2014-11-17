@@ -1,6 +1,8 @@
 function RendererHandler(renderer){
+	Handler.call(this);
 	this.renderer = renderer;
 }
+RendererHandler.prototype = Object.create(Handler.prototype);
 
 RendererHandler.prototype.create = function(){
 	return {

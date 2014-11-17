@@ -1,8 +1,10 @@
 function WorldHandler(sceneHandler, world, renderer){
+	Handler.call(this);
 	this.sceneHandler = sceneHandler;
 	this.world = world;
 	this.renderer = renderer;
 }
+WorldHandler.prototype = Object.create(Handler.prototype);
 
 WorldHandler.prototype.update = function(config){
 	var world = this.world;

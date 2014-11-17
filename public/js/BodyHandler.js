@@ -1,19 +1,17 @@
 function BodyHandler(sceneHandler, world, renderer){
+	Handler.call(this);
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
-	this.bodies = {};
+	this.objects = {};
 }
-
-BodyHandler.prototype.getById = function(id){
-	return this.bodies[id];
-};
+BodyHandler.prototype = Object.create(Handler.prototype);
 
 BodyHandler.prototype.update = function(config){
-	var body = this.bodies[config.id];
+	var body = this.objects[config.id];
 	if(!body){
 		this.add(config);
-		body = this.bodies[config.id];
+		body = this.objects[config.id];
 	}
 
 	body.mass = config.mass;
@@ -43,7 +41,7 @@ BodyHandler.prototype.update = function(config){
 };
 
 BodyHandler.prototype.add = function(config){
-	if(this.bodies[config.id]){
+	if(this.objects[config.id]){
 		return;
 	}
 
@@ -51,20 +49,20 @@ BodyHandler.prototype.add = function(config){
 	var body = new p2.Body({
 		mass: config.mass
 	});
-	this.bodies[config.id] = body;
+	this.objects[config.id] = body;
 	this.world.addBody(body);
 	//this.renderer.addVisual(body);
 };
 
 BodyHandler.prototype.remove = function(config){
-	var body = this.bodies[config.id];
+	var body = this.objects[config.id];
 	this.world.removeBody(body);
 	//this.renderer.removeVisual(body);
-	delete this.bodies[config.id];
+	delete this.objects[config.id];
 };
 
 BodyHandler.prototype.create = function(){
-	var id = this.sceneHandler.createId();
+	var id = this.createId();
 	var bodyConfig = {
 		id: id,
 		name: 'Body ' + id,

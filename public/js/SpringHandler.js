@@ -1,4 +1,5 @@
 function SpringHandler(sceneHandler, world, renderer){
+	Handler.call(this);
 	this.sceneHandler = sceneHandler;
 	this.world = world;
 	this.renderer = renderer;
@@ -6,13 +7,10 @@ function SpringHandler(sceneHandler, world, renderer){
 	// Maps id to object
 	this.objects = {};
 }
-
-SpringHandler.prototype.getById = function(id){
-	return this.objects[id];
-};
+SpringHandler.prototype = Object.create(Handler.prototype);
 
 SpringHandler.prototype.create = function(){
-	var id = this.sceneHandler.createId();
+	var id = this.createId();
 	return {
 		id: id,
 		type: 'linear',

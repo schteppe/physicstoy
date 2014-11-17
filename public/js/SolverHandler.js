@@ -1,6 +1,8 @@
 function SolverHandler(world){
+	Handler.call(this);
 	this.world = world;
 }
+SolverHandler.prototype = Object.create(Handler.prototype);
 
 SolverHandler.prototype.create = function(){
 	return {
