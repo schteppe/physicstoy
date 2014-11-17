@@ -56,7 +56,8 @@ BodyHandler.prototype.add = function(config){
 
 BodyHandler.prototype.remove = function(config){
 	var body = this.objects[config.id];
-	this.world.removeBody(body);
+	if(body)
+		this.world.removeBody(body);
 	//this.renderer.removeVisual(body);
 	delete this.objects[config.id];
 };

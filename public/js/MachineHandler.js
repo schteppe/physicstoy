@@ -11,7 +11,6 @@ MachineHandler.prototype.create = function(){
 	return {
 		id: id,
 		name: 'State machine ' + id,
-
 		states: [this.sceneHandler.stateHandler.create()]
 	};
 };
