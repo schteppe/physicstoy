@@ -3,11 +3,8 @@ function SceneHandler(world,renderer){
 	this.renderer = renderer;
 
 	// Maps, id to object
-	//this.bodies = {};
-	//this.shapes = {};
 	this.machines = {};
 	this.actions = {};
-	//this.springs = {};
 
 	this.rendererHandler = new RendererHandler(renderer);
 	this.solverHandler = new SolverHandler(world);
@@ -15,12 +12,15 @@ function SceneHandler(world,renderer){
 	this.shapeHandler = new ShapeHandler(this, world, renderer);
 	this.springHandler = new SpringHandler(this, world, renderer);
 	this.worldHandler = new WorldHandler(this, world, renderer);
+	this.machineHandler = new MachineHandler(this, world, renderer);
+	this.stateHandler = new StateHandler(this, world, renderer);
+	this.actionHandler = new ActionHandler(this, world, renderer);
 
 	this.idCounter = 1;
 }
 
 SceneHandler.prototype.getById = function(id){
-	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id);
+	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id);
 };
 
 SceneHandler.prototype.createId = function(){
@@ -44,25 +44,6 @@ SceneHandler.prototype.updateAll = function(config){
 	this.worldHandler.update(config.world);
 };
 
-/*
-SceneHandler.prototype.updateWorld = function(config){
-	var world = this.world;
-	world.gravity.set([config.gravityX, config.gravityY]);
-	this.renderer.maxSubSteps = config.maxSubSteps;
-	this.renderer.timeStep = 1 / config.fps;
-};
-
-SceneHandler.prototype.createWorld = function(){
-	return {
-		gravityX: 0,
-		gravityY: -10,
-		fps: 60,
-		maxSubSteps: 3,
-		sleepMode: "NO_SLEEPING"
-	};
-};
-*/
-
 SceneHandler.prototype.createDefaultScene = function(){
 	return {
 		world: {
@@ -76,33 +57,5 @@ SceneHandler.prototype.createDefaultScene = function(){
 		solver: this.solverHandler.create(),
 		bodies: [],
 		springs: []
-	};
-};
-
-SceneHandler.prototype.createMachine = function(){
-	var id = this.createId();
-	return {
-		id: id,
-		name: 'State machine ' + id,
-
-		states: [this.createState()]
-	};
-};
-
-SceneHandler.prototype.createState = function(){
-	var id = this.createId();
-	return {
-		id: id,
-		name: 'State ' + id,
-		actions: []
-	};
-};
-
-SceneHandler.prototype.createAction = function(){
-	var id = this.createId();
-	return {
-		id: id,
-		type: 'wait',
-		time: 1
 	};
 };

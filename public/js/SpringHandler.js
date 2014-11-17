@@ -4,8 +4,12 @@ function SpringHandler(sceneHandler, world, renderer){
 	this.renderer = renderer;
 
 	// Maps id to object
-	this.springs = {};
+	this.objects = {};
 }
+
+SpringHandler.prototype.getById = function(id){
+	return this.objects[id];
+};
 
 SpringHandler.prototype.create = function(){
 	var id = this.sceneHandler.createId();
@@ -32,7 +36,7 @@ SpringHandler.prototype.update = function(config){
 	var bodyA = this.sceneHandler.getById(config.bodyA);
 	var bodyB = this.sceneHandler.getById(config.bodyB);
 
-	var spring = this.springs[config.id];
+	var spring = this.objects[config.id];
 	if(spring){
 		this.renderer.removeVisual(spring);
 		this.world.removeSpring(spring);
@@ -65,23 +69,23 @@ SpringHandler.prototype.update = function(config){
 		break;
 	}
 	this.world.addSpring(spring);
-	this.springs[config.id] = spring;
+	this.objects[config.id] = spring;
 	this.renderer.addVisual(spring);
 };
 
 SpringHandler.prototype.remove = function(config){
-	var spring = this.springs[config.id];
+	var spring = this.objects[config.id];
 	var bodyA = this.sceneHandler.getById(config.bodyA);
 	var bodyB = this.sceneHandler.getById(config.bodyB);
 	if(spring){
 		this.renderer.removeVisual(spring);
 		this.world.removeSpring(spring);
 	}
-	delete this.springs[config.id];
+	delete this.objects[config.id];
 };
 
 SpringHandler.prototype.add = function(config){
-	if(this.springs[config.id]){
+	if(this.objects[config.id]){
 		return;
 	}
 	this.update(config);

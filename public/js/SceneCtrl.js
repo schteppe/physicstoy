@@ -52,7 +52,7 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addMachineToBody = function (body) {
-		body.machines.push(sceneHandler.createMachine());
+		body.machines.push(sceneHandler.machineHandler.create());
 	};
 
 	$scope.removeMachine = function (body, machine) {
@@ -62,7 +62,7 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addState = function (machine) {
-		machine.states.push(sceneHandler.createState());
+		machine.states.push(sceneHandler.stateHandler.create());
 	};
 
 	$scope.removeState = function (machine, state) {
@@ -72,7 +72,7 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addAction = function (state) {
-		state.actions.push(sceneHandler.createAction());
+		state.actions.push(sceneHandler.actionHandler.create());
 	};
 
 	$scope.removeAction = function (state,action) {
