@@ -23,15 +23,6 @@ angular.module('physicsApp', [])
 
 	$scope.updateAll = function () {
 		sceneHandler.updateAll();
-		/*
-		for (var i = 0; i < $scope.bodies.length; i++) {
-			var bodyConfig = $scope.bodies[i];
-			sceneHandler.updateBody(bodyConfig);
-			for (var j = 0; j < bodyConfig.shapes.length; j++) {
-				sceneHandler.updateShape(bodyConfig.id, bodyConfig.shapes[j]);
-			}
-		}
-		*/
 	};
 
 	$scope.addBody = function () {
@@ -55,7 +46,8 @@ angular.module('physicsApp', [])
 
 	$scope.removeShape = function(body, shape){
 		var idx = body.shapes.indexOf(shape);
-		body.shapes.splice(idx, 1);
+		if(idx !== -1)
+			body.shapes.splice(idx, 1);
 		sceneHandler.shapeHandler.remove(body.id, shape);
 	};
 
@@ -65,7 +57,8 @@ angular.module('physicsApp', [])
 
 	$scope.removeMachine = function (body, machine) {
 		var idx = body.machines.indexOf(machine);
-		body.machines.splice(idx, 1);
+		if(idx !== -1)
+			body.machines.splice(idx, 1);
 	};
 
 	$scope.addState = function (machine) {
@@ -74,7 +67,8 @@ angular.module('physicsApp', [])
 
 	$scope.removeState = function (machine, state) {
 		var idx = machine.states.indexOf(state);
-		machine.states.splice(idx, 1);
+		if(idx !== -1)
+			machine.states.splice(idx, 1);
 	};
 
 	$scope.addAction = function (state) {
@@ -83,21 +77,39 @@ angular.module('physicsApp', [])
 
 	$scope.removeAction = function (state,action) {
 		var idx = state.actions.indexOf(action);
-		state.actions.splice(idx, 1);
+		if(idx !== -1)
+			state.actions.splice(idx, 1);
 	};
 
 	$scope.addSpring = function () {
-		var config = sceneHandler.createSpring();
+		var config = sceneHandler.springHandler.create();
 		$scope.springs.push(config);
-		sceneHandler.addSpring(config);
+		sceneHandler.springHandler.add(config);
 	};
 
 	$scope.removeSpring = function (config) {
 		var idx = $scope.springs.indexOf(config);
-		$scope.springs.splice(idx, 1);
-		sceneHandler.removeSpring(config);
+		if(idx !== -1)
+			$scope.springs.splice(idx, 1);
+		sceneHandler.springHandler.remove(config);
 	};
 
+	$scope.$watch('playing', function (nv, ov){
+		renderer.paused = !nv;
+		if(renderer.paused){
+			renderer.state = renderer.defaultState = Renderer.PANZOOM;
+		} else {
+			renderer.state = renderer.defaultState = Renderer.DEFAULT;
+		}
+		sceneHandler.updateAll($scope);
+	});
+
+	var vars = Object.keys(sceneHandler.worldHandler.create()).map(function(v){ return 'world.' + v; });
+	watchMany($scope, vars, function() {
+		sceneHandler.worldHandler.update($scope.world);
+	});
+
+	// Keyboard shortcuts
 	window.addEventListener('keyup', function (evt) {
 		if(['CANVAS','BODY'].indexOf(document.activeElement.nodeName) === -1){
 			return;
@@ -109,6 +121,7 @@ angular.module('physicsApp', [])
 		$scope.$apply();
 	});
 
+	// On click save
 	document.getElementById('saveButton').addEventListener('click', function (evt){
 		var vars = Object.keys($scope).filter(function(v){ return v[0] !== '$'; });
 		var data = {};
@@ -126,21 +139,6 @@ angular.module('physicsApp', [])
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
 	}, true);
-
-	$scope.$watch('playing', function (nv, ov){
-		renderer.paused = !nv;
-		if(renderer.paused){
-			renderer.state = renderer.defaultState = Renderer.PANZOOM;
-		} else {
-			renderer.state = renderer.defaultState = Renderer.DEFAULT;
-		}
-		sceneHandler.updateAll($scope);
-	});
-
-	var vars = Object.keys(sceneHandler.createWorld()).map(function(v){ return 'world.' + v; });
-	watchMany($scope, vars, function() {
-		sceneHandler.updateWorld($scope.world);
-	});
 })
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {
@@ -162,6 +160,7 @@ angular.module('physicsApp', [])
 
 .controller('SpringCtrl', function ($scope, $rootScope) {
 
+	// Convert from string to integer
 	$scope.$watch('spring.bodyA', function(nv, ov){
 		$scope.spring.bodyA = parseInt(nv, 10);
 	});
@@ -169,9 +168,9 @@ angular.module('physicsApp', [])
 		$scope.spring.bodyB = parseInt(nv, 10);
 	});
 
-	var vars = Object.keys(sceneHandler.createSpring()).map(function(v){ return 'spring.' + v; });
+	var vars = Object.keys(sceneHandler.springHandler.create()).map(function(v){ return 'spring.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.updateSpring($scope.spring);
+		sceneHandler.springHandler.update($scope.spring);
 	});
 
 })
