@@ -94,6 +94,20 @@ angular.module('physicsApp', [])
 		sceneHandler.springHandler.remove(config);
 	};
 
+	$scope.addConstraint = function () {
+		var config = sceneHandler.constraintHandler.create();
+		$scope.constraints.push(config);
+		sceneHandler.constraintHandler.add(config);
+	};
+
+	$scope.removeConstraint = function (config) {
+		var idx = $scope.constraints.indexOf(config);
+		if(idx !== -1)
+			$scope.constraints.splice(idx, 1);
+		sceneHandler.constraintHandler.remove(config);
+	};
+
+
 	$scope.$watch('playing', function (nv, ov){
 		renderer.paused = !nv;
 		if(renderer.paused){
@@ -179,6 +193,8 @@ angular.module('physicsApp', [])
 })
 
 .controller('ActionCtrl', function ($scope, $rootScope) {
+})
+.controller('ConstraintCtrl', function ($scope, $rootScope) {
 })
 
 .controller('RendererCtrl', function ($scope, $rootScope) {

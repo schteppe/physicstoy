@@ -113,6 +113,8 @@ html,body {
 .menu .content.action { background-color: #fdd; }
 .menu .header.spring { background-color: #faa; }
 .menu .content.spring { background-color: #fdd; }
+.menu .header.constraint { background-color: #faf; }
+.menu .content.constraint { background-color: #fdf; }
 
 .ng-invalid {
 	background-color: red;

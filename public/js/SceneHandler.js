@@ -11,6 +11,7 @@ function SceneHandler(world,renderer){
 	this.machineHandler = new MachineHandler(this, world, renderer);
 	this.stateHandler = new StateHandler(this, world, renderer);
 	this.actionHandler = new ActionHandler(this, world, renderer);
+	this.constraintHandler = new ConstraintHandler(this, world, renderer);
 }
 
 SceneHandler.prototype.getById = function(id){
@@ -46,6 +47,7 @@ SceneHandler.prototype.createDefaultScene = function(){
 		renderer: this.rendererHandler.create(),
 		solver: this.solverHandler.create(),
 		bodies: [],
-		springs: []
+		springs: [],
+		constraints: []
 	};
 };

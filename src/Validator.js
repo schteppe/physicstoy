@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 3;
+Validator.CURRENT_VERSION = 4;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -37,6 +37,10 @@ Validator.upgrade = function(obj){
 		obj.version = 3;
 		break;
 	case 3:
+		obj.constraints = [];
+		obj.version = 4;
+		break;
+	case 4:
 		break;
 	default:
 		return false;
@@ -208,6 +212,24 @@ schema = {
 					}
 				}
 			}
+		},
+
+		constraints: {
+			type: "array",
+			required: true,
+			minItems: 0,
+			maxItems: 0,
+			items: {
+				type: "object",
+				required: true,
+				additionalProperties: false,
+				properties: {
+					id: id,
+					name: str,
+					x: num,
+					y: num,
+				},
+			},
 		}
 	}
 };

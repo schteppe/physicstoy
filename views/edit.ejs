@@ -92,7 +92,7 @@
 					</div>
 					<ul class="bodies">
 						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
-							<span class="body header" ng-class="toggled ? 'open' : 'closed'" ng-click="toggled=!toggled" ng-init="toggled=false">
+							<span class="body header" id="id-{{body.id}}" ng-class="toggled ? 'open' : 'closed'" ng-click="toggled=!toggled" ng-init="toggled=false">
 								<div class="text">{{body.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeBody(body)">X</span>
 							</span>
@@ -182,7 +182,7 @@
 								<ul class="shapes">
 									<li class="shape" ng-repeat="shape in body.shapes" ng-controller="ShapeCtrl">
 
-										<span class="shape header" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+										<span class="shape header" id="id-{{shape.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
 											<div class="text">{{shape.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeShape(body,shape)">X</span>
 										</span>
@@ -252,7 +252,7 @@
 								<ul class="machines">
 									<li class="machine" ng-repeat="machine in body.machines" ng-controller="MachineCtrl">
 
-										<span class="machine header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
+										<span class="machine header" id="id-{{machine.id}}" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 											<div class="text">{{machine.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeMachine(body,machine)">X</span>
 										</span>
@@ -279,7 +279,7 @@
 											<ul class="states">
 												<li class="state" ng-repeat="state in machine.states" ng-controller="StateCtrl">
 
-													<span class="state header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
+													<span class="state header" id="id-{{state.id}}" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 														<div class="text">{{state.name||'&nbsp;'}}</div>
 														<span class="rm" ng-click="removeState(machine,state)">X</span>
 													</span>
@@ -301,7 +301,7 @@
 														<ul class="actions">
 															<li class="action" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
 
-																<span class="action header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
+																<span class="action header" id="id-{{action.id}}" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
 																	<div class="text">action</div>
 																	<span class="rm" ng-click="removeAction(state,action)">X</span>
 																</span>
@@ -356,7 +356,7 @@
 					</div>
 					<ul class="springs">
 						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
-							<span class="spring header" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+							<span class="spring header" id="id-{{spring.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
 								<div class="text">{{spring.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeSpring(spring)">X</span>
 							</span>
@@ -435,6 +435,161 @@
 							</div>
 						</li>
 					</ul>
+
+					<div class="form-group">
+						<label>
+							Constraints <button ng-click="addConstraint()">+</button>
+						</label>
+					</div>
+					<ul class="constraints">
+						<li class="constraint" ng-repeat="constraint in constraints" ng-controller="ConstraintCtrl">
+							<span class="constraint header" id="id-{{constraint.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+								<div class="text">{{constraint.name||'&nbsp;'}}</div>
+								<span class="rm" ng-click="removeConstraint(constraint)">X</span>
+							</span>
+
+							<div class="constraint content" ng-show="toggled">
+
+								<!-- name -->
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" ng-model="constraint.name" />
+								</div>
+
+								<!-- type -->
+								<div class="form-group">
+									<label>Type</label>
+									<select ng-model="constraint.type">
+										<option>hinge</option>
+										<option>lock</option>
+										<option>slider</option>
+										<option>distance</option>
+										<option>gear</option>
+									</select>
+								</div>
+
+								<!-- stiffness -->
+								<div class="form-group">
+									<label>stiffness</label>
+									<input type="number" ng-model="constraint.stiffness" />
+								</div>
+
+								<!-- relaxation -->
+								<div class="form-group">
+									<label>relaxation</label>
+									<input type="number" ng-model="constraint.relaxation" />
+								</div>
+
+								<!-- bodyA -->
+								<div class="form-group">
+									<label>body A</label>
+									<select ng-model="constraint.bodyA" ng-options="constraintBodyA.id as constraintBodyA.name for constraintBodyA in bodies">
+									</select>
+								</div>
+
+								<!-- bodyB -->
+								<div class="form-group">
+									<label>body B</label>
+									<select ng-model="constraint.bodyB" ng-options="constraintBodyB.id as constraintBodyB.name for constraintBodyB in bodies">
+									</select>
+								</div>
+
+								<!-- collideConnected -->
+								<div class="form-group">
+									<label>collide connected</label>
+									<input type="checkbox" ng-model="constraint.collideConnected" />
+								</div>
+
+								<!-- maxForce -->
+								<div class="form-group">
+									<label>max force</label>
+									<input type="number" ng-model="constraint.maxForce" />
+								</div>
+
+								<!-- localAnchorA -->
+								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider' || constraint.type=='hinge'">
+									<label>local anchor A</label>
+									<input type="number" class="vec2 x" ng-model="constraint.localAnchorAX"/>
+									<input type="number" class="vec2 y" ng-model="constraint.localAnchorAY"/>
+								</div>
+
+								<!-- localAnchorB -->
+								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider' || constraint.type=='hinge'">
+									<label>local anchor B</label>
+									<input type="number" class="vec2 x" ng-model="constraint.localAnchorBX"/>
+									<input type="number" class="vec2 y" ng-model="constraint.localAnchorBY"/>
+								</div>
+
+								<!-- localAxisA -->
+								<div class="form-group" ng-show="constraint.type=='slider'">
+									<label>local axis A</label>
+									<input type="number" class="vec2 x" ng-model="constraint.localAxisAX"/>
+									<input type="number" class="vec2 y" ng-model="constraint.localAxisAY"/>
+								</div>
+
+								<!-- useCurrentDistance -->
+								<div class="form-group" ng-show="constraint.type=='distance'">
+									<label>use initial distance</label>
+									<input type="checkbox" ng-model="constraint.useCurrentDistance" />
+								</div>
+
+								<!-- distance -->
+								<div class="form-group" ng-show="constraint.type=='distance'">
+									<label>distance</label>
+									<input type="number" ng-model="constraint.distance" />
+								</div>
+
+								<!-- upperLimitEnabled -->
+								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
+									<label>enable upper limit</label>
+									<input type="checkbox" ng-model="constraint.upperLimitEnabled" />
+								</div>
+
+								<!-- lowerLimitEnabled -->
+								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
+									<label>enable lower limit</label>
+									<input type="checkbox" ng-model="constraint.lowerLimitEnabled" />
+								</div>
+
+								<!-- limits -->
+								<div class="form-group" ng-show="(constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider') && (constraint.lowerLimitEnabled || constraint.upperLimitEnabled)">
+									<label>Limits</label>
+									<input type="number" class="vec2 x" ng-model="constraint.lowerLimit"/>
+									<input type="number" class="vec2 y" ng-model="constraint.upperLimit"/>
+								</div>
+
+								<!-- gear ratio -->
+								<div class="form-group" ng-show="constraint.type=='gear'">
+									<label>gear ratio</label>
+									<input type="number" ng-model="constraint.ratio"/>
+								</div>
+
+								<!-- use rel angle -->
+								<div class="form-group" ng-show="constraint.type=='gear'">
+									<label>use current relative angle</label>
+									<input type="checkbox" ng-model="constraint.useCurrentRelAngle"/>
+								</div>
+
+								<!-- relative angle -->
+								<div class="form-group" ng-show="constraint.type=='gear' && !constraint.useCurrentRelAngle">
+									<label>relative angle</label>
+									<input type="number" ng-model="constraint.relAngle"/>
+								</div>
+
+								<!-- enableMotor -->
+								<div class="form-group" ng-show="constraint.type=='slider' || constraint.type=='hinge'">
+									<label>motor enabled</label>
+									<input type="checkbox" ng-model="constraint.motorEnabled"/>
+								</div>
+
+								<!-- motorSpeed -->
+								<div class="form-group" ng-show="(constraint.type=='slider' || constraint.type=='hinge') && constraint.motorEnabled">
+									<label>motor speed</label>
+									<input type="number" ng-model="constraint.motorSpeed"/>
+								</div>
+							</div>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -471,6 +626,7 @@
 		<script src="/js/ShapeHandler.js"></script>
 		<script src="/js/BodyHandler.js"></script>
 		<script src="/js/SpringHandler.js"></script>
+		<script src="/js/ConstraintHandler.js"></script>
 		<script src="/js/MachineHandler.js"></script>
 		<script src="/js/WorldHandler.js"></script>
 		<script src="/js/SceneHandler.js"></script>
