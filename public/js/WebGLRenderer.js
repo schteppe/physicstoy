@@ -139,10 +139,14 @@ WebGLRenderer.prototype.init = function(){
     this.aabbGraphics = new PIXI.Graphics();
     stage.addChild(this.aabbGraphics);
 
+    // Graphics object for selection
+    this.selectionGraphics = new PIXI.Graphics();
+    stage.addChild(this.selectionGraphics);
+
     stage.scale.x = 200; // Flip Y direction.
     stage.scale.y = -200;
 
-    var lastX, lastY, lastMoveX, lastMoveY, startX, startY, down=false;
+    var lastX, lastY, lastMoveX, lastMoveY, startX, startY, lastDownX, lastDownY, down=false;
 
     var physicsPosA = p2.vec2.create();
     var physicsPosB = p2.vec2.create();
@@ -152,8 +156,8 @@ WebGLRenderer.prototype.init = function(){
     var initScaleY = 1;
     var lastNumTouches = 0;
     container.mousedown = container.touchstart = function(e){
-        lastMoveX = e.global.x;
-        lastMoveY = e.global.y;
+        lastMoveX = lastDownX = e.global.x;
+        lastMoveY = lastDownY = e.global.y;
 
         if(e.originalEvent.touches){
             lastNumTouches = e.originalEvent.touches.length;
@@ -262,6 +266,11 @@ WebGLRenderer.prototype.init = function(){
         p2.vec2.set(init_stagePosition, pos.x, pos.y);
         that.stagePositionToPhysics(init_physicsPosition, init_stagePosition);
         that.handleMouseUp(init_physicsPosition);
+
+        var movedDist = Math.sqrt(Math.pow(e.global.x - lastDownX, 2) + Math.pow(e.global.y - lastDownY, 2));
+        if(movedDist < 10){
+            that.handleClick(init_physicsPosition);
+        }
     };
 
     // http://stackoverflow.com/questions/7691551/touchend-event-in-ios-webkit-not-firing
@@ -711,6 +720,25 @@ WebGLRenderer.prototype.render = function(){
     } else if(!this.aabbGraphics.cleared){
         this.aabbGraphics.clear();
         this.aabbGraphics.cleared = true;
+    }
+
+    // Draw selection
+    var g = this.selectionGraphics;
+    g.clear();
+    this.stage.removeChild(g);
+    this.stage.addChild(g);
+    g.lineStyle(this.lineWidth * 3, 0x000000,1);
+    for(var i=0; i!==this.selection.length; i++){
+        var body = this.selection[i];
+        if(body instanceof p2.Body){
+            var aabb = body.getAABB();
+            g.drawRect(
+                aabb.lowerBound[0],
+                aabb.lowerBound[1],
+                aabb.upperBound[0] - aabb.lowerBound[0],
+                aabb.upperBound[1] - aabb.lowerBound[1]
+            );
+        }
     }
 
     this.renderer.render(this.container);

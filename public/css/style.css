@@ -14,9 +14,6 @@ html,body {
 	position: absolute;
 	right: 0;
 	top: 0;
-}
-
-.menu-container {
     -ms-user-select: none;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;

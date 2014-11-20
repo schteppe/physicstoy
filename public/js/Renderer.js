@@ -48,6 +48,7 @@ function Renderer(world, options){
     this.mouseConstraint = null;
     this.nullBody = new p2.Body();
     this.pickPrecision = 5;
+    this.lastMouseDownPhysicsPosition = p2.vec2.create();
 
     this.useInterpolatedPositions = false;
 
@@ -62,7 +63,10 @@ function Renderer(world, options){
     this.drawRectEnd = p2.vec2.create();
 
     this.stateChangeEvent = { type : "stateChange", state:null };
+    this.selectionChangeEvent = { type : "selectionChange" };
 
+    this.selection = [];
+    this.selectionEnabled = false;
 
     // Default collision masks for new shapes
     this.newShapeCollisionMask = 1;
@@ -206,6 +210,31 @@ Renderer.prototype.setWorld = function(world){
 
 Renderer.elementClass = 'p2-canvas';
 Renderer.containerClass = 'p2-container';
+
+Renderer.prototype.clearSelection = function() {
+    this.selection.length = 0;
+    this.emit(this.selectionChangeEvent);
+};
+
+Renderer.prototype.enableSelection = function() {
+    this.selectionEnabled = true;
+};
+
+Renderer.prototype.disableSelection = function() {
+    this.clearSelection();
+    this.selectionEnabled = true;
+};
+
+Renderer.prototype.toggleSelect = function(object) {
+    var selection = this.selection;
+    var idx = selection.indexOf(object);
+    if(idx === -1){
+        selection.push(object);
+    } else {
+        selection.splice(idx, 1);
+    }
+    this.emit(this.selectionChangeEvent);
+};
 
 /**
  * Adds all needed keyboard callbacks
@@ -382,6 +411,9 @@ Renderer.prototype.handleMouseDown = function(physicsPosition){
         this.emit(this.drawRectangleChangeEvent);
         break;
     }
+
+    // Store for next
+    p2.vec2.copy(this.lastMouseDownPhysicsPosition, physicsPosition);
 };
 
 /**
@@ -516,6 +548,17 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
             var s = b.shapes[i];
             s.collisionMask =  this.newShapeCollisionMask;
             s.collisionGroup = this.newShapeCollisionGroup;
+        }
+    }
+};
+
+Renderer.prototype.handleClick = function(physicsPosition){
+    if(this.selectionEnabled){
+        // Check if the clicked point overlaps bodies
+        var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
+        this.clearSelection();
+        if(result.length){
+            this.toggleSelect(result[0]);
         }
     }
 };

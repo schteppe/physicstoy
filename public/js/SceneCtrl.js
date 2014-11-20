@@ -3,7 +3,8 @@ angular.module('physicsApp', [])
 .controller('SceneCtrl', function ($scope, $rootScope) {
 
 	var world = new p2.World();
-	var renderer = new WebGLRenderer(world);
+	renderer = new WebGLRenderer(world);
+	renderer.enableSelection();
 	renderer.state = renderer.defaultState = Renderer.PANZOOM;
 	sceneHandler = new SceneHandler(world,renderer);
 
@@ -143,12 +144,13 @@ angular.module('physicsApp', [])
 			data[vars[i]] = $scope[vars[i]];
 		}
 		data = {
-			version: 3,
+			version: 4,
 			world: JSON.parse(angular.toJson($scope.world)),
 			solver: JSON.parse(angular.toJson($scope.solver)),
 			renderer: JSON.parse(angular.toJson($scope.renderer)),
 			bodies: JSON.parse(angular.toJson($scope.bodies)),
-			springs: JSON.parse(angular.toJson($scope.springs))
+			springs: JSON.parse(angular.toJson($scope.springs)),
+			constraints: JSON.parse(angular.toJson($scope.constraints))
 		};
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
@@ -163,6 +165,20 @@ angular.module('physicsApp', [])
 })
 
 .controller('BodyCtrl', function ($scope, $rootScope) {
+	renderer.on('selectionChange', function (){
+		if(renderer.selection.length){
+			var id = sceneHandler.bodyHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
+			if($scope.body.id === id){
+				$scope.toggled = true;
+			} else {
+				$scope.toggled = false;
+			}
+			$scope.$apply();
+			setTimeout(function(){
+				window.location.hash = "#id-" + id;
+			}, 10);
+		}
+	});
 	var vars = Object.keys(sceneHandler.bodyHandler.create()).map(function(v){ return 'body.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.bodyHandler.update($scope.body);

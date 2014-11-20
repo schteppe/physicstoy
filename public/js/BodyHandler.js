@@ -35,6 +35,7 @@ BodyHandler.prototype.update = function(config){
 		'static': p2.Body.STATIC
 	}[config.type];
 
+	body.updateAABB();
 	body.updateMassProperties();
 	this.renderer.removeVisual(body);
 	this.renderer.addVisual(body);
