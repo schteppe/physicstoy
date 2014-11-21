@@ -39,6 +39,10 @@ SceneHandler.prototype.updateAll = function(config){
 	this.worldHandler.update(config.world);
 };
 
+SceneHandler.prototype.stopSimulation = function(){
+	this.machineHandler.stopAllMachines();
+};
+
 SceneHandler.prototype.createDefaultScene = function(){
 	return {
 		world: {

@@ -1,20 +1,33 @@
-function Machine(options){
+function Machine(world, parent, options){
 	options = options || {};
 
-	this.world = { time: 0 };
-	this.body = options.body || null;
-	this.states = options.states.slice(0) || [];
+	this.world = world;
+	this.parent = options.parent || null;
+
+	this.id = options.id || 0;
+	this.states = options.states ? options.states.slice(0) : [];
 	this.currentState = null;
 	this.defaultState = options.defaultState || null;
 	this.requestTransitionToState = null;
+	this.logging = true;
 }
+
+Machine.prototype.log = function(message){
+	if(this.logging){
+		console.log('Machine ' + this.id + ': ' + message);
+	}
+};
+
 Machine.prototype.update = function(){
 
 	// Enter default state
-	if(!this.currentState && this.defaultState){
-		this.currentState = this.defaultState;
-		console.log('Enter default state...');
-		this.defaultState.enter(this);
+	if(!this.currentState){
+		this.currentState = this.defaultState || this.states[0];
+		if(!this.currentState){
+			return; // No states!
+		}
+		this.log('Entering default state');
+		this.currentState.enter(this);
 		this.transition();
 	}
 
@@ -24,11 +37,13 @@ Machine.prototype.update = function(){
 		this.requestTransitionToState = null;
 
 		// Update states
-		this.currentState.update(this);
+		if(this.currentState)
+			this.currentState.update(this);
 
 		cont = this.transition();
 	}
 };
+
 Machine.prototype.transition = function(){
 	var transitioned = false;
 
@@ -47,27 +62,35 @@ Machine.prototype.transition = function(){
 	return transitioned;
 };
 
-function State(){
+Machine.prototype.stop = function(){
+	if(this.currentState){
+		this.currentState.exit(this);
+		this.currentState = null;
+	}
+};
+
+function State(machine){
 	this.id = ++State.id;
 	this.actions = [];
+	this.machine = machine;
 }
 State.id = 0;
-State.prototype.enter = function(machine){
-	console.log('Entered state ' + this.id);
+State.prototype.enter = function(){
+	this.machine.log('Entered state ' + this.id);
 	for (var i = 0; i < this.actions.length; i++) {
-		this.actions[i].enter(machine);
+		this.actions[i].enter(this.machine);
 	}
 };
 State.prototype.update = function(){
-	console.log('Updating state ' + this.id);
+	this.machine.log('Updating state ' + this.id);
 	for (var i = 0; i < this.actions.length; i++) {
-		this.actions[i].update(machine);
+		this.actions[i].update(this.machine);
 	}
 };
 State.prototype.exit = function(){
-	console.log('Exiting state ' + this.id);
+	this.machine.log('Exiting state ' + this.id);
 	for (var i = 0; i < this.actions.length; i++) {
-		this.actions[i].exit(machine);
+		this.actions[i].exit(this.machine);
 	}
 };
 
@@ -116,8 +139,8 @@ function SetPositionAction(){
 }
 SetPositionAction.prototype = Object.create(Action.prototype);
 SetPositionAction.prototype.enter = function(machine){
-	machine.body.position.set(this.position);
-	machine.body.angle = this.angle;
+	machine.parent.position.set(this.position);
+	machine.parent.angle = this.angle;
 };
 SetPositionAction.prototype.update = function(){};
 SetPositionAction.prototype.exit = function(){};

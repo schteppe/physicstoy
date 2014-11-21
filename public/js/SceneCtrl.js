@@ -53,7 +53,14 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addMachineToBody = function (body) {
-		body.machines.push(sceneHandler.machineHandler.create());
+		var config = sceneHandler.machineHandler.create();
+		body.machines.push(config);
+		sceneHandler.machineHandler.add(config, body);
+
+		// Create default state
+		var stateConfig = sceneHandler.stateHandler.create();
+		config.states.push(stateConfig);
+		sceneHandler.stateHandler.add(stateConfig, config);
 	};
 
 	$scope.removeMachine = function (body, machine) {
@@ -63,7 +70,9 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addState = function (machine) {
-		machine.states.push(sceneHandler.stateHandler.create());
+		var config = sceneHandler.stateHandler.create();
+		machine.states.push(config);
+		sceneHandler.stateHandler.add(config, machine);
 	};
 
 	$scope.removeState = function (machine, state) {
@@ -73,7 +82,9 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.addAction = function (state) {
-		state.actions.push(sceneHandler.actionHandler.create());
+		var config = sceneHandler.actionHandler.create();
+		state.actions.push(config);
+		sceneHandler.actionHandler.add(config);
 	};
 
 	$scope.removeAction = function (state,action) {
@@ -115,6 +126,9 @@ angular.module('physicsApp', [])
 			renderer.state = renderer.defaultState = Renderer.PANZOOM;
 		} else {
 			renderer.state = renderer.defaultState = Renderer.DEFAULT;
+		}
+		if(!nv){ // stopping
+			sceneHandler.stopSimulation();
 		}
 		sceneHandler.updateAll($scope);
 	});
@@ -187,6 +201,10 @@ angular.module('physicsApp', [])
 })
 
 .controller('MachineCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.machineHandler.create()).map(function(v){ return 'machine.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.machineHandler.update($scope.machine);
+	});
 })
 
 .controller('SpringCtrl', function ($scope, $rootScope) {

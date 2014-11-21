@@ -14,3 +14,23 @@ StateHandler.prototype.create = function(){
 		actions: []
 	};
 };
+
+StateHandler.prototype.add = function(config, machineConfig){
+	if(this.getById(config.id)) return;
+
+	var machine = this.sceneHandler.getById(machineConfig.id);
+	var state = new State(machine);
+	machine.states.push(state);
+};
+
+StateHandler.prototype.remove = function(config){
+	var state = this.getById(config.id);
+	var idx = state.machine.states.indexOf(state);
+	if(idx !== -1){
+		state.machine.states.splice(idx, 1);
+	}
+};
+
+StateHandler.prototype.update = function(config){
+	// ?
+};
