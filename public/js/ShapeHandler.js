@@ -88,7 +88,7 @@ ShapeHandler.prototype.create = function(){
 	var id = this.createId();
 	return {
 		id: id,
-		name: 'Circle ' + id,
+		name: 'Shape ' + id,
 
 		type: 'circle',
 		color: '#' + Color.randomPastelHex(),
