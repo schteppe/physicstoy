@@ -582,6 +582,12 @@
 									<input type="checkbox" ng-model="constraint.motorEnabled"/>
 								</div>
 
+								<!-- disableRotationalLock -->
+								<div class="form-group" ng-show="constraint.type=='slider'">
+									<label>disable rotational lock</label>
+									<input type="checkbox" ng-model="constraint.disableRotationalLock"/>
+								</div>
+
 								<!-- motorSpeed -->
 								<div class="form-group" ng-show="(constraint.type=='slider' || constraint.type=='hinge') && constraint.motorEnabled">
 									<label>motor speed</label>

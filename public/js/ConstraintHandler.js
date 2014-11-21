@@ -43,6 +43,7 @@ ConstraintHandler.prototype.create = function(){
 		// slider
 		localAxisAX: 0,
 		localAxisAY: 1,
+		disableRotationalLock: false,
 
 		// Slider, hinge
 		motorEnabled: false,
@@ -53,15 +54,84 @@ ConstraintHandler.prototype.create = function(){
 ConstraintHandler.prototype.update = function(config){
 	var bodyA = this.sceneHandler.getById(config.bodyA);
 	var bodyB = this.sceneHandler.getById(config.bodyB);
+
+	var constraint = this.getById(config.id);
+	if(constraint){
+		this.world.removeConstraint(constraint);
+	}
+
+	if(!(bodyA && bodyB)){
+		return;
+	}
+
+	var opts;
+	switch(config.type){
+
+	case 'distance':
+		opts = {
+			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
+			localAnchorB: [config.localAnchorBX, config.localAnchorBY]
+		};
+		if(!config.useCurrentDistance){
+			opts.distance = config.distance;
+		}
+		constraint = new p2.DistanceConstraint(bodyA,bodyB,opts);
+		break;
+
+	case 'lock':
+		constraint = new p2.LockConstraint(bodyA,bodyB);
+		break;
+
+	case 'slider':
+		opts = {
+			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
+			localAnchorB: [config.localAnchorBX, config.localAnchorBY],
+			localAxisA: [config.localAxisAX, config.localAxisAY],
+			disableRotationalLock: config.disableRotationalLock
+		};
+		constraint = new p2.PrismaticConstraint(bodyA,bodyB,opts);
+		break;
+
+	case 'hinge':
+		// Use the local anchor for A, compute local anchor B
+
+		var localPivotB = p2.vec2.create();
+		var localPivotA = [config.localAnchorAX, config.localAnchorAY];
+        p2.vec2.rotate(localPivotB, localPivotA, bodyA.angle); // To world
+        p2.vec2.add(localPivotB, localPivotB, bodyA.position); // Relative to body B
+        p2.vec2.subtract(localPivotB, localPivotB, bodyB.position); // Relative to body B
+        p2.vec2.rotate(localPivotB, localPivotB, -bodyB.angle); // To local rotation of B
+
+		opts = {
+			localPivotA: localPivotA,
+			localPivotB: localPivotB
+		};
+		constraint = new p2.RevoluteConstraint(bodyA,bodyB,opts);
+		break;
+
+	case 'gear':
+		opts = {
+			ratio: config.ratio
+		};
+		constraint = new p2.GearConstraint(bodyA,bodyB,opts);
+		break;
+
+	}
+
+	this.objects[config.id] = constraint;
+	this.world.addConstraint(constraint);
 };
 
 ConstraintHandler.prototype.remove = function(config){
-	var constraint = this.objects[config.id];
-	delete this.objects[config.id];
+	var constraint = this.getById(config.id);
+	if(constraint){
+		this.world.removeConstraint(constraint);
+		delete this.objects[config.id];
+	}
 };
 
 ConstraintHandler.prototype.add = function(config){
-	if(this.objects[config.id]){
+	if(this.objects[config.id]){ // Already added
 		return;
 	}
 	this.update(config);

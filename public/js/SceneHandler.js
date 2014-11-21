@@ -30,6 +30,10 @@ SceneHandler.prototype.updateAll = function(config){
 		var springConfig = config.springs[i];
 		this.springHandler.update(springConfig);
 	}
+	for (i = 0; i < config.constraints.length; i++) {
+		var constraintConfig = config.constraints[i];
+		this.constraintHandler.update(constraintConfig);
+	}
 	this.rendererHandler.update(config.renderer);
 	this.solverHandler.update(config.solver);
 	this.worldHandler.update(config.world);

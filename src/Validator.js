@@ -218,16 +218,53 @@ schema = {
 			type: "array",
 			required: true,
 			minItems: 0,
-			maxItems: 0,
+			maxItems: 999,
 			items: {
 				type: "object",
 				required: true,
 				additionalProperties: false,
 				properties: {
 					id: id,
+					type: str, // distance, lock, slider, hinge, gear
+
 					name: str,
-					x: num,
-					y: num,
+
+					stiffness: num,
+					relaxation: num,
+					bodyA: id,
+					bodyB: id,
+					collideConnected: bool,
+					maxForce: num,
+
+					// distance, slider, hinge
+					localAnchorAX: num,
+					localAnchorAY: num,
+					localAnchorBX: num,
+					localAnchorBY: num,
+
+					// distance
+					useCurrentDistance: bool,
+					distance: num,
+
+					// distance, hinge
+					upperLimitEnabled: bool,
+					lowerLimitEnabled: bool,
+					upperLimit: num,
+					lowerLimit: num,
+
+					// gear
+					ratio: num,
+					useCurrentRelAngle: bool,
+					relAngle: num,
+
+					// slider
+					localAxisAX: num,
+					localAxisAY: num,
+					disableRotationalLock: bool,
+
+					// Slider, hinge
+					motorEnabled: bool,
+					motorSpeed: num
 				},
 			},
 		}

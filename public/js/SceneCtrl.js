@@ -152,6 +152,7 @@ angular.module('physicsApp', [])
 			springs: JSON.parse(angular.toJson($scope.springs)),
 			constraints: JSON.parse(angular.toJson($scope.constraints))
 		};
+		window.location.hash = "";
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
 	}, true);
@@ -210,7 +211,12 @@ angular.module('physicsApp', [])
 
 .controller('ActionCtrl', function ($scope, $rootScope) {
 })
+
 .controller('ConstraintCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.constraintHandler.create()).map(function(v){ return 'constraint.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.constraintHandler.update($scope.constraint);
+	});
 })
 
 .controller('RendererCtrl', function ($scope, $rootScope) {
