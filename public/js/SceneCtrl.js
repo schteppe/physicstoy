@@ -337,6 +337,7 @@ angular.module('physicsApp', [])
 	});
 });
 
+// Until there's watchGroup
 function watchMany(scope, vars, listener){
 	for (var i = 0; i < vars.length; i++) {
 		scope.$watch(vars[i], listener);

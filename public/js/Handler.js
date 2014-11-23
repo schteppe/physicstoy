@@ -11,7 +11,9 @@ Handler.prototype.update = function(config){};
 
 Handler.prototype.add = function(config){};
 
-Handler.prototype.remove = function(config){};
+Handler.prototype.remove = function(config){
+	delete this.objects[config.id];
+};
 
 Handler.prototype.create = function(){};
 
