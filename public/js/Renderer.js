@@ -41,6 +41,7 @@ function Renderer(world, options){
     this.bodies=[];
     this.springs=[];
     this.timeStep = 1/60;
+    this.resetTime = false;
     this.relaxation = p2.Equation.DEFAULT_RELAXATION;
     this.stiffness = p2.Equation.DEFAULT_STIFFNESS;
     this.maxSubSteps = 3;
@@ -329,8 +330,13 @@ Renderer.prototype.startRenderingLoop = function(){
     function update(){
         if(!that.paused){
             var now = Date.now() / 1000,
-                timeSinceLastCall = now-lastCallTime;
+                timeSinceLastCall = now - lastCallTime;
             lastCallTime = now;
+            if(that.resetTime){
+                timeSinceLastCall = 0;
+                that.resetTime = false;
+                that.world.time = 0;
+            }
             that.world.step(that.timeStep, timeSinceLastCall, that.maxSubSteps);
         }
         that.render();

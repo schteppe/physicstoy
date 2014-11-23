@@ -150,6 +150,7 @@ angular.module('physicsApp', [])
 	$scope.$watch('playing', function (nv, ov){
 		renderer.paused = !nv;
 		if(renderer.paused){
+			renderer.resetTime = true;
 			renderer.state = renderer.defaultState = Renderer.PANZOOM;
 		} else {
 			renderer.state = renderer.defaultState = Renderer.DEFAULT;
