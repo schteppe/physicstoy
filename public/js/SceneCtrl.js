@@ -1,3 +1,5 @@
+var sceneHandler;
+
 angular.module('physicsApp', [])
 
 .controller('SceneCtrl', function ($scope, $rootScope) {
@@ -35,50 +37,6 @@ angular.module('physicsApp', [])
 		sceneHandler.bodyHandler.add(bodyConfig);
 	};
 
-	$scope.removeBody = function (body) {
-		var idx = $scope.bodies.indexOf(body);
-		if(idx !== -1)
-			$scope.bodies.splice(idx, 1);
-		sceneHandler.bodyHandler.remove(body);
-	};
-
-	$scope.addShapeToBody = function (body) {
-		var config = sceneHandler.shapeHandler.create();
-		body.shapes.push(config);
-		sceneHandler.shapeHandler.add(body.id, config);
-	};
-
-	$scope.removeShape = function(body, shape){
-		var idx = body.shapes.indexOf(shape);
-		if(idx !== -1)
-			body.shapes.splice(idx, 1);
-		sceneHandler.shapeHandler.remove(body.id, shape);
-	};
-
-	$scope.addMachineToBody = function (body) {
-		var config = sceneHandler.machineHandler.create();
-		body.machines.push(config);
-		sceneHandler.machineHandler.add(config, body);
-
-		// Create default state
-		var stateConfig = sceneHandler.stateHandler.create();
-		config.states.push(stateConfig);
-		sceneHandler.stateHandler.add(stateConfig, config);
-	};
-
-	$scope.removeMachine = function (body, machine) {
-		var idx = body.machines.indexOf(machine);
-		if(idx !== -1){
-			body.machines.splice(idx, 1);
-		}
-	};
-
-	$scope.addState = function (machine) {
-		var config = sceneHandler.stateHandler.create();
-		machine.states.push(config);
-		sceneHandler.stateHandler.add(config, machine);
-	};
-
 	$scope.removeState = function (machine, state) {
 		var idx = machine.states.indexOf(state);
 		if(idx !== -1){
@@ -93,25 +51,73 @@ angular.module('physicsApp', [])
 		sceneHandler.stateHandler.remove(state);
 
 		// Update all actions in all states in the machine - to update any removed refs
-		for (var i = 0; i < machine.states.length; i++) {
+		for (i = 0; i < machine.states.length; i++) {
 			for (var j = 0; j < machine.states[i].actions.length; j++) {
 				sceneHandler.actionHandler.update(machine.states[i].actions[j]);
 			}
 		}
 	};
 
-	$scope.addAction = function (state) {
-		var config = sceneHandler.actionHandler.create();
-		state.actions.push(config);
-		sceneHandler.actionHandler.add(config, state);
+	$scope.removeBody = function (body) {
+
+		var idx = $scope.bodies.indexOf(body);
+		if(idx !== -1){
+			$scope.bodies.splice(idx, 1);
+
+			// Remove shapes
+			var shapes = body.shapes;
+			while(shapes.length){
+				$scope.removeShape(body, shapes[0]);
+			}
+
+			// Machines
+			var machines = body.machines;
+			while(machines.length){
+				$scope.removeMachine(body, machines[0]);
+			}
+
+		}
+		sceneHandler.bodyHandler.remove(body);
 	};
 
-	$scope.removeAction = function (state,action) {
+	$scope.getBodyConfigById = function (id){
+		for (var i = 0; i < $scope.bodies.length; i++) {
+			var bodyConfig = $scope.bodies[i];
+			if(bodyConfig.id === id){
+				return bodyConfig;
+			}
+		}
+		return null;
+	};
+
+	$scope.removeShape = function(body, shape){
+		var idx = body.shapes.indexOf(shape);
+		if(idx !== -1)
+			body.shapes.splice(idx, 1);
+		sceneHandler.shapeHandler.remove(body.id, shape);
+	};
+
+	$scope.removeAction = function (state, action) {
 		var idx = state.actions.indexOf(action);
 		if(idx !== -1){
 			state.actions.splice(idx, 1);
 		}
 		sceneHandler.actionHandler.remove(action);
+	};
+
+	$scope.removeMachine = function (body, machine) {
+
+		// Remove states
+		while(machine.states.length){
+			$scope.removeState(machine, machine.states[0]);
+		}
+
+		// Remove the machine
+		var idx = body.machines.indexOf(machine);
+		if(idx !== -1){
+			body.machines.splice(idx, 1);
+		}
+		sceneHandler.machineHandler.remove(machine);
 	};
 
 	$scope.addSpring = function () {
@@ -160,14 +166,31 @@ angular.module('physicsApp', [])
 	});
 
 	// Keyboard shortcuts
+	var Keys = {
+		DELETE: 46,
+		SPACE: 32
+	};
 	window.addEventListener('keyup', function (evt) {
 		if(['CANVAS','BODY'].indexOf(document.activeElement.nodeName) === -1){
 			return;
 		}
 		switch(evt.keyCode){
-		case 32:
+		case Keys.SPACE:
 			$scope.playing = !$scope.playing;
+			break;
+		case Keys.DELETE:
+			// Delete current selection
+			for (var i = 0; i < renderer.selection.length; i++) {
+				var obj = renderer.selection[i];
+				if(obj instanceof p2.Body){
+					var id = sceneHandler.bodyHandler.getIdOf(obj);
+					var bodyConfig = $scope.getBodyConfigById(id);
+					$scope.removeBody(bodyConfig);
+				}
+			}
+			break;
 		}
+
 		$scope.$apply();
 	});
 
@@ -201,6 +224,24 @@ angular.module('physicsApp', [])
 })
 
 .controller('BodyCtrl', function ($scope, $rootScope) {
+
+	$scope.addShapeToBody = function (body) {
+		var config = sceneHandler.shapeHandler.create();
+		body.shapes.push(config);
+		sceneHandler.shapeHandler.add(body.id, config);
+	};
+
+	$scope.addMachineToBody = function (body) {
+		var config = sceneHandler.machineHandler.create();
+		body.machines.push(config);
+		sceneHandler.machineHandler.add(config, body);
+
+		// Create default state
+		var stateConfig = sceneHandler.stateHandler.create();
+		config.states.push(stateConfig);
+		sceneHandler.stateHandler.add(stateConfig, config);
+	};
+
 	renderer.on('selectionChange', function (){
 		if(renderer.selection.length){
 			var id = sceneHandler.bodyHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
@@ -210,7 +251,8 @@ angular.module('physicsApp', [])
 				$scope.toggled = false;
 			}
 			$scope.$apply();
-			setTimeout(function(){
+
+			setTimeout(function(){ // Better solution?
 				window.location.hash = "#id-" + id;
 			}, 10);
 		}
@@ -222,6 +264,13 @@ angular.module('physicsApp', [])
 })
 
 .controller('MachineCtrl', function ($scope, $rootScope) {
+
+	$scope.addState = function (machine) {
+		var config = sceneHandler.stateHandler.create();
+		machine.states.push(config);
+		sceneHandler.stateHandler.add(config, machine);
+	};
+
 	var vars = Object.keys(sceneHandler.machineHandler.create()).map(function(v){ return 'machine.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.machineHandler.update($scope.machine);
@@ -246,6 +295,13 @@ angular.module('physicsApp', [])
 })
 
 .controller('StateCtrl', function ($scope, $rootScope) {
+
+	$scope.addAction = function (state) {
+		var config = sceneHandler.actionHandler.create();
+		state.actions.push(config);
+		sceneHandler.actionHandler.add(config, state);
+	};
+
 	var vars = Object.keys(sceneHandler.stateHandler.create()).map(function(v){ return 'state.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.stateHandler.update($scope.state);

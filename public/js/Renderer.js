@@ -201,6 +201,7 @@ Renderer.prototype.setWorld = function(world){
         that.addVisual(e.body);
     }).on("removeBody",function(e){
         that.removeVisual(e.body);
+        that.removeFromSelection(e.body);
     }).on("addSpring",function(e){
         that.addVisual(e.spring);
     }).on("removeSpring",function(e){
@@ -234,6 +235,15 @@ Renderer.prototype.toggleSelect = function(object) {
         selection.splice(idx, 1);
     }
     this.emit(this.selectionChangeEvent);
+};
+
+Renderer.prototype.removeFromSelection = function(object){
+    var selection = this.selection;
+    var idx = selection.indexOf(object);
+    if(idx !== -1){
+        selection.splice(idx, 1);
+        this.emit(this.selectionChangeEvent);
+    }
 };
 
 /**

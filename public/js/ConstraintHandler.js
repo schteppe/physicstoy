@@ -52,8 +52,8 @@ ConstraintHandler.prototype.create = function(){
 };
 
 ConstraintHandler.prototype.update = function(config){
-	var bodyA = this.sceneHandler.getById(config.bodyA);
-	var bodyB = this.sceneHandler.getById(config.bodyB);
+	var bodyA = this.sceneHandler.bodyHandler.getById(config.bodyA);
+	var bodyB = this.sceneHandler.bodyHandler.getById(config.bodyB);
 
 	var constraint = this.getById(config.id);
 	if(constraint){

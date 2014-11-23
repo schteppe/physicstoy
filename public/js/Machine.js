@@ -94,8 +94,9 @@ State.prototype.exit = function(){
 	}
 };
 
-function Action(state){
-	this.state = state;
+function Action(options){
+	options = options || {};
+	this.state = options.state || null;
 }
 Action.prototype.enter = function(){};
 Action.prototype.update = function(){};
