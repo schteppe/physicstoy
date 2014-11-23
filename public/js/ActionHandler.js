@@ -45,10 +45,15 @@ ActionHandler.prototype.remove = function(config){
 	delete this.objects[config.id];
 };
 
-ActionHandler.prototype.update = function(config){
+ActionHandler.prototype.update = function(config, stateConfig){
 	var oldAction = this.getById(config.id);
-	var state = oldAction.state;
-	var action;
+	var action, state;
+
+	if(oldAction){
+		state = oldAction.state;
+	} else {
+		state = this.sceneHandler.getById(stateConfig.id);
+	}
 
 	switch(config.type){
 
@@ -76,5 +81,7 @@ ActionHandler.prototype.update = function(config){
 	var idx = state.actions.indexOf(oldAction);
 	if(idx !== -1){
 		state.actions[idx] = action;
+	} else {
+		state.actions.push(action);
 	}
 };

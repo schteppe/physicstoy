@@ -108,8 +108,8 @@ function TransitionAction(options){
 	this.toState = options.toState || null;
 }
 TransitionAction.prototype = Object.create(Action.prototype);
-TransitionAction.prototype.enter = function(machine){
-	console.log('Requesting transition to ' + this.toState.id);
+TransitionAction.prototype.enter = function(){
+	//machine.log('Requesting transition to ' + this.toState.id);
 	machine.requestTransitionToState = this.toState;
 };
 TransitionAction.prototype.update = function(){};
@@ -128,9 +128,9 @@ WaitAction.prototype.enter = function(machine){
 	this.enterTime = machine.world.time;
 };
 WaitAction.prototype.update = function(machine){
-	console.log('time',machine.world.time);
+	//console.log('time',machine.world.time);
 	if(machine.world.time >= this.enterTime + this.time && this.toState){
-		console.log('WaitAction requesting transition to ' + this.toState.id);
+		//console.log('WaitAction requesting transition to ' + this.toState.id);
 		machine.requestTransitionToState = this.toState;
 	}
 };

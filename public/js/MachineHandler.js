@@ -33,7 +33,6 @@ MachineHandler.prototype.add = function(config, bodyConfig){
 		return; // already added
 	}
 	var body = this.sceneHandler.getById(bodyConfig.id);
-
 	this.objects[config.id] = new Machine(this.world, body, {});
 
 	this.update(config);
@@ -43,8 +42,14 @@ MachineHandler.prototype.remove = function(config){
 	delete this.objects[config.id];
 };
 
-MachineHandler.prototype.update = function(config){
+MachineHandler.prototype.update = function(config, bodyConfig){
 	var machine = this.getById(config.id);
+
+	if(!machine){
+		var body = this.sceneHandler.getById(bodyConfig.id);
+		machine = this.objects[config.id] = new Machine(this.world, body, {});
+	}
+
 	machine.logging = config.log;
 };
 

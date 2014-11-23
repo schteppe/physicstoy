@@ -18,10 +18,7 @@ StateHandler.prototype.create = function(){
 StateHandler.prototype.add = function(config, machineConfig){
 	if(this.getById(config.id)) return;
 
-	var machine = this.sceneHandler.getById(machineConfig.id);
-	var state = new State(machine);
-	machine.states.push(state);
-	this.objects[config.id] = state;
+	this.update(config, machineConfig);
 };
 
 StateHandler.prototype.remove = function(config){
@@ -33,6 +30,13 @@ StateHandler.prototype.remove = function(config){
 	delete this.objects[config.id];
 };
 
-StateHandler.prototype.update = function(config){
-	// ?
+StateHandler.prototype.update = function(config, machineConfig){
+	var state = this.getById(config.id);
+	if(!state){
+		var machine = this.sceneHandler.getById(machineConfig.id);
+		state = new State(machine);
+		machine.states.push(state);
+		this.objects[config.id] = state;
+	}
+	// ??
 };

@@ -173,7 +173,50 @@ schema = {
 					machines: {
 						type: "array",
 						required: true,
-						maxItems: 0 // Not yet
+						maxItems: 999,
+						items: {
+							type: "object",
+							required: true,
+							additionalProperties: false,
+							properties: {
+								id: id,
+								name: str,
+								log: bool,
+								states: {
+									type: "array",
+									required: true,
+									maxItems: 999,
+									items: {
+										type: "object",
+										required: true,
+										additionalProperties: false,
+										properties: {
+											id: id,
+											name: str,
+											actions: {
+												type: "array",
+												required: true,
+												maxItems: 999,
+												items: {
+													type: "object",
+													required: true,
+													additionalProperties: false,
+													properties: {
+														id: id,
+														type: str,
+														positionX: num,
+														positionY: num,
+														angle: num,
+														time: num,
+														toState: id
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
 					},
 
 					shapes: {

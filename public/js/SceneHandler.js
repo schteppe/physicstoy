@@ -45,8 +45,27 @@ SceneHandler.prototype.updateAll = function(config){
 	for (var i = 0; i < config.bodies.length; i++) {
 		var bodyConfig = config.bodies[i];
 		this.bodyHandler.update(bodyConfig);
+
+		// Shapes
 		for (var j = 0; j < bodyConfig.shapes.length; j++) {
 			this.shapeHandler.update(bodyConfig.id, bodyConfig.shapes[j]);
+		}
+
+		// Machines
+		for (j = 0; j < bodyConfig.machines.length; j++) {
+			var machineConfig = bodyConfig.machines[j];
+			this.machineHandler.update(machineConfig, bodyConfig);
+
+			// States
+			for (var k = 0; k < machineConfig.states.length; k++) {
+				var state = machineConfig.states[k];
+				this.stateHandler.update(state, machineConfig);
+
+				// Actions
+				for (var l = 0; l < state.actions.length; l++) {
+					this.actionHandler.update(state.actions[l], state);
+				}
+			}
 		}
 	}
 	for (i = 0; i < config.springs.length; i++) {
