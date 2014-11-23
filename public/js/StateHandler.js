@@ -21,6 +21,7 @@ StateHandler.prototype.add = function(config, machineConfig){
 	var machine = this.sceneHandler.getById(machineConfig.id);
 	var state = new State(machine);
 	machine.states.push(state);
+	this.objects[config.id] = state;
 };
 
 StateHandler.prototype.remove = function(config){
@@ -29,6 +30,7 @@ StateHandler.prototype.remove = function(config){
 	if(idx !== -1){
 		state.machine.states.splice(idx, 1);
 	}
+	delete this.objects[config.id];
 };
 
 StateHandler.prototype.update = function(config){

@@ -315,6 +315,7 @@
 																			<label>Type</label>
 																			<select ng-model="action.type">
 																				<option>wait</option>
+																				<option>setPosition</option>
 																			</select>
 																		</div>
 
@@ -327,9 +328,21 @@
 																		<!-- to -->
 																		<div ng-show="action.type=='wait'" class="form-group">
 																			<label>to</label>
-																			<select ng-model="action.to">
-																				<option ng-repeat="toState in machine.states" ng-if="toState!=state">State</option>
+																			<select ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states">
 																			</select>
+																		</div>
+
+																		<!-- position -->
+																		<div ng-show="action.type=='setPosition'" class="form-group">
+																			<label>position</label>
+																			<input type="number" class="vec2 x" ng-model="action.positionX"/>
+																			<input type="number" class="vec2 y" ng-model="action.positionY"/>
+																		</div>
+
+																		<!-- angle -->
+																		<div ng-show="action.type=='setPosition'" class="form-group">
+																			<label>angle</label>
+																			<input type="number" ng-model="action.angle"/>
 																		</div>
 
 																	</div>

@@ -32,7 +32,7 @@ MachineHandler.prototype.add = function(config, bodyConfig){
 	if(this.getById(config.id)){
 		return; // already added
 	}
-	var body = this.getById(bodyConfig.id);
+	var body = this.sceneHandler.getById(bodyConfig.id);
 
 	this.objects[config.id] = new Machine(this.world, body, {});
 

@@ -22,6 +22,9 @@ angular.module('physicsApp', [])
 		$scope[key] = scene[key];
 	}
 
+	// Make sure we get new ids
+	Handler.idCounter = sceneHandler.findMaxId(scene) + 1;
+
 	$scope.updateAll = function () {
 		sceneHandler.updateAll();
 	};
@@ -65,8 +68,9 @@ angular.module('physicsApp', [])
 
 	$scope.removeMachine = function (body, machine) {
 		var idx = body.machines.indexOf(machine);
-		if(idx !== -1)
+		if(idx !== -1){
 			body.machines.splice(idx, 1);
+		}
 	};
 
 	$scope.addState = function (machine) {
@@ -77,20 +81,37 @@ angular.module('physicsApp', [])
 
 	$scope.removeState = function (machine, state) {
 		var idx = machine.states.indexOf(state);
-		if(idx !== -1)
+		if(idx !== -1){
 			machine.states.splice(idx, 1);
+		}
+		// Remove all actions
+		for (var i = 0; i < state.actions.length; i++) {
+			sceneHandler.actionHandler.remove(state.actions[i]);
+		}
+
+		// Remove state
+		sceneHandler.stateHandler.remove(state);
+
+		// Update all actions in all states in the machine - to update any removed refs
+		for (var i = 0; i < machine.states.length; i++) {
+			for (var j = 0; j < machine.states[i].actions.length; j++) {
+				sceneHandler.actionHandler.update(machine.states[i].actions[j]);
+			}
+		}
 	};
 
 	$scope.addAction = function (state) {
 		var config = sceneHandler.actionHandler.create();
 		state.actions.push(config);
-		sceneHandler.actionHandler.add(config);
+		sceneHandler.actionHandler.add(config, state);
 	};
 
 	$scope.removeAction = function (state,action) {
 		var idx = state.actions.indexOf(action);
-		if(idx !== -1)
+		if(idx !== -1){
 			state.actions.splice(idx, 1);
+		}
+		sceneHandler.actionHandler.remove(action);
 	};
 
 	$scope.addSpring = function () {
@@ -225,9 +246,17 @@ angular.module('physicsApp', [])
 })
 
 .controller('StateCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.stateHandler.create()).map(function(v){ return 'state.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.stateHandler.update($scope.state);
+	});
 })
 
 .controller('ActionCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.actionHandler.create()).map(function(v){ return 'action.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.actionHandler.update($scope.action);
+	});
 })
 
 .controller('ConstraintCtrl', function ($scope, $rootScope) {

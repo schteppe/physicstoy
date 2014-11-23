@@ -2,7 +2,7 @@ function Machine(world, parent, options){
 	options = options || {};
 
 	this.world = world;
-	this.parent = options.parent || null;
+	this.parent = parent || null;
 
 	this.id = options.id || 0;
 	this.states = options.states ? options.states.slice(0) : [];
@@ -74,7 +74,7 @@ function State(machine){
 	this.actions = [];
 	this.machine = machine;
 }
-State.id = 0;
+State.id = 1;
 State.prototype.enter = function(){
 	this.machine.log('Entered state ' + this.id);
 	for (var i = 0; i < this.actions.length; i++) {
@@ -94,12 +94,16 @@ State.prototype.exit = function(){
 	}
 };
 
-function Action(){
-
+function Action(state){
+	this.state = state;
 }
+Action.prototype.enter = function(){};
+Action.prototype.update = function(){};
+Action.prototype.exit = function(){};
 
 // Simple immediate transition
 function TransitionAction(options){
+	Action.apply(this, arguments);
 	options = options || {};
 	this.toState = options.toState || null;
 }
@@ -113,9 +117,11 @@ TransitionAction.prototype.exit = function(){};
 
 // Transition after some time
 function WaitAction(options){
+	Action.apply(this, arguments);
 	options = options || {};
 	this.time = options.time || 1; // seconds
 	this.toState = options.toState || null;
+	this.enterTime = -1;
 }
 WaitAction.prototype = Object.create(Action.prototype);
 WaitAction.prototype.enter = function(machine){
@@ -123,19 +129,21 @@ WaitAction.prototype.enter = function(machine){
 };
 WaitAction.prototype.update = function(machine){
 	console.log('time',machine.world.time);
-	if(machine.world.time >= this.enterTime + this.time){
+	if(machine.world.time >= this.enterTime + this.time && this.toState){
 		console.log('WaitAction requesting transition to ' + this.toState.id);
 		machine.requestTransitionToState = this.toState;
 	}
 };
-WaitAction.prototype.exit = function(){};
+WaitAction.prototype.exit = function(){
+	this.enterTime = -1;
+};
 
-/*
-function SetPositionAction(){
-	Action.call(this);
+function SetPositionAction(options){
+	Action.apply(this, arguments);
+	options = options || {};
 
-	this.position = [0,0];
-	this.angle = 0;
+	this.position = options.position ? options.position.slice(0) : [0, 0];
+	this.angle = options.angle || 0;
 }
 SetPositionAction.prototype = Object.create(Action.prototype);
 SetPositionAction.prototype.enter = function(machine){
@@ -144,33 +152,3 @@ SetPositionAction.prototype.enter = function(machine){
 };
 SetPositionAction.prototype.update = function(){};
 SetPositionAction.prototype.exit = function(){};
-*/
-
-/*
-var stateA = new State();
-var stateB = new State();
-var stateC = new State();
-var action = new TransitionAction({
-	toState: stateB
-});
-var waitAction = new WaitAction({
-	toState: stateC,
-	time: 1
-});
-stateA.actions.push(action);
-stateB.actions.push(waitAction);
-var machine = new Machine({
-	states: [stateA, stateB, stateC],
-	defaultState: stateA
-});
-machine.update();
-machine.update();
-machine.update();
-machine.update();
-machine.world.time = 0.5;
-machine.update();
-machine.update();
-machine.world.time = 1.1;
-machine.update();
-machine.update();
-*/

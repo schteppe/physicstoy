@@ -15,7 +15,30 @@ function SceneHandler(world,renderer){
 }
 
 SceneHandler.prototype.getById = function(id){
-	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id);
+	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id) || this.stateHandler.getById(id);
+};
+
+SceneHandler.prototype.findMaxId = function(config){
+	var f = function (a,b){
+		return a.id > b.id ? a : b;
+	};
+	var maxId = 1;
+	var a = config.bodies
+		.concat(config.springs)
+		.concat(config.constraints);
+	if(a.length){
+		var result = a.reduce(f);
+		if(result) maxId = Math.max(result.id, maxId);
+	}
+
+	for (var i = 0; i < config.bodies.length; i++) {
+		var bodyConfig = config.bodies[i];
+		if(bodyConfig.shapes.length){
+			var result = bodyConfig.shapes.reduce(f);
+			if(result) maxId = Math.max(result.id, maxId);
+		}
+	}
+	return maxId;
 };
 
 SceneHandler.prototype.updateAll = function(config){
