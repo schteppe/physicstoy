@@ -12,8 +12,8 @@ ConstraintHandler.prototype.create = function(){
 		id: id,
 		type: 'hinge', // distance, lock, slider, hinge, gear
 		name: 'Constraint ' + id,
-		stiffness: 100,
-		relaxation: 4,
+		stiffness: p2.Equation.DEFAULT_STIFFNESS,
+		relaxation: p2.Equation.DEFAULT_RELAXATION,
 		bodyA: 0,
 		bodyB: 0,
 		collideConnected: false,
@@ -70,16 +70,25 @@ ConstraintHandler.prototype.update = function(config){
 	case 'distance':
 		opts = {
 			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
-			localAnchorB: [config.localAnchorBX, config.localAnchorBY]
+			localAnchorB: [config.localAnchorBX, config.localAnchorBY],
+			maxForce: config.maxForce
 		};
 		if(!config.useCurrentDistance){
 			opts.distance = config.distance;
 		}
 		constraint = new p2.DistanceConstraint(bodyA,bodyB,opts);
+
+		constraint.upperLimitEnabled = config.upperLimitEnabled;
+		constraint.lowerLimitEnabled = config.lowerLimitEnabled;
+		constraint.upperLimit = config.upperLimit;
+		constraint.lowerLimit = config.lowerLimit;
+
 		break;
 
 	case 'lock':
-		constraint = new p2.LockConstraint(bodyA,bodyB);
+		constraint = new p2.LockConstraint(bodyA,bodyB,{
+			maxForce: config.maxForce
+		});
 		break;
 
 	case 'slider':
@@ -87,9 +96,16 @@ ConstraintHandler.prototype.update = function(config){
 			localAnchorA: [config.localAnchorAX, config.localAnchorAY],
 			localAnchorB: [config.localAnchorBX, config.localAnchorBY],
 			localAxisA: [config.localAxisAX, config.localAxisAY],
-			disableRotationalLock: config.disableRotationalLock
+			disableRotationalLock: config.disableRotationalLock,
+			maxForce: config.maxForce
 		};
 		constraint = new p2.PrismaticConstraint(bodyA,bodyB,opts);
+
+		if(config.motorEnabled){
+			constraint.enableMotor();
+			constraint.motorSpeed = config.motorSpeed;
+		}
+
 		break;
 
 	case 'hinge':
@@ -104,19 +120,39 @@ ConstraintHandler.prototype.update = function(config){
 
 		opts = {
 			localPivotA: localPivotA,
-			localPivotB: localPivotB
+			localPivotB: localPivotB,
+			maxForce: config.maxForce
 		};
 		constraint = new p2.RevoluteConstraint(bodyA,bodyB,opts);
+
+		constraint.upperLimitEnabled = config.upperLimitEnabled;
+		constraint.lowerLimitEnabled = config.lowerLimitEnabled;
+		constraint.upperLimit = config.upperLimit;
+		constraint.lowerLimit = config.lowerLimit;
+
+		if(config.motorEnabled){
+			constraint.enableMotor();
+			constraint.setMotorSpeed(config.motorSpeed);
+		}
+
 		break;
 
 	case 'gear':
 		opts = {
-			ratio: config.ratio
+			ratio: config.ratio,
+			maxTorque: config.maxForce
 		};
+		if(!config.useCurrentRelAngle){
+			opts.angle = config.relAngle;
+		}
 		constraint = new p2.GearConstraint(bodyA,bodyB,opts);
 		break;
 
 	}
+
+	constraint.setStiffness(config.stiffness);
+	constraint.setRelaxation(config.relaxation);
+	constraint.collideConnected = config.collideConnected;
 
 	this.objects[config.id] = constraint;
 	this.world.addConstraint(constraint);
