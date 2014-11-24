@@ -496,12 +496,27 @@ WebGLRenderer.prototype.drawCapsule = function(g, x, y, angle, len, radius, colo
 
 // Todo angle
 WebGLRenderer.prototype.drawRectangle = function(g,x,y,angle,w,h,color,fillColor,lineWidth,isSleeping){
-    lineWidth = typeof(lineWidth)==="number" ? lineWidth : 1;
-    color = typeof(color)==="number" ? color : 0xffffff;
-    fillColor = typeof(fillColor)==="number" ? fillColor : 0xffffff;
+    var path = [
+        [w / 2, h / 2],
+        [-w / 2, h / 2],
+        [-w / 2, -h / 2],
+        [w / 2, -h / 2],
+    ];
+
+    // Rotate and add position
+    for (var i = 0; i < path.length; i++) {
+        var v = path[i];
+        p2.vec2.rotate(v, v, angle);
+        p2.vec2.add(v, v, [x, y]);
+    }
+
+    this.drawPath(g,path,color,fillColor,lineWidth,isSleeping);
+
+    /*
     g.lineStyle(lineWidth);
     g.beginFill(fillColor, isSleeping ? this.sleepOpacity : 1.0);
     g.drawRect(x-w/2,y-h/2,w,h);
+    */
 };
 
 WebGLRenderer.prototype.drawConvex = function(g,verts,triangles,color,fillColor,lineWidth,debug,offset,isSleeping){
