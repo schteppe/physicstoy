@@ -511,12 +511,6 @@ WebGLRenderer.prototype.drawRectangle = function(g,x,y,angle,w,h,color,fillColor
     }
 
     this.drawPath(g,path,color,fillColor,lineWidth,isSleeping);
-
-    /*
-    g.lineStyle(lineWidth);
-    g.beginFill(fillColor, isSleeping ? this.sleepOpacity : 1.0);
-    g.drawRect(x-w/2,y-h/2,w,h);
-    */
 };
 
 WebGLRenderer.prototype.drawConvex = function(g,verts,triangles,color,fillColor,lineWidth,debug,offset,isSleeping){

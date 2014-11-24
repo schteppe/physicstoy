@@ -1,5 +1,11 @@
 var sceneHandler;
 
+function setSelectedId(id){
+	setTimeout(function(){ // Better solution?
+		window.location.hash = "#id-" + id;
+	}, 10);
+}
+
 angular.module('physicsApp', [])
 
 .controller('SceneCtrl', function ($scope, $rootScope) {
@@ -246,18 +252,15 @@ angular.module('physicsApp', [])
 	renderer.on('selectionChange', function (){
 		if(renderer.selection.length){
 			var id = sceneHandler.bodyHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
-			if($scope.body.id === id){
-				$scope.toggled = true;
-			} else {
-				$scope.toggled = false;
-			}
+			$scope.toggled = ($scope.body.id === id);
 			$scope.$apply();
 
-			setTimeout(function(){ // Better solution?
-				window.location.hash = "#id-" + id;
-			}, 10);
+			if($scope.toggled){
+				setSelectedId(id);
+			}
 		}
 	});
+
 	var vars = Object.keys(sceneHandler.bodyHandler.create()).map(function(v){ return 'body.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.bodyHandler.update($scope.body);
@@ -286,6 +289,18 @@ angular.module('physicsApp', [])
 	});
 	$scope.$watch('spring.bodyB', function(nv, ov){
 		$scope.spring.bodyB = parseInt(nv, 10);
+	});
+
+	renderer.on('selectionChange', function (){
+		if(renderer.selection.length){
+			var id = sceneHandler.springHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
+			$scope.toggled = ($scope.spring.id === id);
+			$scope.$apply();
+
+			if($scope.toggled){
+				setSelectedId(id);
+			}
+		}
 	});
 
 	var vars = Object.keys(sceneHandler.springHandler.create()).map(function(v){ return 'spring.' + v; });
@@ -317,6 +332,19 @@ angular.module('physicsApp', [])
 })
 
 .controller('ConstraintCtrl', function ($scope, $rootScope) {
+
+	renderer.on('selectionChange', function (){
+		if(renderer.selection.length){
+			var id = sceneHandler.constraintHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
+			$scope.toggled = ($scope.constraint.id === id);
+			$scope.$apply();
+
+			if($scope.toggled){
+				setSelectedId(id);
+			}
+		}
+	});
+
 	var vars = Object.keys(sceneHandler.constraintHandler.create()).map(function(v){ return 'constraint.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.constraintHandler.update($scope.constraint);
