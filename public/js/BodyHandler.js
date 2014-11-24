@@ -35,6 +35,12 @@ BodyHandler.prototype.update = function(config){
 		'static': p2.Body.STATIC
 	}[config.type];
 
+	if(config.type === 'static'){
+		body.velocity.set([0, 0]);
+		body.angularVelocity = 0;
+		body.mass = 0;
+	}
+
 	body.updateAABB();
 	body.updateMassProperties();
 	this.renderer.removeVisual(body);

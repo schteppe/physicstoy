@@ -149,13 +149,13 @@
 								</div>
 
 								<!-- Velocities -->
-								<div class="form-group">
+								<div class="form-group" ng-show="body.type!='static'">
 									<label>velocity</label>
 									<input type="number" class="vec2 x" ng-model="body.velocityX"/>
 									<input type="number" class="vec2 y" ng-model="body.velocityY"/>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" ng-show="body.type!='static'">
 									<label>angular velocity</label>
 									<input type="number" ng-model="body.angularVelocity"/>
 								</div>
