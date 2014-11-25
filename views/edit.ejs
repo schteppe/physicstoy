@@ -120,13 +120,13 @@
 
 								<!-- mass -->
 								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label>Mass</label>
+									<label data-tooltip="Total mass of the body.">Mass</label>
 									<input type="number" step="any" min="0" ng-model="body.mass" />
 								</div>
 
 								<!-- sleep -->
 								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label>Enable sleep</label>
+									<label data-tooltip="If sleeping is enabled, the body will be deactivated if has little velocity for some time.">Enable sleep</label>
 									<input type="checkbox" ng-model="body.enableSleep" />
 								</div>
 
