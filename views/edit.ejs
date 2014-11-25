@@ -214,7 +214,7 @@
 											</div>
 
 											<div class="form-group">
-												<label>local position</label>
+												<label data-tooltip="The position of the shape, locally in the body.">local position</label>
 												<input type="number" class="vec2 x" ng-model="shape.x"/>
 												<input type="number" class="vec2 y" ng-model="shape.y"/>
 											</div>
@@ -225,22 +225,22 @@
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='circle' || shape.type=='capsule'">
-												<label>radius</label>
+												<label data-tooltip="Circle radius.">radius</label>
 												<input type="number" min="0" ng-model="shape.radius" />
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='capsule'">
-												<label>length</label>
+												<label data-tooltip="The distance between the end center points in the capsule. Note that the total length of the capsule becomes length + 2*radius.">length</label>
 												<input type="number" min="0" ng-model="shape.length" />
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='box'">
-												<label>width</label>
+												<label data-tooltip="Total X extent of the rectangle.">width</label>
 												<input type="number" min="0" ng-model="shape.width"/>
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='box'">
-												<label>height</label>
+												<label data-tooltip="Total Y-extent of the rectangle.">height</label>
 												<input type="number" min="0" ng-model="shape.height"/>
 											</div>
 
@@ -275,7 +275,7 @@
 											</div>
 
 											<div class="form-group">
-												<label>log</label>
+												<label data-tooltip="Log the state transitions to the developer console.">log</label>
 												<input type="checkbox" ng-model="machine.log"/>
 											</div>
 
@@ -333,14 +333,14 @@
 
 																		<!-- to -->
 																		<div ng-show="action.type=='wait'" class="form-group">
-																			<label>to</label>
+																			<label data-tooltip="The state to transition to">to</label>
 																			<select ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states">
 																			</select>
 																		</div>
 
 																		<!-- position -->
 																		<div ng-show="action.type=='setPosition'" class="form-group">
-																			<label>position</label>
+																			<label data-tooltip="World position to warp the body to.">position</label>
 																			<input type="number" class="vec2 x" ng-model="action.positionX"/>
 																			<input type="number" class="vec2 y" ng-model="action.positionY"/>
 																		</div>
