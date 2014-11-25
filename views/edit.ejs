@@ -9,7 +9,7 @@
 	</head>
 	<body>
 		<div class="menu-container">
-			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl">
+			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl" style="display:none">
 
 				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=false" ng-class="controlToggled ? 'open' : 'closed'">
 					<div class="text">Control</div>
@@ -658,6 +658,7 @@
 		<script src="/qtip/jquery.qtip.min.js"></script>
 
 		<script>
+
 			<% if(typeof(errors) !== 'undefined'){ %>
 				var errors = JSON.parse('<%-JSON.stringify(errors)%>');
 				if(errors && errors.length){
@@ -680,6 +681,10 @@
 					classes: 'qtip-light'
 				}
 			});
+
+			setTimeout(function(){
+				$('.menu').show();
+			}, 1000);
 		</script>
 
 		<% include ga %>
