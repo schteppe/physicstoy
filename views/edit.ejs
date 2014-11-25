@@ -79,12 +79,12 @@
 					</div>
 
 					<div class="form-group">
-						<label>FPS</label>
+						<label data-tooltip="Number of physics steps per second. More means more smooth movement and stable simulation, but needs more computations.">FPS</label>
 						<input type="number" step="1" min="1" ng-model="world.fps"/>
 					</div>
 
 					<div class="form-group">
-						<label>max substeps</label>
+						<label data-tooltip="The maximum number of time steps to use to make the physics clock catch up with the wall clock. Usually, between 3 and 10 are enough.">max substeps</label>
 						<input type="number" step="1" min="1" ng-model="world.maxSubSteps"/>
 					</div>
 
@@ -110,7 +110,7 @@
 
 								<!-- body type -->
 								<div class="form-group">
-									<label>Type</label>
+									<label data-tooltip="Determines how to simulate this body. Static bodies never move. Dynamic bodies always move, and is the only type that respond to forces. A kinematic body will move if you set its velocity.">Type</label>
 									<select ng-model="body.type">
 										<option>dynamic</option>
 										<option>static</option>
