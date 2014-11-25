@@ -57,12 +57,12 @@
 					</div>
 
 					<div class="form-group">
-						<label>aabbs</label>
+						<label data-tooltip="Render bounding boxes.">aabbs</label>
 						<input type="checkbox" ng-model="renderer.aabbs"/>
 					</div>
 
 					<div class="form-group">
-						<label>constraints</label>
+						<label data-tooltip="Render constraints.">constraints</label>
 						<input type="checkbox" ng-model="renderer.constraints"/>
 					</div>
 				</div>
@@ -73,7 +73,7 @@
 
 				<div class="world content" ng-show="toggled">
 					<div class="form-group">
-						<label>gravity</label>
+						<label data-tooltip="Global gravity acceleration vector.">gravity</label>
 						<input type="number" class="vec2 x" ng-model="world.gravityX"/>
 						<input type="number" class="vec2 y" ng-model="world.gravityY"/>
 					</div>
