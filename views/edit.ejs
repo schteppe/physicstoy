@@ -666,25 +666,40 @@
 				}
 			<% } %>
 
-			$('[data-tooltip!=""]').qtip({
-				content: {
-					attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
-				},
-				position: {
-					my: 'right center',  // Position my top left...
-					at: 'left center', // at the bottom right of...
-					adjust: {
-						x: -10
-					},
-				},
-				style: {
-					classes: 'qtip-light'
-				}
-			});
-
 			setTimeout(function(){
 				$('.menu').show();
 			}, 1000);
+
+			// Attach qtip
+			// https://github.com/qTip2/qTip2/wiki/Events-Guide#delegation-on--live--delegate
+			$('.menu').on('mouseover', '[data-tooltip!=""]', function (evt){
+				var hasqtip = $(this).data('hasqtip');
+
+				//console.log(hasqtip)
+				if(!hasqtip){
+					$(this).qtip({
+						overwrite: false,
+						content: {
+							attr: 'data-tooltip' // Tell qTip2 to look inside this attr for its content
+						},
+						position: {
+							my: 'right center',  // Position my top left...
+							at: 'left center', // at the bottom right of...
+							adjust: {
+								x: -10
+							},
+						},
+						style: {
+							classes: 'qtip-light'
+						},
+						show: {
+							event: evt.type, // Use the same show event as the one that triggered the event handler
+							ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
+						}
+					}, evt);
+				}
+			});
+
 		</script>
 
 		<% include ga %>
