@@ -402,20 +402,20 @@
 
 								<!-- stiffness -->
 								<div class="form-group">
-									<label>stiffness</label>
+									<label data-tooltip="Spring stiffness, as defined in Hookes Law.">stiffness</label>
 									<input type="number" ng-model="spring.stiffness" />
 								</div>
 
 								<!-- damping -->
 								<div class="form-group">
-									<label>damping</label>
+									<label data-tooltip="Spring damping">damping</label>
 									<input type="number" ng-model="spring.damping" />
 								</div>
 
 								<!-- useInitialRestLength -->
 								<div class="form-group">
-									<label ng-show="spring.type=='linear'">use initial rest length</label>
-									<label ng-show="spring.type=='rotational'">use initial rest angle</label>
+									<label ng-show="spring.type=='linear'" data-tooltip="Make the spring start at its rest length.">use initial rest length</label>
+									<label ng-show="spring.type=='rotational'" data-tooltip="Use the initial relative angle as rest angle.>use initial rest angle</label>
 									<input type="checkbox" ng-model="spring.useInitialRestLength" />
 								</div>
 
@@ -442,14 +442,14 @@
 
 								<!-- localAnchorA -->
 								<div class="form-group" ng-show="spring.type=='linear'">
-									<label>local anchor A</label>
+									<label data-tooltip="Where to attach the spring on bodyA.">local anchor A</label>
 									<input type="number" class="vec2 x" ng-model="spring.localAnchorAX"/>
 									<input type="number" class="vec2 y" ng-model="spring.localAnchorAY"/>
 								</div>
 
 								<!-- localAnchorB -->
 								<div class="form-group" ng-show="spring.type=='linear'">
-									<label>local anchor B</label>
+									<label data-tooltip="Where to attach the spring on bodyB.">local anchor B</label>
 									<input type="number" class="vec2 x" ng-model="spring.localAnchorBX"/>
 									<input type="number" class="vec2 y" ng-model="spring.localAnchorBY"/>
 								</div>
@@ -492,13 +492,13 @@
 
 								<!-- stiffness -->
 								<div class="form-group">
-									<label>stiffness</label>
+									<label data-tooltip="How stiff the constraint should be.">stiffness</label>
 									<input type="number" ng-model="constraint.stiffness" />
 								</div>
 
 								<!-- relaxation -->
 								<div class="form-group">
-									<label>relaxation</label>
+									<label data-tooltip="How many time steps until the constraint should be stabilized. A value of 4 is usually good.">relaxation</label>
 									<input type="number" ng-model="constraint.relaxation" />
 								</div>
 
@@ -518,46 +518,46 @@
 
 								<!-- collideConnected -->
 								<div class="form-group">
-									<label>collide connected</label>
+									<label data-tooltip="If enabled, the connected bodies will also collide.">collide connected</label>
 									<input type="checkbox" ng-model="constraint.collideConnected" />
 								</div>
 
 								<!-- maxForce -->
 								<div class="form-group">
-									<label>max force</label>
+									<label data-tooltip="The maximum force to be applied by the constraint.">max force</label>
 									<input type="number" ng-model="constraint.maxForce" />
 								</div>
 
 								<!-- localAnchorA -->
 								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider' || constraint.type=='hinge'">
-									<label>local anchor A</label>
+									<label data-tooltip="Attachment points of the constraint on body A">local anchor A</label>
 									<input type="number" class="vec2 x" ng-model="constraint.localAnchorAX"/>
 									<input type="number" class="vec2 y" ng-model="constraint.localAnchorAY"/>
 								</div>
 
 								<!-- localAnchorB -->
 								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider'">
-									<label>local anchor B</label>
+									<label data-tooltip="Attachment points of the constraint on body A">local anchor B</label>
 									<input type="number" class="vec2 x" ng-model="constraint.localAnchorBX"/>
 									<input type="number" class="vec2 y" ng-model="constraint.localAnchorBY"/>
 								</div>
 
 								<!-- localAxisA -->
 								<div class="form-group" ng-show="constraint.type=='slider'">
-									<label>local axis A</label>
+									<label data-tooltip="An axis, defined locally in body A, that the anchor point of body B can slide along.">local axis A</label>
 									<input type="number" class="vec2 x" ng-model="constraint.localAxisAX"/>
 									<input type="number" class="vec2 y" ng-model="constraint.localAxisAY"/>
 								</div>
 
 								<!-- useCurrentDistance -->
 								<div class="form-group" ng-show="constraint.type=='distance'">
-									<label>use initial distance</label>
+									<label data-tooltip="If enabled, the constraint will start at rest.">use initial distance</label>
 									<input type="checkbox" ng-model="constraint.useCurrentDistance" />
 								</div>
 
 								<!-- distance -->
 								<div class="form-group" ng-show="constraint.type=='distance'">
-									<label>distance</label>
+									<label data-tooltip="The distance to keep between the world anchor points.">distance</label>
 									<input type="number" ng-model="constraint.distance" />
 								</div>
 
@@ -582,13 +582,13 @@
 
 								<!-- gear ratio -->
 								<div class="form-group" ng-show="constraint.type=='gear'">
-									<label>gear ratio</label>
+									<label data-tooltip="If the gear ratio is 2, then body B is constrained to have the same angle value as body A, but doubled.">gear ratio</label>
 									<input type="number" ng-model="constraint.ratio"/>
 								</div>
 
 								<!-- use rel angle -->
 								<div class="form-group" ng-show="constraint.type=='gear'">
-									<label>use current relative angle</label>
+									<label data-tooltip="If enabled, the constraint will start at rest.">use current relative angle</label>
 									<input type="checkbox" ng-model="constraint.useCurrentRelAngle"/>
 								</div>
 
@@ -600,7 +600,7 @@
 
 								<!-- enableMotor -->
 								<div class="form-group" ng-show="constraint.type=='slider' || constraint.type=='hinge'">
-									<label>motor enabled</label>
+									<label data-tooltip="If enabled, the sliding velocity of your slider, or rotational velocity of your hinge, will be constrained to a given value.">motor enabled</label>
 									<input type="checkbox" ng-model="constraint.motorEnabled"/>
 								</div>
 
