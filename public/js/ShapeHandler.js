@@ -30,6 +30,9 @@ ShapeHandler.prototype.update = function(bodyId, config){
 	case 'plane':
 		shape = new p2.Plane();
 		break;
+	case 'capsule':
+		shape = new p2.Capsule(config.length, config.radius);
+		break;
 	}
 	this.objects[config.id] = body.shapes[i] = shape;
 	shape.color = oldColor;
@@ -56,6 +59,9 @@ ShapeHandler.prototype.add = function(bodyId, config){
 		break;
 	case 'plane':
 		shape = new p2.Plane();
+		break;
+	case 'capsule':
+		shape = new p2.Capsule(config.length, config.radius);
 		break;
 	}
 
@@ -90,15 +96,18 @@ ShapeHandler.prototype.create = function(){
 		id: id,
 		name: 'Shape ' + id,
 
-		type: 'circle',
+		type: 'circle', // circle, box, capsule, plane
 		color: '#' + Color.randomPastelHex(),
 		angle: 0,
 		x: 0,
 		y: 0,
 		collisionResponse: true,
 
-		// Circle
+		// Circle, Capsule
 		radius: 1,
+
+		// Capsule
+		length: 1,
 
 		// Box
 		width: 1,

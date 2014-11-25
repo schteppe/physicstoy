@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 4;
+Validator.CURRENT_VERSION = 5;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -29,21 +29,37 @@ Validator.upgrade = function(obj){
 
 	// Upgrade
 	switch(version){
+
 	case 1:
 		obj.version = 2;
 		break;
+
 	case 2:
 		obj.springs = [];
 		obj.version = 3;
 		break;
+
 	case 3:
 		obj.constraints = [];
 		obj.version = 4;
 		break;
+
 	case 4:
+		// Add "length" property to all shapes
+		obj.version = 5;
+		for(var i=0; i<obj.bodies.length; i++){
+			for(var j=0; j<obj.bodies[i].shapes.length; j++){
+				obj.bodies[i].shapes[j].length = 1; // default
+			}
+		}
 		break;
+
+	case 5:
+		break;
+
 	default:
 		return false;
+
 	}
 
 	// Are we done?
@@ -237,8 +253,11 @@ schema = {
 								y: num,
 								collisionResponse: bool,
 
-								// Circle
+								// Circle, Capsule
 								radius: num,
+
+								// Capsule
+								length: num,
 
 								// Box
 								width: num,

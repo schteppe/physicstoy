@@ -204,6 +204,7 @@
 													<option>box</option>
 													<option>plane</option>
 													<option>convex</option>
+													<option>capsule</option>
 												</select>
 											</div>
 
@@ -223,9 +224,14 @@
 												<input type="number" ng-model="shape.angle"/>
 											</div>
 
-											<div class="form-group" ng-show="shape.type=='circle'">
+											<div class="form-group" ng-show="shape.type=='circle' || shape.type=='capsule'">
 												<label>radius</label>
 												<input type="number" min="0" ng-model="shape.radius" />
+											</div>
+
+											<div class="form-group" ng-show="shape.type=='capsule'">
+												<label>length</label>
+												<input type="number" min="0" ng-model="shape.length" />
 											</div>
 
 											<div class="form-group" ng-show="shape.type=='box'">
