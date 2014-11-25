@@ -132,25 +132,25 @@
 
 								<!-- gravityScale -->
 								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label>gravity scale</label>
+									<label data-tooltip="The gravity vector will be scaled by this value before being applied to the body. If you set it to 1, the body will fall normally. 0 will disable gravity for the body, and -1 will make it fall the other way.>gravity scale</label>
 									<input type="number" ng-model="body.gravityScale" />
 								</div>
 
 								<!-- Positions -->
 								<div class="form-group">
-									<label>position</label>
+									<label data-tooltip="The initial world position of the bodys center of mass.">position</label>
 									<input type="number" class="vec2 x" ng-model="body.x"/>
 									<input type="number" class="vec2 y" ng-model="body.y"/>
 								</div>
 
 								<div class="form-group">
-									<label>angle</label>
+									<label data-tooltip="The initial angle of the body, in radians, around the center of mass. Positive values rotate counter-clockwise.">angle</label>
 									<input type="number" ng-model="body.angle"/>
 								</div>
 
 								<!-- Velocities -->
 								<div class="form-group" ng-show="body.type!='static'">
-									<label>velocity</label>
+									<label data-tooltip="Initial velocity of the body.">velocity</label>
 									<input type="number" class="vec2 x" ng-model="body.velocityX"/>
 									<input type="number" class="vec2 y" ng-model="body.velocityY"/>
 								</div>
@@ -162,7 +162,7 @@
 
 								<!-- damping -->
 								<div class="form-group">
-									<label>damping</label>
+									<label data-tooltip="A value usually between 0 and 1, that will slow down the movement of the body. 0 will not slow it down at all while 1 will slow it down very fast.">damping</label>
 									<input type="number" ng-model="body.damping" min="0"/>
 								</div>
 
@@ -172,7 +172,7 @@
 								</div>
 
 								<div class="form-group">
-									<label>fixed rotation</label>
+									<label data-tooltip="If enabled, the body will not be able to rotate.">fixed rotation</label>
 									<input type="checkbox" ng-model="body.fixedRotation"/>
 								</div>
 
