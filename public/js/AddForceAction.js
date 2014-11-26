@@ -7,8 +7,9 @@ function AddForceAction(options){
 }
 AddForceAction.prototype = Object.create(Action.prototype);
 AddForceAction.prototype.enter = function(machine){
-	machine.parent.force.set(this.force);
-	machine.parent.angularForce = this.angularForce;
+	machine.parent.force[0] += this.force[0];
+        machine.parent.force[1] += this.force[1];
+	machine.parent.angularForce += this.angularForce;
 };
 AddForceAction.prototype.update = function(){};
 AddForceAction.prototype.exit = function(){};
