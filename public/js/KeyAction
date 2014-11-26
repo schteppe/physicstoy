@@ -1,0 +1,10 @@
+function KeyAction(options){
+	Action.apply(this, arguments);
+	options = options || {};
+	this.keyCode = options.keyCode || 0;
+this.eventType = options.eventType || 'keydown';
+}
+KeyAction.prototype = Object.create(Action.prototype);
+KeyAction.prototype.enter = function(){};
+KeyAction.prototype.update = function(){};
+KeyAction.prototype.exit = function(){};
