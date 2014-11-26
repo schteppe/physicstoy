@@ -183,9 +183,9 @@ Renderer.prototype.getDevicePixelRatio = function() {
 
 Renderer.prototype.resizeToFit = function(){
     var dpr = this.getDevicePixelRatio();
-    var rect = this.elementContainer.getBoundingClientRect();
-    var w = rect.width * dpr;
-    var h = rect.height * dpr;
+    //var rect = this.elementContainer.getBoundingClientRect();
+    var w = window.innerWidth * dpr;
+    var h = window.innerHeight * dpr;
     this.resize(w, h);
 };
 
