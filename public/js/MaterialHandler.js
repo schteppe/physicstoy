@@ -6,11 +6,11 @@ function MaterialHandler(sceneHandler, world, renderer){
 }
 MaterialHandler.prototype = Object.create(Handler.prototype);
 
-MaterialHandler.prototype.create = function(){
+MaterialHandler.prototype.create = function(name){
 	var id = this.createId();
 	var config = {
 		id: id,
-		name: 'Material ' + id
+		name: name || 'Material ' + id
 	};
 	return config;
 };

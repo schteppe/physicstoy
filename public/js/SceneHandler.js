@@ -12,6 +12,8 @@ function SceneHandler(world,renderer){
 	this.stateHandler = new StateHandler(this, world, renderer);
 	this.actionHandler = new ActionHandler(this, world, renderer);
 	this.constraintHandler = new ConstraintHandler(this, world, renderer);
+	this.materialHandler = new MaterialHandler(this, world, renderer);
+	this.contactMaterialHandler = new ContactMaterialHandler(this, world, renderer);
 }
 
 SceneHandler.prototype.getById = function(id){
@@ -42,13 +44,23 @@ SceneHandler.prototype.findMaxId = function(config){
 };
 
 SceneHandler.prototype.updateAll = function(config){
+	// Materials
+	for (i = 0; i < config.materials.length; i++) {
+		this.materialHandler.update(config.materials[i]);
+	}
+
+	// ContactMaterials
+	for (i = 0; i < config.contactMaterials.length; i++) {
+		this.contactMaterialHandler.update(config.contactMaterials[i]);
+	}
+
 	for (var i = 0; i < config.bodies.length; i++) {
 		var bodyConfig = config.bodies[i];
 		this.bodyHandler.update(bodyConfig);
 
 		// Shapes
 		for (var j = 0; j < bodyConfig.shapes.length; j++) {
-			this.shapeHandler.update(bodyConfig.id, bodyConfig.shapes[j]);
+			this.shapeHandler.update(bodyConfig, bodyConfig.shapes[j]);
 		}
 
 		// Machines
@@ -76,6 +88,7 @@ SceneHandler.prototype.updateAll = function(config){
 		var constraintConfig = config.constraints[i];
 		this.constraintHandler.update(constraintConfig);
 	}
+
 	this.rendererHandler.update(config.renderer);
 	this.solverHandler.update(config.solver);
 	this.worldHandler.update(config.world);
@@ -86,6 +99,8 @@ SceneHandler.prototype.stopSimulation = function(){
 };
 
 SceneHandler.prototype.createDefaultScene = function(){
+	var ice = this.materialHandler.create("Ice");
+	var wood = this.materialHandler.create("Wood");
 	return {
 		world: {
 			gravityX: 0,
@@ -98,6 +113,12 @@ SceneHandler.prototype.createDefaultScene = function(){
 		solver: this.solverHandler.create(),
 		bodies: [],
 		springs: [],
-		constraints: []
+		constraints: [],
+		materials: [ice, wood],
+		contactMaterials: [
+			this.contactMaterialHandler.createIceIce(ice),
+			this.contactMaterialHandler.createWoodWood(wood),
+			this.contactMaterialHandler.createIceWood(ice, wood)
+		]
 	};
 };

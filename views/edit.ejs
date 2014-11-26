@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-<title>Edit - <%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
+		<title>Edit - <%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
 		<% include meta %>
 		<link rel="stylesheet" type="text/css" href="/css/style.css">
 		<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css">
@@ -175,6 +175,12 @@
 								<div class="form-group">
 									<label data-tooltip="If enabled, the body will not be able to rotate.">fixed rotation</label>
 									<input type="checkbox" ng-model="body.fixedRotation"/>
+								</div>
+
+								<div class="form-group">
+									<label>material</label>
+									<select ng-model="body.material" ng-options="mat.id as mat.name for mat in materials">
+									</select>
 								</div>
 
 								<!-- Shapes -->
@@ -619,6 +625,108 @@
 							</div>
 						</li>
 					</ul>
+
+					<div class="form-group">
+						<label>
+							Materials <button ng-click="addMaterial()">+</button>
+						</label>
+					</div>
+					<ul class="materials">
+						<li class="material" ng-repeat="material in materials" ng-controller="MaterialCtrl">
+							<span class="material header" id="id-{{material.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+								<div class="text">{{material.name||'&nbsp;'}}</div>
+								<span class="rm" ng-click="removeMaterial(material)">X</span>
+							</span>
+
+							<div class="material content" ng-show="toggled">
+
+								<!-- name -->
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" ng-model="material.name" />
+								</div>
+							</div>
+						</li>
+					</ul>
+
+					<div class="form-group">
+						<label>
+							ContactMaterials <button ng-click="addContactMaterial()">+</button>
+						</label>
+					</div>
+					<ul class="contactMaterials">
+						<li class="contactMaterial" ng-repeat="contactMaterial in contactMaterials" ng-controller="ContactMaterialCtrl">
+							<span class="contactMaterial header" id="id-{{contactMaterial.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+								<div class="text">{{contactMaterial.name||'&nbsp;'}}</div>
+								<span class="rm" ng-click="removeContactMaterial(contactMaterial)">X</span>
+							</span>
+
+							<div class="contactMaterial content" ng-show="toggled">
+
+								<!-- name -->
+								<div class="form-group">
+									<label>Name</label>
+									<input type="text" ng-model="contactMaterial.name" />
+								</div>
+
+								<!-- bodyA -->
+								<div class="form-group">
+									<label>material A</label>
+									<select ng-model="contactMaterial.materialA" ng-options="contactMaterial_materialA.id as contactMaterial_materialA.name for contactMaterial_materialA in materials">
+									</select>
+								</div>
+
+								<!-- materialB -->
+								<div class="form-group">
+									<label>material B</label>
+									<select ng-model="contactMaterial.materialB" ng-options="contactMaterial_materialB.id as contactMaterial_materialB.name for contactMaterial_materialB in materials">
+									</select>
+								</div>
+
+								<!-- friction -->
+								<div class="form-group">
+									<label>friction</label>
+									<input type="number" ng-model="contactMaterial.friction" />
+								</div>
+
+								<!-- restitution -->
+								<div class="form-group">
+									<label>restitution</label>
+									<input type="number" ng-model="contactMaterial.restitution" />
+								</div>
+
+								<!-- stiffness -->
+								<div class="form-group">
+									<label>stiffness</label>
+									<input type="number" ng-model="contactMaterial.stiffness" />
+								</div>
+
+								<!-- relaxation -->
+								<div class="form-group">
+									<label>relaxation</label>
+									<input type="number" ng-model="contactMaterial.relaxation" />
+								</div>
+
+								<!-- frictionStiffness -->
+								<div class="form-group">
+									<label>frictionStiffness</label>
+									<input type="number" ng-model="contactMaterial.frictionStiffness" />
+								</div>
+
+								<!-- frictionRelaxation -->
+								<div class="form-group">
+									<label>frictionRelaxation</label>
+									<input type="number" ng-model="contactMaterial.frictionRelaxation" />
+								</div>
+
+								<!-- surfaceVelocity -->
+								<div class="form-group">
+									<label>surfaceVelocity</label>
+									<input type="number" ng-model="contactMaterial.surfaceVelocity" />
+								</div>
+							</div>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -649,6 +757,8 @@
 		<script src="/js/BodyHandler.js"></script>
 		<script src="/js/SpringHandler.js"></script>
 		<script src="/js/ConstraintHandler.js"></script>
+		<script src="/js/MaterialHandler.js"></script>
+		<script src="/js/ContactMaterialHandler.js"></script>
 		<script src="/js/MachineHandler.js"></script>
 		<script src="/js/WorldHandler.js"></script>
 		<script src="/js/SceneHandler.js"></script>

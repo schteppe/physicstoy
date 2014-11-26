@@ -112,6 +112,10 @@ html,body {
 .menu .content.spring { background-color: #fdd; }
 .menu .header.constraint { background-color: #faf; }
 .menu .content.constraint { background-color: #fdf; }
+.menu .header.material { background-color: #aff; }
+.menu .content.material { background-color: #dff; }
+.menu .header.contactMaterial { background-color: #aaf; }
+.menu .content.contactMaterial { background-color: #ddf; }
 
 .ng-invalid {
 	background-color: red;

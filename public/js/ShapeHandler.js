@@ -8,12 +8,12 @@ function ShapeHandler(sceneHandler, world, renderer){
 }
 ShapeHandler.prototype = Object.create(Handler.prototype);
 
-ShapeHandler.prototype.update = function(bodyId, config){
-	var body = this.sceneHandler.getById(bodyId);
+ShapeHandler.prototype.update = function(bodyConfig, config){
+	var body = this.sceneHandler.getById(bodyConfig.id);
 
 	var shape = this.objects[config.id];
 	if(!shape){
-		this.add(bodyId, config);
+		this.add(bodyConfig, config);
 		shape = this.objects[config.id];
 	}
 
@@ -40,15 +40,20 @@ ShapeHandler.prototype.update = function(bodyId, config){
 	// Hack in the color
 	shape.color = parseInt(config.color.replace('#',''), 16);
 
+	var material = this.sceneHandler.materialHandler.getById(bodyConfig.material);
+	if(material){
+		shape.material = material;
+	}
+
 	body.shapeOffsets[i].set([config.x, config.y]);
 	body.shapeAngles[i] = config.angle;
 
 	this.bodyChanged(body);
 };
 
-ShapeHandler.prototype.add = function(bodyId, config){
+ShapeHandler.prototype.add = function(bodyConfig, config){
 	// Get the parent body
-	var body = this.sceneHandler.getById(bodyId);
+	var body = this.sceneHandler.getById(bodyConfig.id);
 	var shape;
 	switch(config.type){
 	case 'circle':
@@ -65,9 +70,14 @@ ShapeHandler.prototype.add = function(bodyId, config){
 		break;
 	}
 
+	var material = this.sceneHandler.materialHandler.getById(bodyConfig.material);
+	if(material){
+		shape.material = material;
+	}
+
 	this.objects[config.id] = shape;
 	body.addShape(shape, [config.x, config.y], config.angle);
-	this.update(bodyId, config);
+	this.update(bodyConfig, config);
 };
 
 ShapeHandler.prototype.remove = function(bodyId, config){

@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 5;
+Validator.CURRENT_VERSION = 6;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -55,6 +55,15 @@ Validator.upgrade = function(obj){
 		break;
 
 	case 5:
+		obj.materials = [];
+		obj.contactMaterials = [];
+		obj.version = 6;
+		for(var i=0; i < obj.bodies.length; i++){
+			obj.bodies[i].material = 0;
+		}
+		break;
+
+	case 6:
 		break;
 
 	default:
@@ -176,6 +185,7 @@ schema = {
 					angle: num,
 					type: str,
 					mass: num,
+					material: id,
 					collisionResponse: bool,
 					velocityX: num,
 					velocityY: num,
@@ -329,6 +339,49 @@ schema = {
 					motorSpeed: num
 				},
 			},
+		},
+
+		materials: {
+			type: "array",
+			required: true,
+			minItems: 0,
+			maxItems: 999,
+			items: {
+				type: "object",
+				required: true,
+				additionalProperties: false,
+				properties: {
+					id: id,
+					name: str
+				}
+			}
+		},
+
+		contactMaterials: {
+			type: "array",
+			required: true,
+			minItems: 0,
+			maxItems: 999,
+			items: {
+				type: "object",
+				required: true,
+				additionalProperties: false,
+				properties: {
+					id: id,
+					name: str,
+
+					materialA: id,
+					materialB: id,
+
+					friction: num,
+					restitution: num,
+					stiffness: num,
+					relaxation: num,
+					frictionStiffness: num,
+					frictionRelaxation: num,
+					surfaceVelocity: num
+				}
+			}
 		}
 	}
 };

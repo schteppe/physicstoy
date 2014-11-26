@@ -7,6 +7,40 @@ function BodyHandler(sceneHandler, world, renderer){
 }
 BodyHandler.prototype = Object.create(Handler.prototype);
 
+BodyHandler.prototype.create = function(){
+	var id = this.createId();
+	var bodyConfig = {
+		id: id,
+		name: 'Body ' + id,
+
+		material: 0,
+
+		x: 0,
+		y: 0,
+		angle: 0,
+		type: 'dynamic',
+		mass: 1,
+		collisionResponse: true,
+		shapes: [],
+
+		velocityX: 0,
+		velocityY: 0,
+		angularVelocity: 0,
+
+		damping: 0,
+		angularDamping: 0,
+
+		fixedRotation: false,
+
+		enableSleep: false,
+
+		gravityScale: 1,
+		machines: []
+	};
+
+	return bodyConfig;
+};
+
 BodyHandler.prototype.update = function(config){
 	var body = this.objects[config.id];
 	if(!body){
@@ -67,36 +101,4 @@ BodyHandler.prototype.remove = function(config){
 		this.world.removeBody(body);
 	//this.renderer.removeVisual(body);
 	delete this.objects[config.id];
-};
-
-BodyHandler.prototype.create = function(){
-	var id = this.createId();
-	var bodyConfig = {
-		id: id,
-		name: 'Body ' + id,
-
-		x: 0,
-		y: 0,
-		angle: 0,
-		type: 'dynamic',
-		mass: 1,
-		collisionResponse: true,
-		shapes: [],
-
-		velocityX: 0,
-		velocityY: 0,
-		angularVelocity: 0,
-
-		damping: 0,
-		angularDamping: 0,
-
-		fixedRotation: false,
-
-		enableSleep: false,
-
-		gravityScale: 1,
-		machines: []
-	};
-
-	return bodyConfig;
 };

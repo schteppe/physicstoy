@@ -153,6 +153,34 @@ angular.module('physicsApp', [])
 	};
 
 
+	$scope.addMaterial = function () {
+		var config = sceneHandler.materialHandler.create();
+		$scope.materials.push(config);
+		sceneHandler.materialHandler.add(config);
+	};
+
+	$scope.removeMaterial = function (config) {
+		var idx = $scope.materials.indexOf(config);
+		if(idx !== -1)
+			$scope.materials.splice(idx, 1);
+		sceneHandler.materialHandler.remove(config);
+	};
+
+
+	$scope.addContactMaterial = function () {
+		var config = sceneHandler.contactMaterialHandler.create();
+		$scope.contactMaterials.push(config);
+		sceneHandler.contactMaterialHandler.add(config);
+	};
+
+	$scope.removeContactMaterial = function (config) {
+		var idx = $scope.contactMaterials.indexOf(config);
+		if(idx !== -1)
+			$scope.contactMaterials.splice(idx, 1);
+		sceneHandler.contactMaterialHandler.remove(config);
+	};
+
+
 	$scope.$watch('playing', function (nv, ov){
 		renderer.paused = !nv;
 		if(renderer.paused){
@@ -209,13 +237,15 @@ angular.module('physicsApp', [])
 			data[vars[i]] = $scope[vars[i]];
 		}
 		data = {
-			version: 5,
+			version: 6,
 			world: JSON.parse(angular.toJson($scope.world)),
 			solver: JSON.parse(angular.toJson($scope.solver)),
 			renderer: JSON.parse(angular.toJson($scope.renderer)),
 			bodies: JSON.parse(angular.toJson($scope.bodies)),
 			springs: JSON.parse(angular.toJson($scope.springs)),
-			constraints: JSON.parse(angular.toJson($scope.constraints))
+			constraints: JSON.parse(angular.toJson($scope.constraints)),
+			materials: JSON.parse(angular.toJson($scope.materials)),
+			contactMaterials: JSON.parse(angular.toJson($scope.contactMaterials))
 		};
 		window.location.hash = "";
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
@@ -226,7 +256,7 @@ angular.module('physicsApp', [])
 .controller('ShapeCtrl', function ($scope, $rootScope) {
 	var vars = Object.keys(sceneHandler.shapeHandler.create()).map(function(v){ return 'shape.' + v; });
 	watchMany($scope, vars, function() {
-		sceneHandler.shapeHandler.update($scope.body.id, $scope.shape);
+		sceneHandler.shapeHandler.update($scope.body, $scope.shape);
    });
 })
 
@@ -235,7 +265,7 @@ angular.module('physicsApp', [])
 	$scope.addShapeToBody = function (body) {
 		var config = sceneHandler.shapeHandler.create();
 		body.shapes.push(config);
-		sceneHandler.shapeHandler.add(body.id, config);
+		sceneHandler.shapeHandler.add(body, config);
 	};
 
 	$scope.addMachineToBody = function (body) {
@@ -362,6 +392,20 @@ angular.module('physicsApp', [])
 	var vars = Object.keys(sceneHandler.solverHandler.create()).map(function(v){ return 'solver.' + v; });
 	watchMany($scope, vars, function(){
 		sceneHandler.solverHandler.update($scope.solver);
+	});
+})
+
+.controller('MaterialCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.materialHandler.create()).map(function(v){ return 'material.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.materialHandler.update($scope.material);
+	});
+})
+
+.controller('ContactMaterialCtrl', function ($scope, $rootScope) {
+	var vars = Object.keys(sceneHandler.contactMaterialHandler.create()).map(function(v){ return 'contactMaterial.' + v; });
+	watchMany($scope, vars, function(){
+		sceneHandler.contactMaterialHandler.update($scope.contactMaterial);
 	});
 });
 
