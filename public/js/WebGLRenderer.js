@@ -299,6 +299,8 @@ WebGLRenderer.prototype.init = function(){
         if(typeof lastMoveX !== 'undefined'){
             that.zoom(lastMoveX, lastMoveY, out, undefined, undefined, delta);
         }
+
+        e.preventDefault();
     }
 
     if (el.addEventListener) {
