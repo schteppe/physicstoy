@@ -34,6 +34,7 @@
 			var renderer = new WebGLRenderer(world);
 			var handler = new SceneHandler(world,renderer);
 			handler.updateAll(scene);
+			renderer.frameAll();
 			renderer.paused = false;
 		</script>
 		<% include ga %>

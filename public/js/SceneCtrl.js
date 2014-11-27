@@ -251,6 +251,12 @@ angular.module('physicsApp', [])
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
 	}, true);
+
+	/*
+	setTimeout(function(){
+		renderer.frameAll();
+	}, 1000);
+	*/
 })
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {

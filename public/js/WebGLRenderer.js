@@ -240,8 +240,10 @@ WebGLRenderer.prototype.init = function(){
         }
 
         if(down && that.state === Renderer.PANNING){
-            stage.position.x = e.global.x - lastX + startX;
-            stage.position.y = e.global.y - lastY + startY;
+            var newStageX = e.global.x - lastX + startX;
+            var newStageY = e.global.y - lastY + startY;
+            stage.position.x = newStageX;
+            stage.position.y = newStageY;
         }
 
         that.lastMousePos = e.global;
@@ -361,6 +363,30 @@ WebGLRenderer.prototype.frame = function(centerX, centerY, width, height){
         this.stage.scale.x = -this.stage.scale.y;
     }
     this.centerCamera(centerX, centerY);
+};
+
+WebGLRenderer.prototype.frameAll = function(){
+    var aabb = new p2.AABB();
+    var max = 1e6;
+    for (var i = 0; i < this.bodies.length; i++) {
+        var bodyAABB = this.bodies[i].getAABB();
+        if(p2.vec2.dist(bodyAABB.lowerBound, bodyAABB.upperBound) < 1e6){
+            aabb.extend(bodyAABB);
+        }
+    }
+    var center = p2.vec2.create();
+    p2.vec2.add(center, aabb.upperBound, aabb.lowerBound);
+    p2.vec2.scale(center, center, 0.5);
+    var width = aabb.upperBound[0] - aabb.lowerBound[0];
+    var height = aabb.upperBound[1] - aabb.lowerBound[1];
+
+    if(width > 1 && height > 1){
+        this.frame(
+            center[0], center[1],
+            width * 1.5,
+            height * 1.5
+        );
+    }
 };
 
 /**
