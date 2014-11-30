@@ -5,7 +5,7 @@ html,body {
     height:100%;
     overflow: hidden;
 	font-family: sans-serif;
-	line-height: 1.5em;
+	line-height: 1.7em;
 	font-size: 12px;
 }
 .fullscreen-button {
@@ -26,7 +26,7 @@ html,body {
     user-select: none;
 }
 .menu-container {
-	width:300px;
+	width:250px;
 	overflow:auto;
 	overflow-x:hidden;
 	max-height:100%;
@@ -77,15 +77,15 @@ html,body {
 	margin-left: 3px;
 }
 .menu input, .menu select {
-	width:150px;
+	width:110px;
 	position: absolute;
 	right: 3px;
 }
 .menu input.vec2.x {
-	right: 80px;
+	right: 60px;
 }
 .menu input.vec2 {
-	width: 73px;
+	width: 53px;
 }
 .menu .rm {
 	position: absolute;
