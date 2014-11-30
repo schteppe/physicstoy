@@ -874,7 +874,7 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
 
                 } else if(child instanceof p2.Plane){
                     // TODO use shape angle
-                    WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 100);
+                    WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 1e6);
 
                 } else if(child instanceof p2.Line){
                     WebGLRenderer.drawLine(graphics, offset, angle, child.length, lineColor, lw);
