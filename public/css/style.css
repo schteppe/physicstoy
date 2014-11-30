@@ -13,10 +13,17 @@ html,body {
 	left:0;
 	bottom:0;
 }
-.fullscreen-button img {
+.fullscreen-button, .edit-button {
+	position: absolute;
+	left:5px;
+	bottom:0;
+}
+.edit-button {
+	left:30px;
+}
+.fullscreen-button img, .edit-button img {
 	width:20px;
 	height:20px;
-	margin-left: 5px;
 }
 .no-select {
     -ms-user-select: none;
