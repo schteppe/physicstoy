@@ -266,9 +266,6 @@ Renderer.prototype.setUpKeyboard = function() {
         case "S": // step
             that.world.step(that.world.lastTimeStep);
             break;
-        case "R": // restart
-            //that.setScene(that.currentScene);
-            break;
         case "C": // toggle draw contacts & constraints
             that.drawContacts = !that.drawContacts;
             that.drawConstraints = !that.drawConstraints;
@@ -276,28 +273,8 @@ Renderer.prototype.setUpKeyboard = function() {
         case "T": // toggle draw AABBs
             that.drawAABBs = !that.drawAABBs;
             break;
-        case "D": // toggle draw polygon mode
-            that.setState(s === Renderer.DRAWPOLYGON ? that.defaultState : s = Renderer.DRAWPOLYGON);
-            break;
-        case "A": // toggle draw circle mode
-            that.setState(s === Renderer.DRAWCIRCLE ? that.defaultState : s = Renderer.DRAWCIRCLE);
-            break;
-        case "F": // toggle draw rectangle mode
-            that.setState(s === Renderer.DRAWRECTANGLE ? that.defaultState : s = Renderer.DRAWRECTANGLE);
-            break;
         case "Q": // set default
             that.setState(that.defaultState);
-            break;
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-        case "6":
-        case "7":
-        case "8":
-        case "9":
-            //that.setSceneByIndex(parseInt(ch) - 1);
             break;
         default:
             Renderer.keydownEvent.keyCode = e.keyCode;
