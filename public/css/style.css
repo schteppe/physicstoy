@@ -8,7 +8,23 @@ html,body {
 	line-height: 1.5em;
 	font-size: 12px;
 }
-
+.fullscreen-button {
+	position: absolute;
+	left:0;
+	bottom:0;
+}
+.fullscreen-button img {
+	width:20px;
+	height:20px;
+	margin-left: 5px;
+}
+.no-select {
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
 .menu-container {
 	width:300px;
 	overflow:auto;
@@ -17,11 +33,6 @@ html,body {
 	position: absolute;
 	right: 0;
 	top: 0;
-    -ms-user-select: none;
-    -moz-user-select: -moz-none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
 }
 
 .menu {

@@ -123,6 +123,7 @@ function Renderer(world, options){
 
     this.setUpKeyboard();
     this.startRenderingLoop();
+    //this.addFullScreenButton();
 }
 Renderer.prototype = new p2.EventEmitter();
 
@@ -620,6 +621,12 @@ Renderer.prototype.removeVisual = function(obj){
     } else {
         console.warn("Renderer.prototype.removeVisual: Visual type not recognized...");
     }
+};
+
+Renderer.prototype.addFullScreenButton = function(){
+    var el = document.createElement('div');
+    el.innerHTML = '<a onclick="window.screenfull && screenfull.request()" class="fullscreen-button"><img src="/img/fullscreen.png"/></a>';
+    document.body.appendChild(el);
 };
 
 Renderer.zoomInEvent = {

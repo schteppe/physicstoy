@@ -27,6 +27,7 @@
 		<script src="/js/ActionHandler.js"></script>
 		<script src="/js/StateHandler.js"></script>
 		<script src="/js/SceneHandler.js"></script>
+		<script src="/js/screenfull.js"></script>
 		<script id="loadedSceneData" type="application/json"><%-scene%></script>
 		<script>
 			var scene = JSON.parse(document.getElementById('loadedSceneData').innerHTML);
@@ -38,5 +39,6 @@
 			renderer.paused = false;
 		</script>
 		<% include ga %>
+		<% include fullscreenbutton %>
 	</body>
 </html>
