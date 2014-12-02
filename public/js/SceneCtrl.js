@@ -3,6 +3,9 @@ var sceneHandler;
 function setSelectedId(id){
 	setTimeout(function(){ // Better solution?
 		window.location.hash = "#id-" + id;
+
+		if(history.pushState)
+			history.pushState('', document.title, window.location.pathname);
 	}, 10);
 }
 
