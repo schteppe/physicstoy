@@ -68,11 +68,11 @@
 					</div>
 				</div>
 
-				<span class="world header" ng-click="toggled=!toggled" ng-init="toggled=true" ng-class="toggled ? 'open' : 'closed'">
+				<span class="world header" ng-click="worldToggled=!worldToggled" ng-init="worldToggled=true" ng-class="worldToggled ? 'open' : 'closed'">
 					<div class="text">World</div>
 				</span>
 
-				<div class="world content" ng-show="toggled">
+				<div class="world content" ng-show="worldToggled">
 					<div class="form-group">
 						<label data-tooltip="Global gravity acceleration vector.">gravity</label>
 						<input type="number" class="vec2 x" ng-model="world.gravityX"/>
@@ -96,12 +96,12 @@
 					</div>
 					<ul class="bodies">
 						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
-							<span class="body header" id="id-{{body.id}}" ng-class="toggled ? 'open' : 'closed'" ng-click="toggled=!toggled" ng-init="toggled=false">
+							<span class="body header" id="id-{{body.id}}" ng-class="bodyToggled ? 'open' : 'closed'" ng-click="bodyToggled=!bodyToggled" ng-init="bodyToggled=false">
 								<div class="text">{{body.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeBody(body)">X</span>
 							</span>
 
-							<div class="body content" ng-show="toggled">
+							<div class="body content" ng-show="bodyToggled">
 
 								<!-- name -->
 								<div class="form-group">
@@ -210,12 +210,12 @@
 								<ul class="shapes">
 									<li class="shape" ng-repeat="shape in body.shapes" ng-controller="ShapeCtrl">
 
-										<span class="shape header" id="id-{{shape.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+										<span class="shape header" id="id-{{shape.id}}" ng-click="shapeToggled=!shapeToggled" ng-init="shapeToggled=false" ng-class="shapeToggled ? 'open' : 'closed'">
 											<div class="text">{{shape.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeShape(body,shape)">X</span>
 										</span>
 
-										<div class="shape content" ng-show="toggled">
+										<div class="shape content" ng-show="shapeToggled">
 
 											<div class="form-group">
 												<label>name</label>
@@ -286,12 +286,12 @@
 								<ul class="machines">
 									<li class="machine" ng-repeat="machine in body.machines" ng-controller="MachineCtrl">
 
-										<span class="machine header" id="id-{{machine.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+										<span class="machine header" id="id-{{machine.id}}" ng-click="machineToggled=!machineToggled" ng-init="machineToggled=false" ng-class="machineToggled ? 'open' : 'closed'">
 											<div class="text">{{machine.name||'&nbsp;'}}</div>
 											<span class="rm" ng-click="removeMachine(body,machine)">X</span>
 										</span>
 
-										<div class="machine content" ng-show="toggled">
+										<div class="machine content" ng-show="machineToggled">
 
 											<!-- name -->
 											<div class="form-group">
@@ -313,12 +313,12 @@
 											<ul class="states">
 												<li class="state" ng-repeat="state in machine.states" ng-controller="StateCtrl">
 
-													<span class="state header" id="id-{{state.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+													<span class="state header" id="id-{{state.id}}" ng-click="stateToggled=!stateToggled" ng-init="stateToggled=false" ng-class="stateToggled ? 'open' : 'closed'">
 														<div class="text">{{state.name||'&nbsp;'}}</div>
 														<span class="rm" ng-click="removeState(machine,state)">X</span>
 													</span>
 
-													<div class="state content" ng-show="toggled">
+													<div class="state content" ng-show="stateToggled">
 
 														<!-- name -->
 														<div class="form-group">
@@ -335,12 +335,12 @@
 														<ul class="actions">
 															<li class="action" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
 
-																<span class="action header" id="id-{{action.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+																<span class="action header" id="id-{{action.id}}" ng-click="actionToggled=!actionToggled" ng-init="actionToggled=false" ng-class="actionToggled ? 'open' : 'closed'">
 																	<div class="text">{{action.type}} action</div>
 																	<span class="rm" ng-click="removeAction(state,action)">X</span>
 																</span>
 
-																<div class="action content" ng-show="toggled">
+																<div class="action content" ng-show="actionToggled">
 																	<div class="form-group">
 																		<div class="form-group">
 																			<label>Type</label>
@@ -403,12 +403,12 @@
 					</div>
 					<ul class="springs">
 						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
-							<span class="spring header" id="id-{{spring.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+							<span class="spring header" id="id-{{spring.id}}" ng-click="springToggled=!springToggled" ng-init="springToggled=false" ng-class="springToggled ? 'open' : 'closed'">
 								<div class="text">{{spring.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeSpring(spring)">X</span>
 							</span>
 
-							<div class="spring content" ng-show="toggled">
+							<div class="spring content" ng-show="springToggled">
 
 								<!-- name -->
 								<div class="form-group">
@@ -490,12 +490,12 @@
 					</div>
 					<ul class="constraints">
 						<li class="constraint" ng-repeat="constraint in constraints" ng-controller="ConstraintCtrl">
-							<span class="constraint header" id="id-{{constraint.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+							<span class="constraint header" id="id-{{constraint.id}}" ng-click="constraintToggled=!constraintToggled" ng-init="constraintToggled=false" ng-class="constraintToggled ? 'open' : 'closed'">
 								<div class="text">{{constraint.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeConstraint(constraint)">X</span>
 							</span>
 
-							<div class="constraint content" ng-show="toggled">
+							<div class="constraint content" ng-show="constraintToggled">
 
 								<!-- name -->
 								<div class="form-group">
@@ -651,12 +651,12 @@
 					</div>
 					<ul class="materials">
 						<li class="material" ng-repeat="material in materials" ng-controller="MaterialCtrl">
-							<span class="material header" id="id-{{material.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+							<span class="material header" id="id-{{material.id}}" ng-click="materialToggled=!materialToggled" ng-init="materialToggled=false" ng-class="materialToggled ? 'open' : 'closed'">
 								<div class="text">{{material.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeMaterial(material)">X</span>
 							</span>
 
-							<div class="material content" ng-show="toggled">
+							<div class="material content" ng-show="materialToggled">
 
 								<!-- name -->
 								<div class="form-group">
@@ -674,12 +674,12 @@
 					</div>
 					<ul class="contactMaterials">
 						<li class="contactMaterial" ng-repeat="contactMaterial in contactMaterials" ng-controller="ContactMaterialCtrl">
-							<span class="contactMaterial header" id="id-{{contactMaterial.id}}" ng-click="toggled=!toggled" ng-init="toggled=false" ng-class="toggled ? 'open' : 'closed'">
+							<span class="contactMaterial header" id="id-{{contactMaterial.id}}" ng-click="contactMaterialToggled=!contactMaterialToggled" ng-init="contactMaterialToggled=false" ng-class="contactMaterialToggled ? 'open' : 'closed'">
 								<div class="text">{{contactMaterial.name||'&nbsp;'}}</div>
 								<span class="rm" ng-click="removeContactMaterial(contactMaterial)">X</span>
 							</span>
 
-							<div class="contactMaterial content" ng-show="toggled">
+							<div class="contactMaterial content" ng-show="contactMaterialToggled">
 
 								<!-- name -->
 								<div class="form-group">

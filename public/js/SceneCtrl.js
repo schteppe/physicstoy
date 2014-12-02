@@ -1,12 +1,18 @@
 var sceneHandler;
 
+var currentSelectedId = -1;
 function setSelectedId(id){
-	setTimeout(function(){ // Better solution?
-		window.location.hash = "#id-" + id;
-
-		if(history.pushState)
-			history.pushState('', document.title, window.location.pathname);
-	}, 10);
+	if(currentSelectedId !== id){
+		/*
+		setTimeout(function(){ // Better solution?
+			window.location.hash = "#id-" + id;
+			if(history.pushState){
+				history.pushState('', document.title, window.location.pathname);
+			}
+			currentSelectedId = id;
+		}, 10);
+*/
+	}
 }
 
 angular.module('physicsApp', [])
@@ -303,10 +309,10 @@ angular.module('physicsApp', [])
 	renderer.on('selectionChange', function (){
 		if(renderer.selection.length){
 			var id = sceneHandler.bodyHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
-			$scope.toggled = ($scope.body.id === id);
+			$scope.bodyToggled = ($scope.body.id === id);
 			$scope.$apply();
 
-			if($scope.toggled){
+			if($scope.bodyToggled){
 				setSelectedId(id);
 			}
 		}
@@ -345,10 +351,10 @@ angular.module('physicsApp', [])
 	renderer.on('selectionChange', function (){
 		if(renderer.selection.length){
 			var id = sceneHandler.springHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
-			$scope.toggled = ($scope.spring.id === id);
+			$scope.springToggled = ($scope.spring.id === id);
 			$scope.$apply();
 
-			if($scope.toggled){
+			if($scope.springToggled){
 				setSelectedId(id);
 			}
 		}
@@ -387,10 +393,10 @@ angular.module('physicsApp', [])
 	renderer.on('selectionChange', function (){
 		if(renderer.selection.length){
 			var id = sceneHandler.constraintHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
-			$scope.toggled = ($scope.constraint.id === id);
+			$scope.constraintToggled = ($scope.constraint.id === id);
 			$scope.$apply();
 
-			if($scope.toggled){
+			if($scope.constraintToggled){
 				setSelectedId(id);
 			}
 		}

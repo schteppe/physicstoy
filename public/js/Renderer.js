@@ -215,8 +215,10 @@ Renderer.elementClass = 'p2-canvas';
 Renderer.containerClass = 'p2-container';
 
 Renderer.prototype.clearSelection = function() {
+    var prevLength = this.selection.length;
     this.selection.length = 0;
-    this.emit(this.selectionChangeEvent);
+    if(prevLength)
+        this.emit(this.selectionChangeEvent);
 };
 
 Renderer.prototype.enableSelection = function() {
