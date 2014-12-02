@@ -237,7 +237,7 @@ angular.module('physicsApp', [])
 			data[vars[i]] = $scope[vars[i]];
 		}
 		data = {
-			version: 6,
+			version: 7,
 			world: JSON.parse(angular.toJson($scope.world)),
 			solver: JSON.parse(angular.toJson($scope.solver)),
 			renderer: JSON.parse(angular.toJson($scope.renderer)),
@@ -261,12 +261,24 @@ angular.module('physicsApp', [])
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {
 	var vars = Object.keys(sceneHandler.shapeHandler.create()).map(function(v){ return 'shape.' + v; });
+	vars.push(
+		'body.collisionGroup',
+		'body.collisionMask'
+	);
 	watchMany($scope, vars, function() {
 		sceneHandler.shapeHandler.update($scope.body, $scope.shape);
    });
 })
 
 .controller('BodyCtrl', function ($scope, $rootScope) {
+
+	// Convert from string to integer
+	$scope.$watch('body.collisionMask', function(nv, ov){
+		$scope.body.collisionMask = parseInt(nv, 10);
+	});
+	$scope.$watch('body.collisionGroup', function(nv, ov){
+		$scope.body.collisionGroup = parseInt(nv, 10);
+	});
 
 	$scope.addShapeToBody = function (body) {
 		var config = sceneHandler.shapeHandler.create();

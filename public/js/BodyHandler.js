@@ -32,6 +32,9 @@ BodyHandler.prototype.create = function(){
 
 		fixedRotation: false,
 
+		collisionMask: 1,
+		collisionGroup: 1,
+
 		enableSleep: false,
 
 		gravityScale: 1,

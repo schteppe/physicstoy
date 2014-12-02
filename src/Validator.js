@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 6;
+Validator.CURRENT_VERSION = 7;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -64,6 +64,14 @@ Validator.upgrade = function(obj){
 		break;
 
 	case 6:
+		obj.version = 7;
+		for(var i=0; i < obj.bodies.length; i++){
+			obj.bodies[i].collisionGroup = 1;
+			obj.bodies[i].collisionMask = 1;
+		}
+		break;
+
+	case 7:
 		break;
 
 	default:
@@ -195,6 +203,8 @@ schema = {
 					fixedRotation: bool,
 					enableSleep: bool,
 					gravityScale: num,
+					collisionGroup: integer,
+					collisionMask: integer,
 
 					machines: {
 						type: "array",

@@ -44,6 +44,8 @@ ShapeHandler.prototype.update = function(bodyConfig, config){
 	if(material){
 		shape.material = material;
 	}
+	shape.collisionGroup = bodyConfig.collisionGroup;
+	shape.collisionMask = bodyConfig.collisionMask;
 
 	body.shapeOffsets[i].set([config.x, config.y]);
 	body.shapeAngles[i] = config.angle;
