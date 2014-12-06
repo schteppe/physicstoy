@@ -51,14 +51,16 @@
 		<script type="text/javascript" src="js/Thumbnail.js"></script>
 
 		<script type="text/javascript">
-			var canvases = document.getElementsByClassName('thumbnail');
-			for (var i = 0; i < canvases.length; i++) {
-				var canvas = canvases[i];
-				var ctx = canvas.getContext('2d');
-				var scriptNode = canvas.querySelector('script');
-				var scene = JSON.parse(scriptNode.innerHTML);
-				Thumbnail.drawOnCanvas(ctx, scene, canvas.width, canvas.height, {});
-			}
+			document.addEventListener("DOMContentLoaded", function(event) {
+				var canvases = document.getElementsByClassName('thumbnail');
+				for (var i = 0; i < canvases.length; i++) {
+					var canvas = canvases[i];
+					var ctx = canvas.getContext('2d');
+					var scriptNode = canvas.querySelector('script');
+					var scene = JSON.parse(scriptNode.innerHTML);
+					Thumbnail.drawOnCanvas(ctx, scene, canvas.width, canvas.height, {});
+				}
+			});
 		</script>
 
 	</body>
