@@ -22,9 +22,6 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
     for(var key in options)
         settings[key] = options[key];
 
-    if(scene.version !== 8)
-        throw new Error("Scene format not supported!");
-
     function getSceneAABB(scene){
         var aabb = new p2.AABB();
         var max = 1e6;
