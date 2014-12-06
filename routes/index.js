@@ -8,8 +8,22 @@ exports.index = function(req, res, next){
 	db.query('SELECT * FROM pt_scenes ORDER BY id DESC OFFSET 0 LIMIT 10', [], function (err, result){
 		if(err) return next(err);
 
+		// Upgrade all of the data
+		var scenes = [];
+		for (var i = 0; i < result.rows.length; i++) {
+			var row = result.rows[i];
+
+			var upgradedScene = Validator.upgrade(row.scene);
+			if(upgradedScene){
+				scenes.push({
+					id: row.id,
+					scene: upgradedScene
+				});
+			}
+		}
+
 		res.render('index', {
-			scenes: result.rows
+			scenes: scenes
 		});
 	});
 };

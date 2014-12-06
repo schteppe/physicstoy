@@ -3,6 +3,20 @@
 	<head>
 		<title><%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
 		<% include meta %>
+    	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			.thumbnail {
+				border: 1px solid black;
+			}
+			ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			li {
+				display: inline-block;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>Physics Toy</h1>
@@ -19,8 +33,11 @@
 		<ul>
 			<% for (var i = 0; i < scenes.length; i++) { %>
 				<li>
-					<a href="/<%=scenes[i].id%>">Scene <%=scenes[i].id%></a>
-					<a href="/<%=scenes[i].id%>/edit">(edit)</a>
+					<a href="/<%=scenes[i].id%>">
+						<canvas width="100" height="100" class="thumbnail">
+							<script type="application/json"><%-JSON.stringify(scenes[i].scene)%></script>
+						</canvas>
+					</a>
 				</li>
 			<% } %>
 		</ul>
@@ -30,5 +47,19 @@
 		</p>
 
 		<% include ga %>
+		<script type="text/javascript" src="js/p2.js"></script>
+		<script type="text/javascript" src="js/Thumbnail.js"></script>
+
+		<script type="text/javascript">
+			var canvases = document.getElementsByClassName('thumbnail');
+			for (var i = 0; i < canvases.length; i++) {
+				var canvas = canvases[i];
+				var ctx = canvas.getContext('2d');
+				var scriptNode = canvas.querySelector('script');
+				var scene = JSON.parse(scriptNode.innerHTML);
+				Thumbnail.drawOnCanvas(ctx, scene, canvas.width, canvas.height, {});
+			}
+		</script>
+
 	</body>
 </html>
