@@ -56,9 +56,13 @@
 				for (var i = 0; i < canvases.length; i++) {
 					var canvas = canvases[i];
 					var ctx = canvas.getContext('2d');
-					var scriptNode = canvas.querySelector('script');
-					var scene = JSON.parse(scriptNode.innerHTML);
-					Thumbnail.drawOnCanvas(ctx, scene, canvas.width, canvas.height, {});
+					var scriptNode = canvas.childNodes[1];
+					try {
+						var scene = JSON.parse(scriptNode.innerHTML);
+						Thumbnail.drawOnCanvas(ctx, scene, canvas.width, canvas.height, {});
+					} catch(err){
+						console.error(err);
+					}
 				}
 			});
 		</script>
