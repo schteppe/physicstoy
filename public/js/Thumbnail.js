@@ -42,6 +42,9 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
                 case "box":
                     shape = new p2.Rectangle(s.width, s.height);
                     break;
+                case "capsule":
+                    shape = new p2.Capsule(s.length, s.radius);
+                    break;
                 }
                 if(shape){
                     body.addShape(shape, [s.x, s.y], s.angle);
@@ -141,6 +144,7 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
             ctx.translate(s.x, s.y);
 
             switch(s.type){
+
             case "circle":
                 // Draw circles
                 ctx.beginPath();
@@ -160,6 +164,16 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
             case "box":
                 ctx.beginPath();
                 ctx.rect(- s.width / 2, - s.height / 2, s.width, s.height);
+                ctx.stroke();
+                ctx.fill();
+                break;
+
+            case "capsule":
+                // Draw circles
+                ctx.beginPath();
+                ctx.arc(-s.length / 2, 0, s.radius, Math.PI / 2, -Math.PI / 2, false);
+                ctx.arc(s.length / 2, 0, s.radius, -Math.PI / 2, Math.PI / 2, false);
+                ctx.closePath();
                 ctx.stroke();
                 ctx.fill();
                 break;
