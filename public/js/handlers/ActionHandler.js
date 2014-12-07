@@ -107,7 +107,7 @@ ActionHandler.prototype.update = function(config, stateConfig){
 			keyCode: config.keyCode,
 			eventType: config.eventType
 		});
-		var toState = this.sceneHandler.getById(config.toState);
+		var toState = this.sceneHandler.stateHandler.getById(config.toState);
 		if(toState){
 			action.toState = toState;
 		}
