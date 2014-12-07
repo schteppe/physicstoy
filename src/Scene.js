@@ -16,3 +16,24 @@ Scene.prototype.getById = function(id, callback){
 		callback(null, result.rows[0].scene);
 	});
 };
+
+Scene.prototype.forEach = function(iterator, callback){
+	var id = 0;
+	function doNext(){
+		db.query('SELECT * FROM pt_scenes WHERE id>$1 ORDER BY id ASC LIMIT 1', [id], function (err, result){
+
+			if(err) return callback(err);
+
+			if(result.rows.length && result.rows[0].scene){
+				var row = result.rows[0];
+				iterator(row.scene, row);
+				id = row.id;
+				doNext();
+			} else {
+				callback(null);
+			}
+		});
+	}
+
+	doNext();
+};

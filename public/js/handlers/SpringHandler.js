@@ -31,8 +31,8 @@ SpringHandler.prototype.create = function(){
 };
 
 SpringHandler.prototype.update = function(config){
-	var bodyA = this.sceneHandler.getById(config.bodyA);
-	var bodyB = this.sceneHandler.getById(config.bodyB);
+	var bodyA = this.sceneHandler.bodyHandler.getById(config.bodyA);
+	var bodyB = this.sceneHandler.bodyHandler.getById(config.bodyB);
 
 	var spring = this.objects[config.id];
 	if(spring){
@@ -73,8 +73,8 @@ SpringHandler.prototype.update = function(config){
 
 SpringHandler.prototype.remove = function(config){
 	var spring = this.objects[config.id];
-	var bodyA = this.sceneHandler.getById(config.bodyA);
-	var bodyB = this.sceneHandler.getById(config.bodyB);
+	var bodyA = this.sceneHandler.bodyHandler.getById(config.bodyA);
+	var bodyB = this.sceneHandler.bodyHandler.getById(config.bodyB);
 	if(spring){
 		this.renderer.removeVisual(spring);
 		this.world.removeSpring(spring);

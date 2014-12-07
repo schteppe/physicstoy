@@ -9,7 +9,7 @@ function ShapeHandler(sceneHandler, world, renderer){
 ShapeHandler.prototype = Object.create(Handler.prototype);
 
 ShapeHandler.prototype.update = function(bodyConfig, config){
-	var body = this.sceneHandler.getById(bodyConfig.id);
+	var body = this.sceneHandler.bodyHandler.getById(bodyConfig.id);
 
 	var shape = this.objects[config.id];
 	if(!shape){
@@ -55,7 +55,7 @@ ShapeHandler.prototype.update = function(bodyConfig, config){
 
 ShapeHandler.prototype.add = function(bodyConfig, config){
 	// Get the parent body
-	var body = this.sceneHandler.getById(bodyConfig.id);
+	var body = this.sceneHandler.bodyHandler.getById(bodyConfig.id);
 	var shape;
 	switch(config.type){
 	case 'circle':
@@ -84,7 +84,7 @@ ShapeHandler.prototype.add = function(bodyConfig, config){
 
 ShapeHandler.prototype.remove = function(bodyId, config){
 	var shape = this.objects[config.id];
-	var body = this.sceneHandler.getById(bodyId);
+	var body = this.sceneHandler.bodyHandler.getById(bodyId);
 	body.removeShape(shape);
 	this.bodyChanged(body);
 	delete this.objects[config.id];

@@ -3,7 +3,10 @@ var path = require("path");
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+
 var db = require(path.join(__dirname, 'src', 'Database'));
+var scene = require(path.join(__dirname, 'src', 'Scene'));
+var Validator = require(path.join(__dirname, 'src', 'Validator'));
 
 var routes = require(path.join(__dirname, 'routes'));
 var Middleware = require(path.join(__dirname, 'src', 'Middleware'));
@@ -39,3 +42,19 @@ db.sync({
 		console.log("Listening on port " + port + " ("+app.get('env')+")");
 	});
 });
+
+// Try validating everything on start
+if(app.get('env') === 'development'){
+	scene.forEach(function (scene, row){
+
+		var upgradedScene = Validator.upgrade(scene);
+		if(!upgradedScene){
+			console.error('Scene ' + row.id + ' (v' + scene.version + ') could not be upgraded:\n' + Validator.result);
+		}
+
+	}, function (err){
+		if(err) throw err;
+
+		console.log('Validated all scenes');
+	});
+}

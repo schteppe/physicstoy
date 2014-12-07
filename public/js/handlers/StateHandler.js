@@ -33,7 +33,7 @@ StateHandler.prototype.remove = function(config){
 StateHandler.prototype.update = function(config, machineConfig){
 	var state = this.getById(config.id);
 	if(!state){
-		var machine = this.sceneHandler.getById(machineConfig.id);
+		var machine = this.sceneHandler.machineHandler.getById(machineConfig.id);
 		state = new State(machine);
 		machine.states.push(state);
 		this.objects[config.id] = state;

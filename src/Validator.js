@@ -73,6 +73,24 @@ Validator.upgrade = function(obj){
 
 	case 7:
 		obj.version = 8;
+		// Added keyCode and eventType to actions
+		for(var i=0; i < obj.bodies.length; i++){
+			var body = obj.bodies[i];
+
+			for (var j = 0; j < body.machines.length; j++) {
+				var machine = body.machines[j];
+
+				for (var k = 0; k < machine.states.length; k++) {
+					var state = machine.states[k];
+
+					for (var l = 0; l < state.actions.length; l++) {
+						var action = state.actions[l];
+						action.keyCode = -1;
+						action.eventType = 'keydown';
+					}
+				}
+			}
+		}
 		break;
 
 	case 8:

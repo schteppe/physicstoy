@@ -42,7 +42,7 @@ ActionHandler.prototype.add = function(config, stateConfig){
 		return;
 	}
 
-	var state = this.sceneHandler.getById(stateConfig.id);
+	var state = this.sceneHandler.stateHandler.getById(stateConfig.id);
 	var action = new Action();
 	action.state = state;
 	state.actions.push(action);
@@ -66,13 +66,13 @@ ActionHandler.prototype.update = function(config, stateConfig){
 	if(oldAction){
 		state = oldAction.state;
 	} else {
-		state = this.sceneHandler.getById(stateConfig.id);
+		state = this.sceneHandler.stateHandler.getById(stateConfig.id);
 	}
 
 	switch(config.type){
 
 	case "wait":
-		var toState = this.sceneHandler.getById(config.toState);
+		var toState = this.sceneHandler.stateHandler.getById(config.toState);
 		action = new WaitAction({
 			time: config.time
 		});
