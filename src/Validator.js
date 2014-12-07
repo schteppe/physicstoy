@@ -17,7 +17,7 @@ Validator.upgrade = function(obj){
 		return false;
 	}
 
-	var version;
+	var version, i, j, k, l;
 	if(typeof(obj.version) === 'number'){
 		version = obj.version;
 	} else {
@@ -47,8 +47,8 @@ Validator.upgrade = function(obj){
 	case 4:
 		// Add "length" property to all shapes
 		obj.version = 5;
-		for(var i=0; i<obj.bodies.length; i++){
-			for(var j=0; j<obj.bodies[i].shapes.length; j++){
+		for(i=0; i<obj.bodies.length; i++){
+			for(j=0; j<obj.bodies[i].shapes.length; j++){
 				obj.bodies[i].shapes[j].length = 1; // default
 			}
 		}
@@ -58,14 +58,14 @@ Validator.upgrade = function(obj){
 		obj.materials = [];
 		obj.contactMaterials = [];
 		obj.version = 6;
-		for(var i=0; i < obj.bodies.length; i++){
+		for(i=0; i < obj.bodies.length; i++){
 			obj.bodies[i].material = 0;
 		}
 		break;
 
 	case 6:
 		obj.version = 7;
-		for(var i=0; i < obj.bodies.length; i++){
+		for(i=0; i < obj.bodies.length; i++){
 			obj.bodies[i].collisionGroup = 1;
 			obj.bodies[i].collisionMask = 1;
 		}
@@ -74,16 +74,16 @@ Validator.upgrade = function(obj){
 	case 7:
 		obj.version = 8;
 		// Added keyCode and eventType to actions
-		for(var i=0; i < obj.bodies.length; i++){
+		for(i=0; i < obj.bodies.length; i++){
 			var body = obj.bodies[i];
 
-			for (var j = 0; j < body.machines.length; j++) {
+			for (j=0; j < body.machines.length; j++) {
 				var machine = body.machines[j];
 
-				for (var k = 0; k < machine.states.length; k++) {
+				for (k = 0; k < machine.states.length; k++) {
 					var state = machine.states[k];
 
-					for (var l = 0; l < state.actions.length; l++) {
+					for (l = 0; l < state.actions.length; l++) {
 						var action = state.actions[l];
 						action.keyCode = -1;
 						action.eventType = 'keydown';
@@ -96,16 +96,16 @@ Validator.upgrade = function(obj){
 	case 8:
 		obj.version = 9;
 		// Added velocityXY,angularVelocity to all actions
-		for(var i=0; i < obj.bodies.length; i++){
+		for(i=0; i < obj.bodies.length; i++){
 			var body = obj.bodies[i];
 
-			for (var j = 0; j < body.machines.length; j++) {
+			for (j=0; j < body.machines.length; j++) {
 				var machine = body.machines[j];
 
-				for (var k = 0; k < machine.states.length; k++) {
+				for (k=0; k < machine.states.length; k++) {
 					var state = machine.states[k];
 
-					for (var l = 0; l < state.actions.length; l++) {
+					for (l = 0; l < state.actions.length; l++) {
 						var action = state.actions[l];
 						action.velocityX = 0;
 						action.velocityY = 0;
@@ -119,16 +119,16 @@ Validator.upgrade = function(obj){
 	case 9:
 		obj.version = 10;
 		// Added forceXY,angularForce to all actions
-		for(var i=0; i < obj.bodies.length; i++){
+		for(i=0; i < obj.bodies.length; i++){
 			var body = obj.bodies[i];
 
-			for (var j = 0; j < body.machines.length; j++) {
+			for (j=0; j < body.machines.length; j++) {
 				var machine = body.machines[j];
 
-				for (var k = 0; k < machine.states.length; k++) {
+				for (k = 0; k < machine.states.length; k++) {
 					var state = machine.states[k];
 
-					for (var l = 0; l < state.actions.length; l++) {
+					for (l = 0; l < state.actions.length; l++) {
 						var action = state.actions[l];
 						action.forceX = 0;
 						action.forceY = 0;

@@ -45,16 +45,20 @@ db.sync({
 
 // Try validating everything on start
 if(app.get('env') === 'development'){
+	var passed = 0, failed = 0;
 	scene.forEach(function (scene, row){
 
 		var upgradedScene = Validator.upgrade(scene);
 		if(!upgradedScene){
 			console.error('Scene ' + row.id + ' (v' + scene.version + ') could not be upgraded:\n' + Validator.result);
+			failed++;
+		} else {
+			passed++;
 		}
 
 	}, function (err){
 		if(err) throw err;
 
-		console.log('Validated all scenes');
+		console.log('Validated '+(passed+failed)+' scenes, ' + failed + ' failed.');
 	});
 }
