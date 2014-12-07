@@ -4,6 +4,7 @@ function SetVelocityAction(options){
 
 	this.velocity = options.velocity ? options.velocity.slice(0) : [0, 0];
 	this.angularVelocity = options.angularVelocity || 0;
+	this.localFrame = options.localFrame || false;
 }
 SetVelocityAction.prototype = Object.create(Action.prototype);
 SetVelocityAction.prototype.enter = function(machine){

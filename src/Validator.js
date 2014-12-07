@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 10;
+Validator.CURRENT_VERSION = 11;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -140,6 +140,27 @@ Validator.upgrade = function(obj){
 		break;
 
 	case 10:
+		obj.version = 11;
+		// Added localFrame to all actions
+		for(i=0; i < obj.bodies.length; i++){
+			var body = obj.bodies[i];
+
+			for (j=0; j < body.machines.length; j++) {
+				var machine = body.machines[j];
+
+				for (k = 0; k < machine.states.length; k++) {
+					var state = machine.states[k];
+
+					for (l = 0; l < state.actions.length; l++) {
+						var action = state.actions[l];
+						action.localFrame = false;
+					}
+				}
+			}
+		}
+		break;
+
+	case 11:
 		break;
 
 	default:
@@ -320,6 +341,8 @@ schema = {
 														forceX: num,
 														forceY: num,
 														angularForce: num,
+
+														localFrame: bool,
 
 														time: num,
 														toState: id,

@@ -31,6 +31,9 @@ ActionHandler.prototype.create = function(){
 		forceY: 0,
 		angularForce: 0,
 
+		// addForce, setVelocity
+		localFrame: false,
+
 		// key
 		keyCode: -1,
 		eventType: 'keydown'
@@ -91,14 +94,16 @@ ActionHandler.prototype.update = function(config, stateConfig){
 	case "setVelocity":
 		action = new SetVelocityAction({
 			velocity: [config.velocityX, config.velocityY],
-			angularVelocity: config.angularVelocity
+			angularVelocity: config.angularVelocity,
+			localFrame: config.localFrame
 		});
 		break;
 
 	case "addForce":
 		action = new AddForceAction({
 			force: [config.forceX, config.forceY],
-			angularForce: config.angularForce
+			angularForce: config.angularForce,
+			localFrame: config.localFrame
 		});
 		break;
 

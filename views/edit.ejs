@@ -405,6 +405,12 @@
 																			<input type="number" ng-model="action.angularForce"/>
 																		</div>
 
+																		<!-- localFrame -->
+																		<div ng-show="action.type=='addForce'" class="form-group">
+																			<label>local frame</label>
+																			<input type="checkbox" ng-model="action.localFrame"/>
+																		</div>
+
 																		<!-- keyCode -->
 																		<div ng-show="action.type=='key'" class="form-group">
 																			<label>keyCode</label>
