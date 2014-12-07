@@ -347,6 +347,7 @@
 																			<select ng-model="action.type">
 																				<option>wait</option>
 																				<option>setPosition</option>
+																				<option>setVelocity</option>
 																				<option>key</option>
 																			</select>
 																		</div>
@@ -375,6 +376,19 @@
 																		<div ng-show="action.type=='setPosition'" class="form-group">
 																			<label>angle</label>
 																			<input type="number" ng-model="action.angle"/>
+																		</div>
+
+																		<!-- velocity -->
+																		<div ng-show="action.type=='setVelocity'" class="form-group">
+																			<label data-tooltip="The velocity to set on the body.">velocity</label>
+																			<input type="number" class="vec2 x" ng-model="action.velocityX"/>
+																			<input type="number" class="vec2 y" ng-model="action.velocityY"/>
+																		</div>
+
+																		<!-- angularVelocity -->
+																		<div ng-show="action.type=='setVelocity'" class="form-group">
+																			<label>angular velocity</label>
+																			<input type="number" ng-model="action.angularVelocity"/>
 																		</div>
 
 																		<!-- keyCode -->
@@ -802,6 +816,8 @@
 		<script src="/js/StateHandler.js"></script>
 		<script src="/js/Machine.js"></script>
 		<script src="/js/KeyAction.js"></script>
+		<script src="/js/SetPositionAction.js"></script>
+		<script src="/js/SetVelocityAction.js"></script>
 		<script src="/js/SceneCtrl.js"></script>
 		<script src="/qtip/jquery.qtip.min.js"></script>
 		<script src="/js/screenfull.js"></script>

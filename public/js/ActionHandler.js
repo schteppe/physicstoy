@@ -21,6 +21,11 @@ ActionHandler.prototype.create = function(){
 		positionY: 0,
 		angle: 0,
 
+		// setVelocity
+		velocityX: 0,
+		velocityY: 0,
+		angularVelocity: 0,
+
 		// key
 		keyCode: -1,
 		eventType: 'keydown'
@@ -78,6 +83,13 @@ ActionHandler.prototype.update = function(config, stateConfig){
 		});
 		break;
 
+	case "setVelocity":
+		action = new SetVelocityAction({
+			velocity: [config.velocityX, config.velocityY],
+			angularVelocity: config.angularVelocity
+		});
+		break;
+
 	case "key":
 		action = new KeyAction({
 			keyCode: config.keyCode,
@@ -91,7 +103,6 @@ ActionHandler.prototype.update = function(config, stateConfig){
 
 	default:
 		throw new Error('Action type not recognized: ' + config.type);
-		break;
 	}
 
 	this.objects[config.id] = action;
