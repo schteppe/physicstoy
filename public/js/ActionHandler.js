@@ -19,7 +19,11 @@ ActionHandler.prototype.create = function(){
 		// setPosition
 		positionX: 0,
 		positionY: 0,
-		angle: 0
+		angle: 0,
+
+		// key
+		keyCode: -1,
+		eventType: 'keydown'
 	};
 };
 
@@ -60,7 +64,7 @@ ActionHandler.prototype.update = function(config, stateConfig){
 	case "wait":
 		var toState = this.sceneHandler.getById(config.toState);
 		action = new WaitAction({
-			time: config.time || 1
+			time: config.time
 		});
 		if(toState){
 			action.toState = toState;
@@ -72,6 +76,21 @@ ActionHandler.prototype.update = function(config, stateConfig){
 			position: [config.positionX, config.positionY],
 			angle: config.angle
 		});
+		break;
+
+	case "key":
+		action = new KeyAction({
+			keyCode: config.keyCode,
+			eventType: config.eventType
+		});
+		var toState = this.sceneHandler.getById(config.toState);
+		if(toState){
+			action.toState = toState;
+		}
+		break;
+
+	default:
+		throw new Error('Action type not recognized: ' + config.type);
 		break;
 	}
 

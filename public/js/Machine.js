@@ -110,7 +110,6 @@ function TransitionAction(options){
 }
 TransitionAction.prototype = Object.create(Action.prototype);
 TransitionAction.prototype.enter = function(){
-	//machine.log('Requesting transition to ' + this.toState.id);
 	machine.requestTransitionToState = this.toState;
 };
 TransitionAction.prototype.update = function(){};
@@ -120,7 +119,7 @@ TransitionAction.prototype.exit = function(){};
 function WaitAction(options){
 	Action.apply(this, arguments);
 	options = options || {};
-	this.time = options.time || 1; // seconds
+	this.time = typeof(options.time) !== 'undefined' ? options.time : 1; // seconds
 	this.toState = options.toState || null;
 	this.enterTime = -1;
 }
@@ -129,9 +128,7 @@ WaitAction.prototype.enter = function(machine){
 	this.enterTime = machine.world.time;
 };
 WaitAction.prototype.update = function(machine){
-	//console.log('time',machine.world.time);
 	if(machine.world.time >= this.enterTime + this.time && this.toState){
-		//console.log('WaitAction requesting transition to ' + this.toState.id);
 		machine.requestTransitionToState = this.toState;
 	}
 };

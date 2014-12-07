@@ -72,8 +72,11 @@ SceneHandler.prototype.updateAll = function(config){
 			for (var k = 0; k < machineConfig.states.length; k++) {
 				var state = machineConfig.states[k];
 				this.stateHandler.update(state, machineConfig);
+			}
 
-				// Actions
+			// Actions, some depend on states so we update them after all states are added
+			for (var k = 0; k < machineConfig.states.length; k++) {
+				var state = machineConfig.states[k];
 				for (var l = 0; l < state.actions.length; l++) {
 					this.actionHandler.update(state.actions[l], state);
 				}

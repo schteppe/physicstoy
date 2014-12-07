@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 7;
+Validator.CURRENT_VERSION = 8;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -72,6 +72,10 @@ Validator.upgrade = function(obj){
 		break;
 
 	case 7:
+		obj.version = 8;
+		break;
+
+	case 8:
 		break;
 
 	default:
@@ -240,11 +244,15 @@ schema = {
 													properties: {
 														id: id,
 														type: str,
+
 														positionX: num,
 														positionY: num,
 														angle: num,
 														time: num,
-														toState: id
+														toState: id,
+
+														keyCode: integer,
+														eventType: str
 													}
 												}
 											}

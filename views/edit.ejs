@@ -228,7 +228,7 @@
 													<option>circle</option>
 													<option>box</option>
 													<option>plane</option>
-													<option>convex</option>
+													<!-- <option>convex</option> -->
 													<option>capsule</option>
 												</select>
 											</div>
@@ -347,6 +347,7 @@
 																			<select ng-model="action.type">
 																				<option>wait</option>
 																				<option>setPosition</option>
+																				<option>key</option>
 																			</select>
 																		</div>
 
@@ -357,7 +358,7 @@
 																		</div>
 
 																		<!-- to -->
-																		<div ng-show="action.type=='wait'" class="form-group">
+																		<div ng-show="action.type=='wait' || action.type=='key'" class="form-group">
 																			<label data-tooltip="The state to transition to">to</label>
 																			<select ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states">
 																			</select>
@@ -374,6 +375,21 @@
 																		<div ng-show="action.type=='setPosition'" class="form-group">
 																			<label>angle</label>
 																			<input type="number" ng-model="action.angle"/>
+																		</div>
+
+																		<!-- keyCode -->
+																		<div ng-show="action.type=='key'" class="form-group">
+																			<label>keyCode</label>
+																			<input type="number" ng-model="action.keyCode"/>
+																		</div>
+
+																		<!-- eventType -->
+																		<div ng-show="action.type=='key'" class="form-group">
+																			<label>eventType</label>
+																			<select ng-model="action.eventType">
+																				<option>keydown</option>
+																				<option>keyup</option>
+																			</select>
 																		</div>
 
 																	</div>
@@ -785,6 +801,7 @@
 		<script src="/js/ActionHandler.js"></script>
 		<script src="/js/StateHandler.js"></script>
 		<script src="/js/Machine.js"></script>
+		<script src="/js/KeyAction.js"></script>
 		<script src="/js/SceneCtrl.js"></script>
 		<script src="/qtip/jquery.qtip.min.js"></script>
 		<script src="/js/screenfull.js"></script>
