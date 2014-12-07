@@ -348,6 +348,7 @@
 																				<option>wait</option>
 																				<option>setPosition</option>
 																				<option>setVelocity</option>
+																				<option>addForce</option>
 																				<option>key</option>
 																			</select>
 																		</div>
@@ -389,6 +390,19 @@
 																		<div ng-show="action.type=='setVelocity'" class="form-group">
 																			<label>angular velocity</label>
 																			<input type="number" ng-model="action.angularVelocity"/>
+																		</div>
+
+																		<!-- force -->
+																		<div ng-show="action.type=='addForce'" class="form-group">
+																			<label data-tooltip="The force to add on the body.">force</label>
+																			<input type="number" class="vec2 x" ng-model="action.forceX"/>
+																			<input type="number" class="vec2 y" ng-model="action.forceY"/>
+																		</div>
+
+																		<!-- angularForce -->
+																		<div ng-show="action.type=='addForce'" class="form-group">
+																			<label>angular force</label>
+																			<input type="number" ng-model="action.angularForce"/>
 																		</div>
 
 																		<!-- keyCode -->
@@ -820,6 +834,7 @@
 		<script src="/js/fsm/SetPositionAction.js"></script>
 		<script src="/js/fsm/SetVelocityAction.js"></script>
 		<script src="/js/fsm/WaitAction.js"></script>
+		<script src="/js/fsm/AddForceAction.js"></script>
 		<script src="/js/SceneCtrl.js"></script>
 		<script src="/qtip/jquery.qtip.min.js"></script>
 

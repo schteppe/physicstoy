@@ -246,7 +246,7 @@ angular.module('physicsApp', [])
 			data[vars[i]] = $scope[vars[i]];
 		}
 		data = {
-			version: 9,
+			version: 10,
 			world: JSON.parse(angular.toJson($scope.world)),
 			solver: JSON.parse(angular.toJson($scope.solver)),
 			renderer: JSON.parse(angular.toJson($scope.renderer)),

@@ -6,10 +6,10 @@ function AddForceAction(options){
 	this.angularForce = options.angularForce || 0;
 }
 AddForceAction.prototype = Object.create(Action.prototype);
-AddForceAction.prototype.enter = function(machine){
+AddForceAction.prototype.enter = function(){};
+AddForceAction.prototype.update = function(machine){
 	machine.parent.force[0] += this.force[0];
-        machine.parent.force[1] += this.force[1];
+	machine.parent.force[1] += this.force[1];
 	machine.parent.angularForce += this.angularForce;
 };
-AddForceAction.prototype.update = function(){};
 AddForceAction.prototype.exit = function(){};

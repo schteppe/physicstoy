@@ -5,7 +5,7 @@ module.exports = Validator;
 
 function Validator(){}
 
-Validator.CURRENT_VERSION = 9;
+Validator.CURRENT_VERSION = 10;
 
 Validator.validate = function(object){
 	return validate(object, schema);
@@ -99,6 +99,29 @@ Validator.upgrade = function(obj){
 		break;
 
 	case 9:
+		obj.version = 10;
+		// Added forceXY,angularForce to all actions
+		for(var i=0; i < obj.bodies.length; i++){
+			var body = obj.bodies[i];
+
+			for (var j = 0; j < body.machines.length; j++) {
+				var machine = body.machines[j];
+
+				for (var k = 0; k < machine.states.length; k++) {
+					var state = machine.states[k];
+
+					for (var l = 0; l < state.actions.length; l++) {
+						var action = state.actions[l];
+						action.forceX = 0;
+						action.forceY = 0;
+						action.angularForce = 0;
+					}
+				}
+			}
+		}
+		break;
+
+	case 10:
 		break;
 
 	default:
@@ -275,6 +298,10 @@ schema = {
 														velocityX: num,
 														velocityY: num,
 														angularVelocity: num,
+
+														forceX: num,
+														forceY: num,
+														angularForce: num,
 
 														time: num,
 														toState: id,
