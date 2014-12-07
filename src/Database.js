@@ -6,8 +6,6 @@ module.exports = new Database();
 
 pg.defaults.poolSize = typeof(process.env.PHYSICSTOY_MAX_DB_CONNECTIONS) !== 'undefined' ? parseInt(process.env.PHYSICSTOY_MAX_DB_CONNECTIONS, 10) : 10;
 
-console.log(pg.defaults.poolSize)
-
 function Database(){
 
 }
