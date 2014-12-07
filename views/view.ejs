@@ -7,8 +7,9 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		<script src="/js/p2.js"></script>
-		<script src="/js/pixi.js"></script>
+		<script src="/js/lib/p2.js"></script>
+		<script src="/js/lib/pixi.js"></script>
+		<script src="/js/lib/screenfull.js"></script>
 		<script src="/js/Color.js"></script>
 		<script src="/js/Renderer.js"></script>
 		<script src="/js/WebGLRenderer.js"></script>
@@ -27,10 +28,10 @@
 		<script src="/js/KeyAction.js"></script>
 		<script src="/js/SetPositionAction.js"></script>
 		<script src="/js/SetVelocityAction.js"></script>
+		<script src="/js/WaitAction.js"></script>
 		<script src="/js/ActionHandler.js"></script>
 		<script src="/js/StateHandler.js"></script>
 		<script src="/js/SceneHandler.js"></script>
-		<script src="/js/screenfull.js"></script>
 		<script id="loadedSceneData" type="application/json"><%-scene%></script>
 		<script>
 			var scene = JSON.parse(document.getElementById('loadedSceneData').innerHTML);
