@@ -28,6 +28,43 @@ exports.index = function(req, res, next){
 	});
 };
 
+// GET /browse
+// GET /browse?p=0
+// GET /browse?p=1
+exports.browse = function(req, res, next){
+	var numPerPage = 10;
+	var page = parseInt(req.query.p, 10);
+	if(!isNaN(page)){
+		page = Math.max(page, 0);
+	} else {
+		page = 0;
+	}
+	var offset = page * numPerPage;
+
+	db.query('SELECT * FROM pt_scenes ORDER BY id DESC OFFSET $1 LIMIT $2', [offset,numPerPage], function (err, result){
+		if(err) return next(err);
+
+		// Upgrade all of the data
+		var scenes = [];
+		for (var i = 0; i < result.rows.length; i++) {
+			var row = result.rows[i];
+
+			var upgradedScene = Validator.upgrade(row.scene);
+			if(upgradedScene){
+				scenes.push({
+					id: row.id,
+					scene: upgradedScene
+				});
+			}
+		}
+
+		res.render('browse', {
+			scenes: scenes,
+			page: page
+		});
+	});
+};
+
 // GET /new
 exports.new = function(req, res, next){
 	res.render('edit');
