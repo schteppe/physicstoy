@@ -5,22 +5,9 @@ var Validator = require('../src/Validator');
 
 // GET /
 exports.index = function(req, res, next){
-	db.query('SELECT * FROM pt_scenes ORDER BY id DESC OFFSET 0 LIMIT 10', [], function (err, result){
+
+	Scene.listThumbnailData(0, 10, function (err, scenes){
 		if(err) return next(err);
-
-		// Upgrade all of the data
-		var scenes = [];
-		for (var i = 0; i < result.rows.length; i++) {
-			var row = result.rows[i];
-
-			var upgradedScene = Validator.upgrade(row.scene);
-			if(upgradedScene){
-				scenes.push({
-					id: row.id,
-					scene: upgradedScene
-				});
-			}
-		}
 
 		res.render('index', {
 			scenes: scenes
@@ -41,22 +28,8 @@ exports.browse = function(req, res, next){
 	}
 	var offset = page * numPerPage;
 
-	db.query('SELECT * FROM pt_scenes ORDER BY id DESC OFFSET $1 LIMIT $2', [offset,numPerPage], function (err, result){
+	Scene.listThumbnailData(offset, numPerPage, function (err, scenes){
 		if(err) return next(err);
-
-		// Upgrade all of the data
-		var scenes = [];
-		for (var i = 0; i < result.rows.length; i++) {
-			var row = result.rows[i];
-
-			var upgradedScene = Validator.upgrade(row.scene);
-			if(upgradedScene){
-				scenes.push({
-					id: row.id,
-					scene: upgradedScene
-				});
-			}
-		}
 
 		res.render('browse', {
 			scenes: scenes,
