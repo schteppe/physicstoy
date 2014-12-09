@@ -26,6 +26,9 @@ angular.module('physicsApp', [])
 	sceneHandler = new SceneHandler(world,renderer);
 
 	$scope.playing = false;
+	$scope.togglePlaying = function(){
+		$scope.playing = !$scope.playing;
+	};
 
 	var scene;
 	if(window.scene){

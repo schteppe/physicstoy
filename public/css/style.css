@@ -83,7 +83,7 @@ html,body {
 	text-transform: lowercase;
 	margin-left: 3px;
 }
-.menu input, .menu select {
+.menu input, .menu select, .form-group button.playButton {
 	width:110px;
 	position: absolute;
 	right: 3px;

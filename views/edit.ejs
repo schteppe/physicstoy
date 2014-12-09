@@ -12,13 +12,13 @@
 		<div class="menu-container no-select">
 			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl" style="display:none">
 
-				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=false" ng-class="controlToggled ? 'open' : 'closed'">
+				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=true" ng-class="controlToggled ? 'open' : 'closed'">
 					<div class="text">Control</div>
 				</span>
 				<div class="control content" ng-show="controlToggled">
 					<div class="form-group">
-						<label data-tooltip="Run the simulation.">playing</label>
-						<input type="checkbox" ng-model="playing"/>
+						<label data-tooltip="Run the simulation.">Play/pause</label>
+						<button ng-click="togglePlaying()" class="playButton">{{playing ? 'Stop' : 'Play'}}</button>
 					</div>
 					<div class="form-group">
 						<form method="POST" novalidate id="form">
