@@ -816,31 +816,11 @@
 			<script src="/js/lib/jquery.js"></script>
 		<% } %>
 		<script src="/js/lib/p2.<%-(process.env.NODE_ENV=='development' ? '' : 'min.')%>js"></script>
-		<script src="/js/lib/pixi.js"></script>
 		<script src="/js/lib/screenfull.js"></script>
-		<script src="/js/Color.js"></script>
-		<script src="/js/Renderer.js"></script>
-		<script src="/js/WebGLRenderer.js"></script>
-		<script src="/js/handlers/Handler.js"></script>
-		<script src="/js/handlers/RendererHandler.js"></script>
-		<script src="/js/handlers/SolverHandler.js"></script>
-		<script src="/js/handlers/ShapeHandler.js"></script>
-		<script src="/js/handlers/BodyHandler.js"></script>
-		<script src="/js/handlers/SpringHandler.js"></script>
-		<script src="/js/handlers/ConstraintHandler.js"></script>
-		<script src="/js/handlers/MaterialHandler.js"></script>
-		<script src="/js/handlers/ContactMaterialHandler.js"></script>
-		<script src="/js/handlers/MachineHandler.js"></script>
-		<script src="/js/handlers/WorldHandler.js"></script>
-		<script src="/js/handlers/SceneHandler.js"></script>
-		<script src="/js/handlers/ActionHandler.js"></script>
-		<script src="/js/handlers/StateHandler.js"></script>
-		<script src="/js/fsm/Machine.js"></script>
-		<script src="/js/fsm/KeyAction.js"></script>
-		<script src="/js/fsm/SetPositionAction.js"></script>
-		<script src="/js/fsm/SetVelocityAction.js"></script>
-		<script src="/js/fsm/WaitAction.js"></script>
-		<script src="/js/fsm/AddForceAction.js"></script>
+		<script src="/js/lib/pixi.js"></script>
+
+		<% include renderDeps %>
+
 		<script src="/js/SceneCtrl.js"></script>
 		<script src="/qtip/jquery.qtip.min.js"></script>
 
