@@ -49,10 +49,39 @@ Scene.prototype.listThumbnailData = function(offset, limit, callback){
 
 			var upgradedScene = Validator.upgrade(row.scene);
 			if(upgradedScene){
-				scenes.push({
+				var data = {
 					id: row.id,
-					scene: upgradedScene
-				});
+					scene: {
+						bodies: []
+					}
+				};
+				for (var j = 0; j < upgradedScene.bodies.length; j++) {
+					var body = upgradedScene.bodies[j];
+					var bodyData = {
+						x: body.x,
+						y: body.y,
+						angle: body.angle,
+						shapes: []
+					};
+					for (var k = 0; k < body.shapes.length; k++) {
+						var shape = body.shapes[k];
+						var shapeData = {
+							type: shape.type,
+							x: shape.x,
+							y: shape.y,
+							angle: shape.angle,
+							color: shape.color,
+							width: shape.width,
+							height: shape.height,
+							radius: shape.radius,
+							length: shape.length,
+							vertices: shape.vertices
+						};
+						bodyData.shapes.push(shapeData);
+					}
+					data.scene.bodies.push(bodyData);
+				}
+				scenes.push(data);
 			}
 		}
 
