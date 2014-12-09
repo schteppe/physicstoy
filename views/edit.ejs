@@ -815,7 +815,7 @@
 			<script src="/js/lib/angular.js"></script>
 			<script src="/js/lib/jquery.js"></script>
 		<% } %>
-		<script src="/js/lib/p2.js"></script>
+		<script src="/js/lib/p2.<%-(process.env.NODE_ENV=='development' ? '' : 'min.')%>js"></script>
 		<script src="/js/lib/pixi.js"></script>
 		<script src="/js/lib/screenfull.js"></script>
 		<script src="/js/Color.js"></script>
