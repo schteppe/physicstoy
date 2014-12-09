@@ -38,6 +38,10 @@ module.exports = function(grunt) {
             physicstoy : {
                 src : ['public/js/PhysicsToy.js'],
                 dest : 'public/js/PhysicsToy.min.js'
+            },
+            pixi : {
+                src : ['public/js/lib/pixi.js'],
+                dest : 'public/js/lib/pixi.min.js'
             }
         }
     });
