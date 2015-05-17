@@ -1194,13 +1194,24 @@
 									</div>
 
 									<h4>Shapes</h4>
-
 									<div>
 										<!-- shape select -->
 										<div class="form-group">
 											<div class="btn-group-vertical col-md-12">
 												<button ng-click="setSelectedId(shape.id)" ng-repeat="shape in body.shapes" type="button" class="btn btn-default btn-block">
 													{{shape.name}}
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<h4>Connected springs</h4>
+									<div>
+										<!-- Spring select -->
+										<div class="form-group">
+											<div class="btn-group-vertical col-md-12">
+												<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" ng-show="spring.bodyA == body.id" type="button" class="btn btn-default btn-block">
+													{{spring.name}}
 												</button>
 											</div>
 										</div>
