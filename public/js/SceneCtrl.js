@@ -3,17 +3,6 @@ var sceneHandler;
 var currentSelectedId = -1;
 function setSelectedId(id){
 	currentSelectedId = id;
-	if(currentSelectedId !== id){
-		/*
-		setTimeout(function(){ // Better solution?
-			window.location.hash = "#id-" + id;
-			if(history.pushState){
-				history.pushState('', document.title, window.location.pathname);
-			}
-			currentSelectedId = id;
-		}, 10);
-*/
-	}
 }
 
 angular.module('physicsApp', [])
@@ -37,6 +26,11 @@ angular.module('physicsApp', [])
 
 	$scope.setSelectedId = function (id) {
 		currentSelectedId = id;
+		var obj = sceneHandler.getById(id);
+		if(obj){
+			renderer.clearSelection();
+			renderer.toggleSelect(obj);
+		}
 	};
 
 	renderer.on('selectionChange', function (){
@@ -154,6 +148,7 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			body.shapes.splice(idx, 1);
 		sceneHandler.shapeHandler.remove(body.id, shape);
+		renderer.clearSelection();
 	};
 
 	$scope.removeAction = function (state, action) {

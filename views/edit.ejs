@@ -1014,9 +1014,31 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
 
+							<h4>Bodies</h4>
+							<div>
+								<!-- Body select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(body.id)" ng-repeat="body in bodies" type="button" class="btn btn-default btn-block">
+											{{body.name}}
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>Springs</h4>
+							<div>
+								<!-- Spring select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" type="button" class="btn btn-default btn-block">
+											{{spring.name}}
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1030,29 +1052,6 @@
 								<h4>{{body.name||'&nbsp;'}}</h4>
 
 								<div class="form-horizontal">
-
-									<!-- Shape select -->
-									<div class="form-group">
-										<label class="col-sm-4 control-label">Shapes</label>
-										<div class="col-sm-8">
-											<div class="btn-group">
-												<button type="button" class="btn btn-default">Shapes</button>
-												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-												<span class="caret"></span>
-												<span class="sr-only">Toggle Dropdown</span>
-												</button>
-												<ul class="dropdown-menu" role="menu">
-													<li>
-														<a ng-click="addShapeToBody(body)" href="#">Add shape</a>
-													</li>
-													<li role="presentation" class="divider"></li>
-													<li ng-repeat="shape in body.shapes">
-														<a ng-click="setSelectedId(shape.id)" href="#">{{shape.name}}</a>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
 
 									<!-- name -->
 									<div class="form-group">
@@ -1193,6 +1192,25 @@
 											<input class="form-control" ng-model="body.collisionMask" type="number" step="1"/>
 										</div>
 									</div>
+
+									<h4>Shapes</h4>
+
+									<div>
+										<!-- shape select -->
+										<div class="form-group">
+											<div class="btn-group-vertical col-md-12">
+												<button ng-click="setSelectedId(shape.id)" ng-repeat="shape in body.shapes" type="button" class="btn btn-default btn-block">
+													{{shape.name}}
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeBody(body)" role="button">Remove body</a>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -1276,10 +1294,127 @@
 											<input class="form-control" type="number" min="0" ng-model="shape.height"/>
 										</div>
 									</div>
+
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeShape(body, shape)" role="button">Remove shape</a>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 						<!-- /Shapes -->
+
+
+
+						<!-- Springs -->
+						<div ng-repeat="spring in springs">
+							<div ng-show="getSelectedId() == spring.id" ng-controller="SpringCtrl">
+
+								<h4>{{spring.name||'&nbsp;'}}</h4>
+
+								<div class="form-horizontal">
+
+									<!-- name -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="spring.name" />
+										</div>
+									</div>
+
+									<!-- type -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Type</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="spring.type">
+												<option>linear</option>
+												<option>rotational</option>
+											</select>
+										</div>
+									</div>
+
+									<!-- stiffness -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="Spring stiffness, as defined in Hookes Law.">stiffness</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="spring.stiffness" />
+										</div>
+									</div>
+
+									<!-- damping -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="Spring damping">damping</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="spring.damping" />
+										</div>
+									</div>
+
+									<!-- useInitialRestLength -->
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="spring.useInitialRestLength" /> Use initial rest {{spring.type=='linear' ? 'length' : 'angle'}}
+											</label>
+										</div>
+									</div>
+
+									<!-- restLength -->
+									<div class="form-group" ng-show="!spring.useInitialRestLength">
+										<label class="col-sm-4 control-label" ng-show="spring.type=='linear'">rest length</label>
+										<label class="col-sm-4 control-label" ng-show="spring.type=='rotational'">rest angle</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="spring.restLength" />
+										</div>
+									</div>
+
+									<!-- bodyA -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">body A</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="spring.bodyA" ng-options="springBodyA.id as springBodyA.name for springBodyA in bodies"></select>
+										</div>
+									</div>
+
+									<!-- bodyB -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">body B</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="spring.bodyB" ng-options="springBodyB.id as springBodyB.name for springBodyB in bodies"></select>
+										</div>
+									</div>
+
+									<!-- localAnchorA -->
+									<div class="form-group" ng-show="spring.type=='linear'">
+										<label class="col-sm-4 control-label" data-tooltip="Where to attach the spring on bodyA.">local anchor A</label>
+
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="spring.localAnchorAX"/>
+										</div>
+
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="spring.localAnchorAY"/>
+										</div>
+									</div>
+
+									<!-- localAnchorB -->
+									<div class="form-group" ng-show="spring.type=='linear'">
+										<label class="col-sm-4 control-label" data-tooltip="Where to attach the spring on bodyB.">local anchor B</label>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="spring.localAnchorBX"/>
+										</div>
+
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="spring.localAnchorBY"/>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+						<!-- /Springs -->
+
+
 					</div>
 				</div>
 			</div>
