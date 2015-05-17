@@ -25,7 +25,7 @@ html,body {
 	width:20px;
 	height:20px;
 }
-.no-select {
+* {
     -ms-user-select: none;
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -36,10 +36,10 @@ html,body {
 	width:250px;
 	overflow:auto;
 	overflow-x:hidden;
-	max-height:100%;
+	bottom:0;
 	position: absolute;
 	right: 0;
-	top: 0;
+	top: 60px;
 }
 
 .menu {
@@ -137,4 +137,7 @@ html,body {
 
 .ng-invalid {
 	background-color: red;
+}
+.navbar .brand {
+	margin-left: 0px;
 }

@@ -3,8 +3,6 @@ function ShapeHandler(sceneHandler, world, renderer){
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
-
-	this.objects = {};
 }
 ShapeHandler.prototype = Object.create(Handler.prototype);
 

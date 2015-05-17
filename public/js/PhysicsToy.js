@@ -600,6 +600,61 @@ Renderer.prototype.handleClick = function(physicsPosition){
     }
 };
 
+p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
+    precision = precision || 0;
+
+    // Create a dummy particle body with a particle shape to test against the bodies
+    var pb = new p2.Body({ position:worldPoint }),
+        ps = new p2.Particle(),
+        px = worldPoint,
+        pa = 0,
+        x = [0,0],
+        zero = [0,0],
+        tmp = [0,0];
+    pb.addShape(ps);
+
+    var n = this.narrowphase,
+        result = [];
+
+    // Check bodies
+    for(var i=0, N=bodies.length; i!==N; i++){
+        var b = bodies[i];
+        for(var j=0, NS=b.shapes.length; j!==NS; j++){
+            var s = b.shapes[j],
+                offset = b.shapeOffsets[j] || zero,
+                angle = b.shapeAngles[j] || 0.0;
+
+            // Get shape world position + angle
+            p2.vec2.rotate(x, offset, b.angle);
+            p2.vec2.add(x, x, b.position);
+            var a = angle + b.angle;
+
+            if( (s instanceof p2.Circle    && n.circleParticle  (b,s,x,a,     pb,ps,px,pa, true)) ||
+                (s instanceof p2.Convex    && n.particleConvex  (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Plane     && n.particlePlane   (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Capsule   && n.particleCapsule (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Particle  && p2.vec2.squaredLength(vec2.sub(tmp,x,worldPoint)) < precision*precision)
+                ){
+                result.push(s);
+            }
+        }
+    }
+
+    return result;
+};
+
+
+Renderer.prototype.handleDoubleClick = function(physicsPosition){
+    if(this.selectionEnabled){
+        // Check if the clicked point overlaps bodies
+        var result = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+        this.clearSelection();
+        if(result.length){
+            this.toggleSelect(result[0]);
+        }
+    }
+};
+
 /**
  * Update stats
  */
@@ -802,11 +857,9 @@ WebGLRenderer.prototype.init = function(){
     el.classList.add(Renderer.elementClass);
     el.setAttribute('style','width:100%;');
 
-    var div = this.elementContainer = document.createElement('div');
-    div.classList.add(Renderer.containerClass);
+    var div = this.elementContainer = document.getElementById('p2-container');
     div.setAttribute('style','width:100%; height:100%');
     div.appendChild(el);
-    document.body.appendChild(div);
     el.focus();
     el.oncontextmenu = function(e){
         return false;
@@ -940,7 +993,11 @@ WebGLRenderer.prototype.init = function(){
         that.stagePositionToPhysics(init_physicsPosition, init_stagePosition);
         that.handleMouseMove(init_physicsPosition);
     };
-    container.mouseup = container.touchend = function(e){
+    var lastUpTime = performance.now();
+    container.mouseup = container.touchend = container.dblclick = function(e){
+        var doubleClick = performance.now() - lastUpTime < 300;
+
+        lastUpTime = performance.now();
         if(e.originalEvent.touches){
             lastNumTouches = e.originalEvent.touches.length;
         }
@@ -958,7 +1015,10 @@ WebGLRenderer.prototype.init = function(){
 
         var movedDist = Math.sqrt(Math.pow(e.global.x - lastDownX, 2) + Math.pow(e.global.y - lastDownY, 2));
         if(movedDist < 10){
-            that.handleClick(init_physicsPosition);
+            if(doubleClick)
+                that.handleDoubleClick(init_physicsPosition);
+            else
+                that.handleClick(init_physicsPosition);
         }
     };
 
@@ -1359,6 +1419,9 @@ WebGLRenderer.prototype.updateSpriteTransform = function(sprite,body){
     }
 };
 
+
+var tmpAABB = new p2.AABB();
+
 var X = p2.vec2.fromValues(1,0),
     distVec = p2.vec2.fromValues(0,0),
     worldAnchorA = p2.vec2.fromValues(0,0),
@@ -1486,16 +1549,47 @@ WebGLRenderer.prototype.render = function(){
     this.stage.removeChild(g);
     this.stage.addChild(g);
     g.lineStyle(this.lineWidth * 3, 0x000000,1);
-    for(var i=0; i!==this.selection.length; i++){
-        var body = this.selection[i];
-        if(body instanceof p2.Body){
-            var aabb = body.getAABB();
+    for(var i=0; this.paused && i!==this.selection.length; i++){
+        var object = this.selection[i];
+
+        if(object instanceof p2.Body){
+            var aabb = object.getAABB();
             g.drawRect(
                 aabb.lowerBound[0],
                 aabb.lowerBound[1],
                 aabb.upperBound[0] - aabb.lowerBound[0],
                 aabb.upperBound[1] - aabb.lowerBound[1]
             );
+        }
+
+        if(object instanceof p2.Shape){
+            // Get body of shape
+            var bodyObject;
+            var shapeOffset;
+            var shapeAngle;
+            var world = this.world;
+            for(var k=0; k<world.bodies.length; k++){
+                var body = world.bodies[k];
+                for(var j=0; j<body.shapes.length; j++){
+                    var shape = body.shapes[j];
+                    if(shape === object){
+                        bodyObject = body;
+                        shapeOffset = body.shapeOffsets[j];
+                        shapeAngle = body.shapeAngles[j];
+                    }
+                }
+            }
+
+            if(bodyObject){
+                var offset = [body.position[0] + shapeOffset[0], body.position[1] + shapeOffset[1]];
+                object.computeAABB(tmpAABB, offset, body.angle + shapeAngle);
+                g.drawRect(
+                    tmpAABB.lowerBound[0],
+                    tmpAABB.lowerBound[1],
+                    tmpAABB.upperBound[0] - tmpAABB.lowerBound[0],
+                    tmpAABB.upperBound[1] - tmpAABB.lowerBound[1]
+                );
+            }
         }
     }
 
@@ -1561,6 +1655,10 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
 
                 } else if(child instanceof p2.Plane){
                     // TODO use shape angle
+                    var p0 = p2.vec2.fromValues(-10, 0);
+                    var p1 = p2.vec2.fromValues(10, 0);
+                    p2.vec2.rotate(p0, p0, angle);
+                    p2.vec2.rotate(p1, p1, angle);
                     WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 1e6);
 
                 } else if(child instanceof p2.Line){
@@ -1673,7 +1771,9 @@ Handler.prototype.createId = function(){
 
 Handler.prototype.getIdOf = function(obj){
 	for(var id in this.objects){
-		if(this.objects[id] === obj) return parseInt(id, 10);
+		if(this.objects[id] === obj){
+			return parseInt(id, 10);
+		}
 	}
 	return -1;
 };
@@ -1720,8 +1820,6 @@ function ShapeHandler(sceneHandler, world, renderer){
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
-
-	this.objects = {};
 }
 ShapeHandler.prototype = Object.create(Handler.prototype);
 
@@ -2335,7 +2433,6 @@ function BodyHandler(sceneHandler, world, renderer){
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
-	this.objects = {};
 }
 BodyHandler.prototype = Object.create(Handler.prototype);
 
@@ -2634,6 +2731,33 @@ function SceneHandler(world,renderer){
 
 SceneHandler.prototype.getById = function(id){
 	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id) || this.stateHandler.getById(id);
+};
+
+SceneHandler.prototype.getIdOf = function(object){
+	var id;
+
+	id = this.bodyHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.shapeHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.springHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.machineHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.stateHandler.getIdOf(object);
+	return id;
 };
 
 SceneHandler.prototype.findMaxId = function(config){

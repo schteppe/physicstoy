@@ -23,7 +23,9 @@ Handler.prototype.createId = function(){
 
 Handler.prototype.getIdOf = function(obj){
 	for(var id in this.objects){
-		if(this.objects[id] === obj) return parseInt(id, 10);
+		if(this.objects[id] === obj){
+			return parseInt(id, 10);
+		}
 	}
 	return -1;
 };

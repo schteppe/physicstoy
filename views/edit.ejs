@@ -3,14 +3,21 @@
 	<head>
 		<title>Edit - <%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
 		<% include meta %>
-		<link rel="stylesheet" type="text/css" href="/css/style.css">
-		<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<meta charset="utf-8">
+
+		<script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+		<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/bootstrap/css/bootstrap-theme.min.css">
+		<script src="/bootstrap/js/bootstrap.min.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="/css/style.css">
+		<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css">
 	</head>
-	<body>
+	<body ng-app="physicsApp" ng-controller="SceneCtrl">
+
 		<div class="menu-container no-select">
-			<div class="menu" ng-app="physicsApp" ng-controller="SceneCtrl" style="display:none">
+			<div class="menu" style="display:none">
 
 				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=true" ng-class="controlToggled ? 'open' : 'closed'">
 					<div class="text">Control</div>
@@ -865,6 +872,326 @@
 			});
 
 		</script>
+
+		<div id="p2-container"></div>
+
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">PhysicsToy</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li ng-class="playing ? 'active' : ''">
+							<a id="nav-play" ng-click="togglePlaying()" href="#">
+								<b class="glyphicon glyphicon-play"></b>
+							</a>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Create</a>
+							<ul class="dropdown-menu" role="menu">
+								<li role="presentation" class="dropdown-header">Body</li>
+								<li><a href="#">Box</a></li>
+								<li><a href="#">Circle</a></li>
+								<li><a href="#">Plane</a></li>
+								<li><a href="#">Capsule</a></li>
+								<li><a href="#">Empty</a></li>
+								<li class="divider"></li>
+								<li role="presentation" class="dropdown-header">Spring</li>
+								<li><a href="#">Linear</a></li>
+								<li><a href="#">Angular</a></li>
+								<li class="divider"></li>
+								<li role="presentation" class="dropdown-header">Joint</li>
+								<li><a href="#">Hinge</a></li>
+								<li><a href="#">Lock</a></li>
+								<li><a href="#">Slider</a></li>
+								<li><a href="#">Distance</a></li>
+							</ul>
+						</li>
+						<li>
+							<a href="#" ng-click="save()">Save</a>
+						</li>
+						<li><a href="#">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<nav class="navbar navbar-default" ng-show="getSelectedId() != -1 && !playing" style="position:fixed; top: 60px; left: 10px; width:300px; bottom:0px; overflow: auto;">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+
+
+						<!-- bodies -->
+						<div ng-repeat="body in bodies" ng-controller="BodyCtrl">
+							<div ng-show="body.id == getSelectedId()">
+								<h4>{{body.name||'&nbsp;'}}</h4>
+
+								<div class="form-horizontal">
+
+									<!-- Shape select -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Shapes</label>
+										<div class="col-sm-8">
+											<div class="btn-group">
+												<button type="button" class="btn btn-default">Shapes</button>
+												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+												<span class="caret"></span>
+												<span class="sr-only">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu" role="menu">
+													<li>
+														<a ng-click="addShapeToBody(body)" href="#">Add shape</a>
+													</li>
+													<li role="presentation" class="divider"></li>
+													<li ng-repeat="shape in body.shapes">
+														<a ng-click="setSelectedId(shape.id)" href="#">{{shape.name}}</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+									<!-- name -->
+									<div class="form-group">
+										<label for="bodyInputName" class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input type="text" ng-model="body.name" class="form-control" id="bodyInputName" placeholder="Name">
+										</div>
+									</div>
+
+									<!-- body type -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="Determines how to simulate this body. Static bodies never move. Dynamic bodies always move, and is the only type that respond to forces. A kinematic body will move if you set its velocity.">Type</label>
+										<div class="col-sm-8">
+											<select ng-model="body.type" class="form-control">
+												<option>dynamic</option>
+												<option>static</option>
+												<option>kinematic</option>
+											</select>
+										</div>
+									</div>
+
+									<!-- mass -->
+									<div ng-show="body.type=='dynamic'" class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="Total mass of the body.">Mass</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" step="any" min="0" ng-model="body.mass" />
+										</div>
+									</div>
+
+									<!-- sleep -->
+									<div ng-show="body.type=='dynamic'" class="form-group">
+										<div class="col-sm-offset-4 col-sm-8">
+											<div class="checkbox">
+												<label data-tooltip="If sleeping is enabled, the body will be deactivated if has little velocity for some time.">
+													<input type="checkbox"> Enable sleep
+												</label>
+											</div>
+										</div>
+									</div>
+
+									<!-- gravityScale -->
+									<div ng-show="body.type=='dynamic'" class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="The gravity vector will be scaled by this value before being applied to the body. If you set it to 1, the body will fall normally. 0 will disable gravity for the body, and -1 will make it fall the other way.">gravityScale</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="body.gravityScale" />
+										</div>
+									</div>
+
+									<!-- Positions -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="The initial world position of the bodys center of mass.">position</label>
+
+										<div class="col-sm-4">
+											<input class="form-control" type="number" ng-model="body.x"/>
+										</div>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" ng-model="body.y"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="The initial angle of the body, in radians, around the center of mass. Positive values rotate counter-clockwise.">angle</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="body.angle"/>
+										</div>
+									</div>
+
+									<!-- Velocities -->
+									<div class="form-group" ng-show="body.type!='static'">
+										<label class="col-sm-4 control-label" data-tooltip="Initial velocity of the body.">velocity</label>
+										<div class="col-sm-4">
+											<input type="number" class="form-control" ng-model="body.velocityX"/>
+										</div>
+										<div class="col-sm-4">
+											<input type="number" class="form-control" ng-model="body.velocityY"/>
+										</div>
+									</div>
+
+									<div class="form-group" ng-show="body.type!='static'">
+										<label class="col-sm-4 control-label">angularVelocity</label>
+										<div class="col-sm-8">
+											<input type="number" class="form-control" ng-model="body.angularVelocity"/>
+										</div>
+									</div>
+
+									<!-- damping -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="A value usually between 0 and 1, that will slow down the movement of the body. 0 will not slow it down at all while 1 will slow it down very fast.">damping</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="body.damping" min="0"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">angularDamping</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="body.angularDamping" min="0"/>
+										</div>
+									</div>
+
+									<!-- fixedRotation -->
+									<div ng-show="body.type=='dynamic'" class="form-group">
+										<div class="col-sm-offset-4 col-sm-8">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox"> fixedRotation
+												</label>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">material</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="body.material" ng-options="mat.id as mat.name for mat in materials">
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">group</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="body.collisionGroup">
+												<option>1</option>
+												<option>2</option>
+												<option>4</option>
+												<option>8</option>
+												<option>16</option>
+												<option>32</option>
+												<option>64</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">mask</label>
+										<div class="col-sm-8">
+											<input class="form-control" ng-model="body.collisionMask" type="number" step="1"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- Shapes -->
+						<div ng-repeat="body in bodies">
+							<div ng-repeat="shape in body.shapes" ng-show="getSelectedId() == shape.id" ng-controller="ShapeCtrl">
+
+								<h4>{{shape.name||'&nbsp;'}}</h4>
+
+								<div class="form-horizontal">
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="shape.name"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Type</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="shape.type">
+												<option>circle</option>
+												<option>box</option>
+												<option>plane</option>
+												<option>capsule</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">color</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="color" ng-model="shape.color"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="The position of the shape, locally in the body.">position</label>
+										<div class="col-sm-4">
+											<input type="number" class="form-control" ng-model="shape.x"/>
+										</div>
+										<div class="col-sm-4">
+											<input type="number" class="form-control" ng-model="shape.y"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-4 control-label">angle</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="shape.angle"/>
+										</div>
+									</div>
+
+									<div class="form-group" ng-show="shape.type=='circle' || shape.type=='capsule'">
+										<label class="col-sm-4 control-label" data-tooltip="Circle radius.">radius</label>
+										<div class="col-sm-8">
+											<input type="number" class="form-control" min="0" ng-model="shape.radius" />
+										</div>
+									</div>
+
+									<div class="form-group" ng-show="shape.type=='capsule'">
+										<label class="col-sm-4 control-label" data-tooltip="The distance between the end center points in the capsule. Note that the total length of the capsule becomes length + 2*radius.">length</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" min="0" ng-model="shape.length" />
+										</div>
+									</div>
+
+									<div class="form-group" ng-show="shape.type=='box'">
+										<label class="col-sm-4 control-label" data-tooltip="Total X extent of the rectangle.">width</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" min="0" ng-model="shape.width"/>
+										</div>
+									</div>
+
+									<div class="form-group" ng-show="shape.type=='box'">
+										<label class="col-sm-4 control-label" data-tooltip="Total Y-extent of the rectangle.">height</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" min="0" ng-model="shape.height"/>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /Shapes -->
+					</div>
+				</div>
+			</div>
+		</nav>
 
 		<% include ga %>
 	</body>

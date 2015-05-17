@@ -559,6 +559,61 @@ Renderer.prototype.handleClick = function(physicsPosition){
     }
 };
 
+p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
+    precision = precision || 0;
+
+    // Create a dummy particle body with a particle shape to test against the bodies
+    var pb = new p2.Body({ position:worldPoint }),
+        ps = new p2.Particle(),
+        px = worldPoint,
+        pa = 0,
+        x = [0,0],
+        zero = [0,0],
+        tmp = [0,0];
+    pb.addShape(ps);
+
+    var n = this.narrowphase,
+        result = [];
+
+    // Check bodies
+    for(var i=0, N=bodies.length; i!==N; i++){
+        var b = bodies[i];
+        for(var j=0, NS=b.shapes.length; j!==NS; j++){
+            var s = b.shapes[j],
+                offset = b.shapeOffsets[j] || zero,
+                angle = b.shapeAngles[j] || 0.0;
+
+            // Get shape world position + angle
+            p2.vec2.rotate(x, offset, b.angle);
+            p2.vec2.add(x, x, b.position);
+            var a = angle + b.angle;
+
+            if( (s instanceof p2.Circle    && n.circleParticle  (b,s,x,a,     pb,ps,px,pa, true)) ||
+                (s instanceof p2.Convex    && n.particleConvex  (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Plane     && n.particlePlane   (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Capsule   && n.particleCapsule (pb,ps,px,pa, b,s,x,a,     true)) ||
+                (s instanceof p2.Particle  && p2.vec2.squaredLength(vec2.sub(tmp,x,worldPoint)) < precision*precision)
+                ){
+                result.push(s);
+            }
+        }
+    }
+
+    return result;
+};
+
+
+Renderer.prototype.handleDoubleClick = function(physicsPosition){
+    if(this.selectionEnabled){
+        // Check if the clicked point overlaps bodies
+        var result = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+        this.clearSelection();
+        if(result.length){
+            this.toggleSelect(result[0]);
+        }
+    }
+};
+
 /**
  * Update stats
  */

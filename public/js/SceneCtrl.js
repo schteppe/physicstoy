@@ -2,6 +2,7 @@ var sceneHandler;
 
 var currentSelectedId = -1;
 function setSelectedId(id){
+	currentSelectedId = id;
 	if(currentSelectedId !== id){
 		/*
 		setTimeout(function(){ // Better solution?
@@ -29,6 +30,19 @@ angular.module('physicsApp', [])
 	$scope.togglePlaying = function(){
 		$scope.playing = !$scope.playing;
 	};
+
+	$scope.getSelectedId = function () {
+		return currentSelectedId;
+	};
+
+	$scope.setSelectedId = function (id) {
+		currentSelectedId = id;
+	};
+
+	renderer.on('selectionChange', function (){
+		var id = sceneHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
+		setSelectedId(id || -1);
+	});
 
 	var scene;
 	if(window.scene){
@@ -107,6 +121,33 @@ angular.module('physicsApp', [])
 		}
 		return null;
 	};
+
+	$scope.getShapeConfigById = function (id){
+		for (var i = 0; i < $scope.bodies.length; i++) {
+			var bodyConfig = $scope.bodies[i];
+
+			for (var j = 0; j < bodyConfig.shapes.length; j++) {
+				var shapeConfig = bodyConfig.shapes[j];
+
+				if(shapeConfig.id === id){
+					return shapeConfig;
+				}
+			}
+		}
+		return null;
+	};
+
+	$scope.getBodyFromShape = function (shape){
+        for(var k=0; k<world.bodies.length; k++){
+            var body = world.bodies[k];
+            for(var j=0; j<body.shapes.length; j++){
+                var currentShape = body.shapes[j];
+                if(currentShape === shape){
+                    return body;
+                }
+            }
+        }
+    };
 
 	$scope.removeShape = function(body, shape){
 		var idx = body.shapes.indexOf(shape);
@@ -222,9 +263,11 @@ angular.module('physicsApp', [])
 			return;
 		}
 		switch(evt.keyCode){
+
 		case Keys.SPACE:
 			$scope.playing = !$scope.playing;
 			break;
+
 		case Keys.DELETE:
 			// Delete current selection
 			for (var i = 0; i < renderer.selection.length; i++) {
@@ -233,16 +276,28 @@ angular.module('physicsApp', [])
 					var id = sceneHandler.bodyHandler.getIdOf(obj);
 					var bodyConfig = $scope.getBodyConfigById(id);
 					$scope.removeBody(bodyConfig);
+				} else if(obj instanceof p2.Shape){
+					var shapeId = sceneHandler.shapeHandler.getIdOf(obj);
+					var body = $scope.getBodyFromShape(obj);
+					var bodyId = sceneHandler.bodyHandler.getIdOf(body);
+					var bodyConfig = $scope.getBodyConfigById(bodyId);
+					var shapeConfig = $scope.getShapeConfigById(shapeId);
+					$scope.removeShape(bodyConfig, shapeConfig);
 				}
 			}
+			renderer.clearSelection();
 			break;
 		}
 
 		$scope.$apply();
 	});
 
-	// On click save
+	// On click save - old!
 	document.getElementById('saveButton').addEventListener('click', function (evt){
+		$scope.save();
+	}, true);
+
+	$scope.save = function () {
 		var vars = Object.keys($scope).filter(function(v){ return v[0] !== '$'; });
 		var data = {};
 		for (var i = 0; i < vars.length; i++) {
@@ -262,7 +317,8 @@ angular.module('physicsApp', [])
 		window.location.hash = "";
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
-	}, true);
+	};
+
 
 	/*
 	setTimeout(function(){
@@ -296,6 +352,7 @@ angular.module('physicsApp', [])
 		var config = sceneHandler.shapeHandler.create();
 		body.shapes.push(config);
 		sceneHandler.shapeHandler.add(body, config);
+		$scope.setSelectedId(config.id);
 	};
 
 	$scope.addMachineToBody = function (body) {
@@ -313,12 +370,14 @@ angular.module('physicsApp', [])
 		if(renderer.selection.length){
 			var id = sceneHandler.bodyHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
 			$scope.bodyToggled = ($scope.body.id === id);
-			$scope.$apply();
 
 			if($scope.bodyToggled){
 				setSelectedId(id);
 			}
+		} else {
+			setSelectedId(-1);
 		}
+		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.bodyHandler.create()).map(function(v){ return 'body.' + v; });
@@ -355,12 +414,14 @@ angular.module('physicsApp', [])
 		if(renderer.selection.length){
 			var id = sceneHandler.springHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
 			$scope.springToggled = ($scope.spring.id === id);
-			$scope.$apply();
 
 			if($scope.springToggled){
 				setSelectedId(id);
 			}
+		} else {
+			setSelectedId(-1);
 		}
+		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.springHandler.create()).map(function(v){ return 'spring.' + v; });
@@ -397,12 +458,15 @@ angular.module('physicsApp', [])
 		if(renderer.selection.length){
 			var id = sceneHandler.constraintHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
 			$scope.constraintToggled = ($scope.constraint.id === id);
-			$scope.$apply();
 
 			if($scope.constraintToggled){
 				setSelectedId(id);
 			}
+		} else {
+			setSelectedId(-1);
 		}
+
+		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.constraintHandler.create()).map(function(v){ return 'constraint.' + v; });

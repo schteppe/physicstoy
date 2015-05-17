@@ -3,7 +3,6 @@ function BodyHandler(sceneHandler, world, renderer){
 	this.world = world;
 	this.renderer = renderer;
 	this.sceneHandler = sceneHandler;
-	this.objects = {};
 }
 BodyHandler.prototype = Object.create(Handler.prototype);
 

@@ -115,11 +115,9 @@ WebGLRenderer.prototype.init = function(){
     el.classList.add(Renderer.elementClass);
     el.setAttribute('style','width:100%;');
 
-    var div = this.elementContainer = document.createElement('div');
-    div.classList.add(Renderer.containerClass);
+    var div = this.elementContainer = document.getElementById('p2-container');
     div.setAttribute('style','width:100%; height:100%');
     div.appendChild(el);
-    document.body.appendChild(div);
     el.focus();
     el.oncontextmenu = function(e){
         return false;
@@ -253,7 +251,11 @@ WebGLRenderer.prototype.init = function(){
         that.stagePositionToPhysics(init_physicsPosition, init_stagePosition);
         that.handleMouseMove(init_physicsPosition);
     };
-    container.mouseup = container.touchend = function(e){
+    var lastUpTime = performance.now();
+    container.mouseup = container.touchend = container.dblclick = function(e){
+        var doubleClick = performance.now() - lastUpTime < 300;
+
+        lastUpTime = performance.now();
         if(e.originalEvent.touches){
             lastNumTouches = e.originalEvent.touches.length;
         }
@@ -271,7 +273,10 @@ WebGLRenderer.prototype.init = function(){
 
         var movedDist = Math.sqrt(Math.pow(e.global.x - lastDownX, 2) + Math.pow(e.global.y - lastDownY, 2));
         if(movedDist < 10){
-            that.handleClick(init_physicsPosition);
+            if(doubleClick)
+                that.handleDoubleClick(init_physicsPosition);
+            else
+                that.handleClick(init_physicsPosition);
         }
     };
 
@@ -672,6 +677,9 @@ WebGLRenderer.prototype.updateSpriteTransform = function(sprite,body){
     }
 };
 
+
+var tmpAABB = new p2.AABB();
+
 var X = p2.vec2.fromValues(1,0),
     distVec = p2.vec2.fromValues(0,0),
     worldAnchorA = p2.vec2.fromValues(0,0),
@@ -799,16 +807,47 @@ WebGLRenderer.prototype.render = function(){
     this.stage.removeChild(g);
     this.stage.addChild(g);
     g.lineStyle(this.lineWidth * 3, 0x000000,1);
-    for(var i=0; i!==this.selection.length; i++){
-        var body = this.selection[i];
-        if(body instanceof p2.Body){
-            var aabb = body.getAABB();
+    for(var i=0; this.paused && i!==this.selection.length; i++){
+        var object = this.selection[i];
+
+        if(object instanceof p2.Body){
+            var aabb = object.getAABB();
             g.drawRect(
                 aabb.lowerBound[0],
                 aabb.lowerBound[1],
                 aabb.upperBound[0] - aabb.lowerBound[0],
                 aabb.upperBound[1] - aabb.lowerBound[1]
             );
+        }
+
+        if(object instanceof p2.Shape){
+            // Get body of shape
+            var bodyObject;
+            var shapeOffset;
+            var shapeAngle;
+            var world = this.world;
+            for(var k=0; k<world.bodies.length; k++){
+                var body = world.bodies[k];
+                for(var j=0; j<body.shapes.length; j++){
+                    var shape = body.shapes[j];
+                    if(shape === object){
+                        bodyObject = body;
+                        shapeOffset = body.shapeOffsets[j];
+                        shapeAngle = body.shapeAngles[j];
+                    }
+                }
+            }
+
+            if(bodyObject){
+                var offset = [body.position[0] + shapeOffset[0], body.position[1] + shapeOffset[1]];
+                object.computeAABB(tmpAABB, offset, body.angle + shapeAngle);
+                g.drawRect(
+                    tmpAABB.lowerBound[0],
+                    tmpAABB.lowerBound[1],
+                    tmpAABB.upperBound[0] - tmpAABB.lowerBound[0],
+                    tmpAABB.upperBound[1] - tmpAABB.lowerBound[1]
+                );
+            }
         }
     }
 
@@ -874,6 +913,10 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
 
                 } else if(child instanceof p2.Plane){
                     // TODO use shape angle
+                    var p0 = p2.vec2.fromValues(-10, 0);
+                    var p1 = p2.vec2.fromValues(10, 0);
+                    p2.vec2.rotate(p0, p0, angle);
+                    p2.vec2.rotate(p1, p1, angle);
                     WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 1e6);
 
                 } else if(child instanceof p2.Line){

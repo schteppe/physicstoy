@@ -20,6 +20,33 @@ SceneHandler.prototype.getById = function(id){
 	return this.bodyHandler.getById(id) || this.shapeHandler.getById(id) || this.springHandler.getById(id) || this.machineHandler.getById(id) || this.stateHandler.getById(id);
 };
 
+SceneHandler.prototype.getIdOf = function(object){
+	var id;
+
+	id = this.bodyHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.shapeHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.springHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.machineHandler.getIdOf(object);
+	if(id !== -1){
+		return id;
+	}
+
+	id = this.stateHandler.getIdOf(object);
+	return id;
+};
+
 SceneHandler.prototype.findMaxId = function(config){
 	var f = function (a,b){
 		return a.id > b.id ? a : b;
