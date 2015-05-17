@@ -1985,9 +1985,6 @@ function SpringHandler(sceneHandler, world, renderer){
 	this.sceneHandler = sceneHandler;
 	this.world = world;
 	this.renderer = renderer;
-
-	// Maps id to object
-	this.objects = {};
 }
 SpringHandler.prototype = Object.create(Handler.prototype);
 

@@ -926,11 +926,103 @@
 			</div>
 		</nav>
 
-		<nav class="navbar navbar-default" ng-show="getSelectedId() != -1 && !playing" style="position:fixed; top: 60px; left: 10px; width:300px; bottom:0px; overflow: auto;">
+		<nav class="navbar navbar-default" ng-show="!playing" style="position:fixed; top: 60px; left: 10px; width:300px; bottom:0px; overflow: auto;">
 			<div class="container-fluid">
-				<div class="row">
+
+				<div class="row" ng-show="getSelectedId() == -1">
 					<div class="col-md-12">
 
+						<div class="form-horizontal">
+
+							<h4>World</h4>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="Global gravity acceleration vector.">gravity</label>
+								<div class="col-sm-4">
+									<input class="form-control" type="number" ng-model="world.gravityX"/>
+								</div>
+								<div class="col-sm-4">
+									<input class="form-control" type="number" ng-model="world.gravityY"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="Number of physics steps per second. More means more smooth movement and stable simulation, but needs more computations.">FPS</label>
+								<div class="col-sm-8">
+									<input class="form-control" type="number" step="1" min="1" ng-model="world.fps"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="The maximum number of time steps to use to make the physics clock catch up with the wall clock. Usually, between 3 and 10 are enough.">maxSubSteps</label>
+								<div class="col-sm-8">
+									<input class="form-control" type="number" step="1" min="1" ng-model="world.maxSubSteps"/>
+								</div>
+							</div>
+
+							<h4>Solver</h4>
+
+							<div ng-controller="SolverCtrl">
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" data-tooltip="The number of iterations controls the quality of all constraints, including contacts and friction. More means better quality, but needs more computations. A value between 3 and 10 is usually enough.">
+										iterations
+									</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="number" ng-model="solver.iterations" min="0"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" data-tooltip="If the solver error is less than this value, the solver quit early in its iterations. Set to a small number, for example 0.001.">tolerance</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="number" ng-model="solver.tolerance" min="0"/>
+									</div>
+								</div>
+							</div>
+
+							<h4>Rendering</h4>
+
+							<div ng-controller="RendererCtrl">
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.contacts"/> contacts
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.aabbs"/> aabbs
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.constraints"/> constraints
+											</label>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="row" ng-show="getSelectedId() != -1">
+					<div class="col-md-12">
 
 						<!-- bodies -->
 						<div ng-repeat="body in bodies" ng-controller="BodyCtrl">
