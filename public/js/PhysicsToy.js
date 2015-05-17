@@ -1198,25 +1198,41 @@ WebGLRenderer.drawSpring = function(g,restLength,color,lineWidth){
  * @param  {Number} diagSize
  * @todo Should consider an angle
  */
-WebGLRenderer.drawPlane = function(g, x0, x1, y, color, lineColor, lineWidth, diagMargin, diagSize, maxLength){
+WebGLRenderer.drawPlane = function(g, offset, angle, color, lineColor, lineWidth, diagMargin, diagSize, maxLength){
     lineWidth = typeof(lineWidth)==="number" ? lineWidth : 1;
     color = typeof(color)==="undefined" ? 0xffffff : color;
     g.lineStyle(lineWidth, lineColor, 1);
 
+    var max = maxLength;
+    var q0 = p2.vec2.fromValues(-maxLength, 0);
+    var q1 = p2.vec2.fromValues(maxLength, 0);
+    var q2 = p2.vec2.fromValues(maxLength, -maxLength);
+    var q3 = p2.vec2.fromValues(-maxLength, -maxLength);
+
+    // transform points
+    p2.vec2.rotate(q0, q0, angle);
+    p2.vec2.rotate(q1, q1, angle);
+    p2.vec2.rotate(q2, q2, angle);
+    p2.vec2.rotate(q3, q3, angle);
+
+    p2.vec2.add(q0, q0, offset);
+    p2.vec2.add(q1, q1, offset);
+    p2.vec2.add(q2, q2, offset);
+    p2.vec2.add(q3, q3, offset);
+
     // Draw a fill color
     g.lineStyle(0,0,0);
     g.beginFill(color);
-    var max = maxLength;
-    g.moveTo(-max,y);
-    g.lineTo(max,y);
-    g.lineTo(max,-max);
-    g.lineTo(-max,-max);
+    g.moveTo(q0[0], q0[1]);
+    g.lineTo(q1[0], q1[1]);
+    g.lineTo(q2[0], q2[1]);
+    g.lineTo(q3[0], q3[1]);
     g.endFill();
 
     // Draw the actual plane
     g.lineStyle(lineWidth,lineColor);
-    g.moveTo(-max,y);
-    g.lineTo(max,y);
+    g.moveTo(q0[0], q0[1]);
+    g.lineTo(q1[0], q1[1]);
 };
 
 
@@ -1565,8 +1581,8 @@ WebGLRenderer.prototype.render = function(){
         if(object instanceof p2.Shape){
             // Get body of shape
             var bodyObject;
-            var shapeOffset;
-            var shapeAngle;
+            var shapeOffset = [0,0];
+            var shapeAngle = 0;
             var world = this.world;
             for(var k=0; k<world.bodies.length; k++){
                 var body = world.bodies[k];
@@ -1574,15 +1590,16 @@ WebGLRenderer.prototype.render = function(){
                     var shape = body.shapes[j];
                     if(shape === object){
                         bodyObject = body;
-                        shapeOffset = body.shapeOffsets[j];
+                        p2.vec2.copy(shapeOffset, body.shapeOffsets[j]);
                         shapeAngle = body.shapeAngles[j];
+                        break;
                     }
                 }
             }
 
             if(bodyObject){
-                var offset = [body.position[0] + shapeOffset[0], body.position[1] + shapeOffset[1]];
-                object.computeAABB(tmpAABB, offset, body.angle + shapeAngle);
+                bodyObject.toWorldFrame(shapeOffset, shapeOffset);
+                object.computeAABB(tmpAABB, shapeOffset, bodyObject.angle + shapeAngle);
                 g.drawRect(
                     tmpAABB.lowerBound[0],
                     tmpAABB.lowerBound[1],
@@ -1654,12 +1671,7 @@ WebGLRenderer.prototype.drawRenderable = function(obj, graphics, color, lineColo
                     this.drawCircle(graphics, offset[0], offset[1], angle, 2*lw, lineColor, 0);
 
                 } else if(child instanceof p2.Plane){
-                    // TODO use shape angle
-                    var p0 = p2.vec2.fromValues(-10, 0);
-                    var p1 = p2.vec2.fromValues(10, 0);
-                    p2.vec2.rotate(p0, p0, angle);
-                    p2.vec2.rotate(p1, p1, angle);
-                    WebGLRenderer.drawPlane(graphics, -10, 10, offset[1], child.color, lineColor, lw, lw*10, lw*10, 1e6);
+                    WebGLRenderer.drawPlane(graphics, offset, angle, child.color, lineColor, lw, lw*10, lw*10, 1e3);
 
                 } else if(child instanceof p2.Line){
                     WebGLRenderer.drawLine(graphics, offset, angle, child.length, lineColor, lw);
