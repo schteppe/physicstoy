@@ -823,8 +823,8 @@ WebGLRenderer.prototype.render = function(){
         if(object instanceof p2.Shape){
             // Get body of shape
             var bodyObject;
-            var shapeOffset;
-            var shapeAngle;
+            var shapeOffset = [0,0];
+            var shapeAngle = 0;
             var world = this.world;
             for(var k=0; k<world.bodies.length; k++){
                 var body = world.bodies[k];
@@ -832,15 +832,16 @@ WebGLRenderer.prototype.render = function(){
                     var shape = body.shapes[j];
                     if(shape === object){
                         bodyObject = body;
-                        shapeOffset = body.shapeOffsets[j];
+                        p2.vec2.copy(shapeOffset, body.shapeOffsets[j]);
                         shapeAngle = body.shapeAngles[j];
+                        break;
                     }
                 }
             }
 
             if(bodyObject){
-                var offset = [body.position[0] + shapeOffset[0], body.position[1] + shapeOffset[1]];
-                object.computeAABB(tmpAABB, offset, body.angle + shapeAngle);
+                bodyObject.toWorldFrame(shapeOffset, shapeOffset);
+                object.computeAABB(tmpAABB, shapeOffset, bodyObject.angle + shapeAngle);
                 g.drawRect(
                     tmpAABB.lowerBound[0],
                     tmpAABB.lowerBound[1],
