@@ -1039,6 +1039,18 @@
 									</div>
 								</div>
 							</div>
+
+							<h4>Constraints</h4>
+							<div>
+								<!-- Spring select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" type="button" class="btn btn-default btn-block">
+											{{constraint.name}}
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1420,10 +1432,236 @@
 										</div>
 									</div>
 
+									<!-- delete spring -->
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeSpring(spring)" role="button">Remove spring</a>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
 						<!-- /Springs -->
+
+
+
+
+						<!-- Constraints -->
+						<div ng-repeat="constraint in constraints">
+							<div ng-show="getSelectedId() == constraint.id" ng-controller="ConstraintCtrl">
+
+								<h4>{{constraint.name||'&nbsp;'}}</h4>
+
+								<div class="form-horizontal">
+
+									<!-- name -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="constraint.name" />
+										</div>
+									</div>
+
+									<!-- type -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Type</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="constraint.type">
+												<option>hinge</option>
+												<option>lock</option>
+												<option>slider</option>
+												<option>distance</option>
+												<option>gear</option>
+											</select>
+										</div>
+									</div>
+
+									<!-- stiffness -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="How stiff the constraint should be.">stiffness</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.stiffness" />
+										</div>
+									</div>
+
+									<!-- relaxation -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="How many time steps until the constraint should be stabilized. A value of 4 is usually good.">relaxation</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.relaxation" />
+										</div>
+									</div>
+
+									<!-- bodyA -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">body A</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="constraint.bodyA" ng-options="constraintBodyA.id as constraintBodyA.name for constraintBodyA in bodies"></select>
+										</div>
+									</div>
+
+									<!-- bodyB -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">body B</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="constraint.bodyB" ng-options="constraintBodyB.id as constraintBodyB.name for constraintBodyB in bodies"></select>
+										</div>
+									</div>
+
+									<!-- collideConnected -->
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.collideConnected" /> collideConnected
+											</label>
+										</div>
+									</div>
+
+									<!-- maxForce -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label" data-tooltip="The maximum force to be applied by the constraint.">max force</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.maxForce" />
+										</div>
+									</div>
+
+									<!-- localAnchorA -->
+									<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider' || constraint.type=='hinge'">
+										<label class="col-sm-4 control-label" data-tooltip="Attachment points of the constraint on body A">local anchor A</label>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="constraint.localAnchorAX"/>
+										</div>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="constraint.localAnchorAY"/>
+										</div>
+									</div>
+
+									<!-- localAnchorB -->
+									<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider'">
+										<label class="col-sm-4 control-label" data-tooltip="Attachment points of the constraint on body A">local anchor B</label>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="constraint.localAnchorBX"/>
+										</div>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="constraint.localAnchorBY"/>
+										</div>
+									</div>
+
+									<!-- localAxisA -->
+									<div class="form-group" ng-show="constraint.type=='slider'">
+										<label class="col-sm-4 control-label" data-tooltip="An axis, defined locally in body A, that the anchor point of body B can slide along.">local axis A</label>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="constraint.localAxisAX"/>
+										</div>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="constraint.localAxisAY"/>
+										</div>
+									</div>
+
+									<!-- useCurrentDistance -->
+									<div class="form-group" ng-show="constraint.type=='distance'">
+										<label class="col-sm-4 control-label" data-tooltip="If enabled, the constraint will start at rest.">use initial distance</label>
+										<input type="checkbox" ng-model="constraint.useCurrentDistance" />
+									</div>
+
+									<!-- distance -->
+									<div class="form-group" ng-show="constraint.type=='distance'">
+										<label class="col-sm-4 control-label" data-tooltip="The distance to keep between the world anchor points.">distance</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.distance" />
+										</div>
+									</div>
+
+									<!-- upperLimitEnabled -->
+									<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.upperLimitEnabled" /> enable upper limit
+											</label>
+										</div>
+									</div>
+
+									<!-- lowerLimitEnabled -->
+									<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.lowerLimitEnabled" /> enable lower limit
+											</label>
+										</div>
+									</div>
+
+									<!-- limits -->
+									<div class="form-group" ng-show="(constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider') && (constraint.lowerLimitEnabled || constraint.upperLimitEnabled)">
+										<label class="col-sm-4 control-label">Limits</label>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 x" ng-model="constraint.lowerLimit"/>
+										</div>
+										<div class="col-sm-4">
+											<input class="form-control" type="number" class="vec2 y" ng-model="constraint.upperLimit"/>
+										</div>
+									</div>
+
+									<!-- gear ratio -->
+									<div class="form-group" ng-show="constraint.type=='gear'">
+										<label class="col-sm-4 control-label" data-tooltip="If the gear ratio is 2, then body B is constrained to have the same angle value as body A, but doubled.">gear ratio</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.ratio"/>
+										</div>
+									</div>
+
+									<!-- use rel angle -->
+									<div class="form-group" ng-show="constraint.type=='gear'">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.useCurrentRelAngle"/> use current relative angle
+											</label>
+										</div>
+									</div>
+
+									<!-- relative angle -->
+									<div class="form-group" ng-show="constraint.type=='gear' && !constraint.useCurrentRelAngle">
+										<label class="col-sm-4 control-label">relative angle</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.relAngle"/>
+										</div>
+									</div>
+
+									<!-- enableMotor -->
+									<div class="form-group" ng-show="constraint.type=='slider' || constraint.type=='hinge'">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.motorEnabled"/> motor enabled
+											</label>
+										</div>
+									</div>
+
+									<!-- disableRotationalLock -->
+									<div class="form-group" ng-show="constraint.type=='slider'">
+										<div class="col-sm-offset-4 col-sm-8">
+											<label class="checkbox">
+												<input type="checkbox" ng-model="constraint.disableRotationalLock"/> disable rotational lock
+											</label>
+										</div>
+									</div>
+
+									<!-- motorSpeed -->
+									<div class="form-group" ng-show="(constraint.type=='slider' || constraint.type=='hinge') && constraint.motorEnabled">
+										<label class="col-sm-4 control-label">motor speed</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="constraint.motorSpeed"/>
+										</div>
+									</div>
+
+									<!-- delete constraint -->
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeConstraint(constraint)" role="button">Remove constraint</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /Constraints -->
 
 
 					</div>

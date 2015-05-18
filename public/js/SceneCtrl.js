@@ -157,6 +157,7 @@ angular.module('physicsApp', [])
 			state.actions.splice(idx, 1);
 		}
 		sceneHandler.actionHandler.remove(action);
+		renderer.clearSelection();
 	};
 
 	$scope.removeMachine = function (body, machine) {
@@ -172,6 +173,8 @@ angular.module('physicsApp', [])
 			body.machines.splice(idx, 1);
 		}
 		sceneHandler.machineHandler.remove(machine);
+		$scope.setSelectedId(-1);
+		renderer.clearSelection();
 	};
 
 	$scope.addSpring = function () {
@@ -185,6 +188,8 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			$scope.springs.splice(idx, 1);
 		sceneHandler.springHandler.remove(config);
+		$scope.setSelectedId(-1);
+		renderer.clearSelection();
 	};
 
 	$scope.addConstraint = function () {
@@ -198,6 +203,8 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			$scope.constraints.splice(idx, 1);
 		sceneHandler.constraintHandler.remove(config);
+		$scope.setSelectedId(-1);
+		renderer.clearSelection();
 	};
 
 
@@ -212,6 +219,8 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			$scope.materials.splice(idx, 1);
 		sceneHandler.materialHandler.remove(config);
+		$scope.setSelectedId(-1);
+		renderer.clearSelection();
 	};
 
 
@@ -226,6 +235,7 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			$scope.contactMaterials.splice(idx, 1);
 		sceneHandler.contactMaterialHandler.remove(config);
+		renderer.clearSelection();
 	};
 
 
