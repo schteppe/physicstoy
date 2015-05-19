@@ -63,6 +63,28 @@ angular.module('physicsApp', [])
 		$scope.setSelectedId(bodyConfig.id);
 	};
 
+	$scope.removeBody = function (body) {
+		var idx = $scope.bodies.indexOf(body);
+		if(idx !== -1){
+			$scope.bodies.splice(idx, 1);
+
+			// Remove shapes
+			var shapes = body.shapes;
+			while(shapes.length){
+				$scope.removeShape(body, shapes[0]);
+			}
+
+			// Machines
+			var machines = body.machines;
+			while(machines.length){
+				$scope.removeMachine(body, machines[0]);
+			}
+
+		}
+		sceneHandler.bodyHandler.remove(body);
+		$scope.setSelectedId(-1);
+	};
+
 	$scope.removeState = function (machine, state) {
 		var idx = machine.states.indexOf(state);
 		if(idx !== -1){
@@ -84,28 +106,6 @@ angular.module('physicsApp', [])
 		}
 	};
 
-	$scope.removeBody = function (body) {
-
-		var idx = $scope.bodies.indexOf(body);
-		if(idx !== -1){
-			$scope.bodies.splice(idx, 1);
-
-			// Remove shapes
-			var shapes = body.shapes;
-			while(shapes.length){
-				$scope.removeShape(body, shapes[0]);
-			}
-
-			// Machines
-			var machines = body.machines;
-			while(machines.length){
-				$scope.removeMachine(body, machines[0]);
-			}
-
-		}
-		sceneHandler.bodyHandler.remove(body);
-		$scope.setSelectedId(-1);
-	};
 
 	$scope.getBodyConfigById = function (id){
 		for (var i = 0; i < $scope.bodies.length; i++) {
@@ -238,6 +238,25 @@ angular.module('physicsApp', [])
 		sceneHandler.contactMaterialHandler.remove(config);
 		$scope.setSelectedId(-1);
 	};
+
+
+
+	$scope.quickAdd = function (shapeType, bodyName, shapeName) {
+		var bodyConfig = sceneHandler.bodyHandler.create();
+		$scope.bodies.push(bodyConfig);
+		sceneHandler.bodyHandler.add(bodyConfig);
+
+		var shapeConfig = sceneHandler.shapeHandler.create();
+		bodyConfig.shapes.push(shapeConfig);
+		sceneHandler.shapeHandler.add(bodyConfig, shapeConfig);
+
+		shapeConfig.type = shapeType;
+		bodyConfig.name = bodyName;
+		shapeConfig.name = shapeName;
+
+		$scope.setSelectedId(bodyConfig.id);
+	};
+
 
 
 	$scope.$watch('playing', function (nv, ov){
