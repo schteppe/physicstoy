@@ -99,7 +99,7 @@
 					<div class="form-group">
 						<label>
 							Bodies <button ng-click="addBody()">+</button>
-						</label>
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </label>
 					</div>
 					<ul class="bodies">
 						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
@@ -1024,6 +1024,9 @@
 										<button ng-click="setSelectedId(body.id)" ng-repeat="body in bodies" type="button" class="btn btn-default btn-block">
 											{{body.name}}
 										</button>
+										<button ng-click="addBody()" type="button" class="btn btn-default btn-block">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add body
+										</button>
 									</div>
 								</div>
 							</div>
@@ -1035,6 +1038,9 @@
 									<div class="btn-group-vertical col-md-12">
 										<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" type="button" class="btn btn-default btn-block">
 											{{spring.name}}
+										</button>
+										<button ng-click="addSpring()" type="button" class="btn btn-default btn-block">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add spring
 										</button>
 									</div>
 								</div>
@@ -1048,6 +1054,9 @@
 										<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" type="button" class="btn btn-default btn-block">
 											{{constraint.name}}
 										</button>
+										<button ng-click="addConstraint()" type="button" class="btn btn-default btn-block">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add constraint
+										</button>
 									</div>
 								</div>
 							</div>
@@ -1060,6 +1069,9 @@
 										<button ng-click="setSelectedId(material.id)" ng-repeat="material in materials" type="button" class="btn btn-default btn-block">
 											{{material.name}}
 										</button>
+										<button ng-click="addMaterial()" type="button" class="btn btn-default btn-block">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add material
+										</button>
 									</div>
 								</div>
 							</div>
@@ -1071,6 +1083,9 @@
 									<div class="btn-group-vertical col-md-12">
 										<button ng-click="setSelectedId(contactMaterial.id)" ng-repeat="contactMaterial in contactMaterials" type="button" class="btn btn-default btn-block">
 											{{contactMaterial.name}}
+										</button>
+										<button ng-click="addContactMaterial()" type="button" class="btn btn-default btn-block">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add contact material
 										</button>
 									</div>
 								</div>
@@ -1241,6 +1256,9 @@
 											<div class="btn-group-vertical col-md-12">
 												<button ng-click="setSelectedId(shape.id)" ng-repeat="shape in body.shapes" type="button" class="btn btn-default btn-block">
 													{{shape.name}}
+												</button>
+												<button ng-click="addShapeToBody(body)" type="button" class="btn btn-default btn-block">
+													<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add shape
 												</button>
 											</div>
 										</div>
@@ -1705,18 +1723,24 @@
 								<h4>{{material.name||'&nbsp;'}}</h4>
 								<div class="form-horizontal">
 
-								<!-- name -->
-								<div class="form-group">
-									<label class="col-sm-4 control-label">Name</label>
-									<div class="col-sm-8">
-										<input class="form-control" type="text" ng-model="material.name" />
-									</div>
-								</div>
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li class="active">{{material.name}}</li>
+									</ol>
 
-								<!-- remove material -->
-								<div class="form-group">
-									<div class="col-sm-12">
-										<a class="btn btn-danger btn-block" href="#" ng-click="removeMaterial(material)" role="button">Remove material</a>
+									<!-- name -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="material.name" />
+										</div>
+									</div>
+
+									<!-- remove material -->
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeMaterial(material)" role="button">Remove material</a>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1728,7 +1752,13 @@
 						<div ng-repeat="contactMaterial in contactMaterials">
 							<div ng-show="getSelectedId() == contactMaterial.id" ng-controller="ContactMaterialCtrl">
 								<h4>{{contactMaterial.name||'&nbsp;'}}</h4>
+
 								<div class="form-horizontal">
+
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li class="active">{{contactMaterial.name}}</li>
+									</ol>
 
 									<!-- name -->
 									<div class="form-group">
@@ -1817,8 +1847,12 @@
 										</div>
 									</div>
 								</div>
+
+
 							</div>
 						</div>
+						<!-- /ContactMaterials -->
+
 					</div>
 				</div>
 			</div>

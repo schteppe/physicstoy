@@ -203,7 +203,6 @@ Renderer.prototype.setWorld = function(world){
         that.addVisual(e.body);
     }).on("removeBody",function(e){
         that.removeVisual(e.body);
-        that.removeFromSelection(e.body);
     }).on("addSpring",function(e){
         that.addVisual(e.spring);
     }).on("removeSpring",function(e){

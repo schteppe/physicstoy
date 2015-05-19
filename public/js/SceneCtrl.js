@@ -1,10 +1,5 @@
 var sceneHandler;
 
-var currentSelectedId = -1;
-function setSelectedId(id){
-	currentSelectedId = id;
-}
-
 angular.module('physicsApp', [])
 
 .controller('SceneCtrl', function ($scope, $rootScope) {
@@ -15,27 +10,31 @@ angular.module('physicsApp', [])
 	renderer.state = renderer.defaultState = Renderer.PANZOOM;
 	sceneHandler = new SceneHandler(world,renderer);
 
+	$scope.selectedId = -1;
+
 	$scope.playing = false;
 	$scope.togglePlaying = function(){
 		$scope.playing = !$scope.playing;
 	};
 
 	$scope.getSelectedId = function () {
-		return currentSelectedId;
+		return $scope.selectedId;
 	};
 
 	$scope.setSelectedId = function (id) {
-		currentSelectedId = id;
 		var obj = sceneHandler.getById(id);
-		renderer.clearSelection();
+		renderer.selection.length = 0;
 		if(obj){
-			renderer.toggleSelect(obj);
+			renderer.selection.push(obj);
 		}
+		$scope.selectedId = id;
 	};
 
+	// Selection made from within the renderer. Update the app state
 	renderer.on('selectionChange', function (){
 		var id = sceneHandler.getIdOf(renderer.selection[renderer.selection.length - 1]);
-		setSelectedId(id || -1);
+		$scope.selectedId = id || -1;
+		$scope.$digest();
 	});
 
 	var scene;
@@ -61,6 +60,7 @@ angular.module('physicsApp', [])
 		var bodyConfig = sceneHandler.bodyHandler.create();
 		$scope.bodies.push(bodyConfig);
 		sceneHandler.bodyHandler.add(bodyConfig);
+		$scope.setSelectedId(bodyConfig.id);
 	};
 
 	$scope.removeState = function (machine, state) {
@@ -104,6 +104,7 @@ angular.module('physicsApp', [])
 
 		}
 		sceneHandler.bodyHandler.remove(body);
+		$scope.setSelectedId(-1);
 	};
 
 	$scope.getBodyConfigById = function (id){
@@ -148,7 +149,7 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			body.shapes.splice(idx, 1);
 		sceneHandler.shapeHandler.remove(body.id, shape);
-		renderer.clearSelection();
+		$scope.setSelectedId(-1);
 	};
 
 	$scope.removeAction = function (state, action) {
@@ -157,7 +158,7 @@ angular.module('physicsApp', [])
 			state.actions.splice(idx, 1);
 		}
 		sceneHandler.actionHandler.remove(action);
-		renderer.clearSelection();
+		$scope.setSelectedId(-1);
 	};
 
 	$scope.removeMachine = function (body, machine) {
@@ -174,13 +175,13 @@ angular.module('physicsApp', [])
 		}
 		sceneHandler.machineHandler.remove(machine);
 		$scope.setSelectedId(-1);
-		renderer.clearSelection();
 	};
 
 	$scope.addSpring = function () {
 		var config = sceneHandler.springHandler.create();
 		$scope.springs.push(config);
 		sceneHandler.springHandler.add(config);
+		$scope.setSelectedId(config.id);
 	};
 
 	$scope.removeSpring = function (config) {
@@ -189,13 +190,13 @@ angular.module('physicsApp', [])
 			$scope.springs.splice(idx, 1);
 		sceneHandler.springHandler.remove(config);
 		$scope.setSelectedId(-1);
-		renderer.clearSelection();
 	};
 
 	$scope.addConstraint = function () {
 		var config = sceneHandler.constraintHandler.create();
 		$scope.constraints.push(config);
 		sceneHandler.constraintHandler.add(config);
+		$scope.setSelectedId(config.id);
 	};
 
 	$scope.removeConstraint = function (config) {
@@ -204,7 +205,6 @@ angular.module('physicsApp', [])
 			$scope.constraints.splice(idx, 1);
 		sceneHandler.constraintHandler.remove(config);
 		$scope.setSelectedId(-1);
-		renderer.clearSelection();
 	};
 
 
@@ -212,6 +212,7 @@ angular.module('physicsApp', [])
 		var config = sceneHandler.materialHandler.create();
 		$scope.materials.push(config);
 		sceneHandler.materialHandler.add(config);
+		$scope.setSelectedId(config.id);
 	};
 
 	$scope.removeMaterial = function (config) {
@@ -220,7 +221,6 @@ angular.module('physicsApp', [])
 			$scope.materials.splice(idx, 1);
 		sceneHandler.materialHandler.remove(config);
 		$scope.setSelectedId(-1);
-		renderer.clearSelection();
 	};
 
 
@@ -228,6 +228,7 @@ angular.module('physicsApp', [])
 		var config = sceneHandler.contactMaterialHandler.create();
 		$scope.contactMaterials.push(config);
 		sceneHandler.contactMaterialHandler.add(config);
+		$scope.setSelectedId(config.id);
 	};
 
 	$scope.removeContactMaterial = function (config) {
@@ -235,7 +236,7 @@ angular.module('physicsApp', [])
 		if(idx !== -1)
 			$scope.contactMaterials.splice(idx, 1);
 		sceneHandler.contactMaterialHandler.remove(config);
-		renderer.clearSelection();
+		$scope.setSelectedId(-1);
 	};
 
 
@@ -271,6 +272,7 @@ angular.module('physicsApp', [])
 
 		case Keys.SPACE:
 			$scope.playing = !$scope.playing;
+			$scope.$digest();
 			break;
 
 		case Keys.DELETE:
@@ -290,11 +292,11 @@ angular.module('physicsApp', [])
 					$scope.removeShape(bodyConfig, shapeConfig);
 				}
 			}
-			renderer.clearSelection();
+			renderer.selection.length = 0;
+			$scope.selectedId = -1;
+			$scope.$digest();
 			break;
 		}
-
-		$scope.$apply();
 	});
 
 	// On click save - old!
@@ -377,12 +379,11 @@ angular.module('physicsApp', [])
 			$scope.bodyToggled = ($scope.body.id === id);
 
 			if($scope.bodyToggled){
-				setSelectedId(id);
+				$scope.setSelectedId(id);
 			}
 		} else {
-			setSelectedId(-1);
+			$scope.setSelectedId(-1);
 		}
-		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.bodyHandler.create()).map(function(v){ return 'body.' + v; });
@@ -421,12 +422,11 @@ angular.module('physicsApp', [])
 			$scope.springToggled = ($scope.spring.id === id);
 
 			if($scope.springToggled){
-				setSelectedId(id);
+				$scope.setSelectedId(id);
 			}
 		} else {
-			setSelectedId(-1);
+			$scope.setSelectedId(-1);
 		}
-		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.springHandler.create()).map(function(v){ return 'spring.' + v; });
@@ -465,13 +465,11 @@ angular.module('physicsApp', [])
 			$scope.constraintToggled = ($scope.constraint.id === id);
 
 			if($scope.constraintToggled){
-				setSelectedId(id);
+				$scope.setSelectedId(id);
 			}
 		} else {
-			setSelectedId(-1);
+			$scope.setSelectedId(-1);
 		}
-
-		$scope.$apply();
 	});
 
 	var vars = Object.keys(sceneHandler.constraintHandler.create()).map(function(v){ return 'constraint.' + v; });
