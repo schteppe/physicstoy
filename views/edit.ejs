@@ -1051,6 +1051,30 @@
 									</div>
 								</div>
 							</div>
+
+							<h4>Materials</h4>
+							<div>
+								<!-- Material select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(material.id)" ng-repeat="material in materials" type="button" class="btn btn-default btn-block">
+											{{material.name}}
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>ContactMaterials</h4>
+							<div>
+								<!-- ContactMaterial select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(contactMaterial.id)" ng-repeat="contactMaterial in contactMaterials" type="button" class="btn btn-default btn-block">
+											{{contactMaterial.name}}
+										</button>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -1064,6 +1088,11 @@
 								<h4>{{body.name||'&nbsp;'}}</h4>
 
 								<div class="form-horizontal">
+
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li class="active">{{body.name}}</li>
+									</ol>
 
 									<!-- name -->
 									<div class="form-group">
@@ -1246,6 +1275,12 @@
 								<h4>{{shape.name||'&nbsp;'}}</h4>
 
 								<div class="form-horizontal">
+
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li><a href="#" ng-click="setSelectedId(body.id)">{{body.name}}</a></li>
+										<li class="active">{{shape.name}}</li>
+									</ol>
 
 									<div class="form-group">
 										<label class="col-sm-4 control-label">name</label>
@@ -1664,6 +1699,126 @@
 						<!-- /Constraints -->
 
 
+						<!-- Materials -->
+						<div ng-repeat="material in materials">
+							<div ng-show="getSelectedId() == material.id" ng-controller="MaterialCtrl">
+								<h4>{{material.name||'&nbsp;'}}</h4>
+								<div class="form-horizontal">
+
+								<!-- name -->
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Name</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="text" ng-model="material.name" />
+									</div>
+								</div>
+
+								<!-- remove material -->
+								<div class="form-group">
+									<div class="col-sm-12">
+										<a class="btn btn-danger btn-block" href="#" ng-click="removeMaterial(material)" role="button">Remove material</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /Materials -->
+
+
+						<!-- ContactMaterials -->
+						<div ng-repeat="contactMaterial in contactMaterials">
+							<div ng-show="getSelectedId() == contactMaterial.id" ng-controller="ContactMaterialCtrl">
+								<h4>{{contactMaterial.name||'&nbsp;'}}</h4>
+								<div class="form-horizontal">
+
+									<!-- name -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="contactMaterial.name" />
+										</div>
+									</div>
+
+									<!-- bodyA -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">material A</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="contactMaterial.materialA" ng-options="contactMaterial_materialA.id as contactMaterial_materialA.name for contactMaterial_materialA in materials"></select>
+										</div>
+									</div>
+
+									<!-- materialB -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">material B</label>
+										<div class="col-sm-8">
+											<select class="form-control" ng-model="contactMaterial.materialB" ng-options="contactMaterial_materialB.id as contactMaterial_materialB.name for contactMaterial_materialB in materials"></select>
+										</div>
+									</div>
+
+									<!-- friction -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">friction</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.friction" />
+										</div>
+									</div>
+
+									<!-- restitution -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">restitution</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.restitution" />
+										</div>
+									</div>
+
+									<!-- stiffness -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">stiffness</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.stiffness" />
+										</div>
+									</div>
+
+									<!-- relaxation -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">relaxation</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.relaxation" />
+										</div>
+									</div>
+
+									<!-- frictionStiffness -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">frictionStiffness</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.frictionStiffness" />
+										</div>
+									</div>
+
+									<!-- frictionRelaxation -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">frictionRelaxation</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.frictionRelaxation" />
+										</div>
+									</div>
+
+									<!-- surfaceVelocity -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">surfaceVelocity</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="number" ng-model="contactMaterial.surfaceVelocity" />
+										</div>
+									</div>
+
+									<!-- remove contact material -->
+									<div class="form-group">
+										<div class="col-sm-12">
+											<a class="btn btn-danger btn-block" href="#" ng-click="removeContactMaterial(contactMaterial)" role="button">Remove ContactMaterial</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

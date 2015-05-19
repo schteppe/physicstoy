@@ -27,8 +27,8 @@ angular.module('physicsApp', [])
 	$scope.setSelectedId = function (id) {
 		currentSelectedId = id;
 		var obj = sceneHandler.getById(id);
+		renderer.clearSelection();
 		if(obj){
-			renderer.clearSelection();
 			renderer.toggleSelect(obj);
 		}
 	};
