@@ -162,6 +162,16 @@ angular.module('physicsApp', [])
 		return null;
 	};
 
+	$scope.getConstraintConfigById = function (id){
+		for (var i = 0; i < $scope.constraints.length; i++) {
+			var constraint = $scope.constraints[i];
+			if(constraint.id === id){
+				return constraint;
+			}
+		}
+		return null;
+	};
+
 	$scope.getShapeConfigById = function (id){
 		for (var i = 0; i < $scope.bodies.length; i++) {
 			var bodyConfig = $scope.bodies[i];
@@ -358,7 +368,7 @@ angular.module('physicsApp', [])
 
 		case Keys.DELETE:
 			var id = $scope.selectedId;
-			var bodyConfig, shapeConfig, springConfig;
+			var bodyConfig, shapeConfig, springConfig, constraintConfig;
 
 			if(bodyConfig = $scope.getBodyConfigById(id)){
 				$scope.removeBody(bodyConfig);
@@ -367,6 +377,8 @@ angular.module('physicsApp', [])
 				$scope.removeShape(bodyConfig2, shapeConfig);
 			} else if(springConfig = $scope.getSpringConfigById(id)){
 				$scope.removeSpring(springConfig);
+			} else if(constraintConfig = $scope.getConstraintConfigById(id)){
+				$scope.removeConstraint(constraintConfig);
 			}
 
 			renderer.selection.length = 0;

@@ -1959,7 +1959,6 @@ function WorldHandler(sceneHandler, world, renderer){
 WorldHandler.prototype = Object.create(Handler.prototype);
 
 WorldHandler.prototype.update = function(config){
-	console.log(config)
 	var world = this.world;
 	world.gravity.set([config.gravityX, config.gravityY]);
 	this.renderer.maxSubSteps = config.maxSubSteps;
@@ -2478,8 +2477,6 @@ BodyHandler.prototype.create = function(){
 };
 
 BodyHandler.prototype.update = function(config){
-	console.log(config.fixedRotation)
-
 	var body = this.objects[config.id];
 	if(!body){
 		this.add(config);

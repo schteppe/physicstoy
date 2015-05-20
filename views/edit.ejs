@@ -437,6 +437,11 @@
 
 								<div class="form-horizontal">
 
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li class="active">{{spring.name}}</li>
+									</ol>
+
 									<!-- name -->
 									<div class="form-group">
 										<label class="col-sm-4 control-label">Name</label>
@@ -552,6 +557,11 @@
 								<h4>{{constraint.name||'&nbsp;'}}</h4>
 
 								<div class="form-horizontal">
+
+									<ol class="breadcrumb">
+										<li><a href="#" ng-click="setSelectedId(-1)">World</a></li>
+										<li class="active">{{constraint.name}}</li>
+									</ol>
 
 									<!-- name -->
 									<div class="form-group">
@@ -941,7 +951,7 @@
 
 							<h4>Constraints</h4>
 							<div>
-								<!-- Spring select -->
+								<!-- Constraint select -->
 								<div class="form-group">
 									<div class="btn-group-vertical col-md-12">
 										<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" type="button" class="btn btn-default btn-block btn-sm">
