@@ -2,7 +2,7 @@ var sceneHandler;
 
 angular.module('physicsApp', [])
 
-.controller('SceneCtrl', function ($scope, $rootScope) {
+.controller('SceneCtrl', function ($scope, $rootScope, $timeout) {
 
 	var world = new p2.World();
 	renderer = new WebGLRenderer(world);
@@ -14,7 +14,6 @@ angular.module('physicsApp', [])
 
 	$scope.playing = false;
 	$scope.togglePlaying = function(){
-		console.log('playy')
 		$scope.playing = !$scope.playing;
 	};
 
@@ -79,6 +78,11 @@ angular.module('physicsApp', [])
 	for(var key in scene){
 		$scope[key] = scene[key];
 	}
+
+	// Frame all
+	$timeout(function(){
+		renderer.frameAll();
+	});
 
 	// Make sure we get new ids
 	Handler.idCounter = sceneHandler.findMaxId(scene) + 1;
@@ -350,31 +354,26 @@ angular.module('physicsApp', [])
 
 		case Keys.SPACE:
 			$scope.playing = !$scope.playing;
-			$scope.$digest();
 			break;
 
 		case Keys.DELETE:
-
 			var id = $scope.selectedId;
+			var bodyConfig, shapeConfig, springConfig;
 
-			var bodyConfig = $scope.getBodyConfigById(id);
-			var shapeConfig = $scope.getShapeConfigById(id);
-			var springConfig = $scope.getSpringConfigById(id);
-
-			if(bodyConfig){
+			if(bodyConfig = $scope.getBodyConfigById(id)){
 				$scope.removeBody(bodyConfig);
-			} else if(shapeConfig){
+			} else if(shapeConfig = $scope.getShapeConfigById(id)){
 				var bodyConfig2 = $scope.getBodyConfigFromShapeConfig(shapeConfig);
 				$scope.removeShape(bodyConfig2, shapeConfig);
-			} else if(springConfig){
+			} else if(springConfig = $scope.getSpringConfigById(id)){
 				$scope.removeSpring(springConfig);
 			}
 
 			renderer.selection.length = 0;
 			$scope.selectedId = -1;
-			$scope.$digest();
 			break;
 		}
+		$scope.$digest();
 	});
 
 	$scope.save = function () {
@@ -398,13 +397,6 @@ angular.module('physicsApp', [])
 		document.getElementById('sceneData').setAttribute('value', JSON.stringify(data));
 		document.getElementById('form').submit();
 	};
-
-
-	/*
-	setTimeout(function(){
-		renderer.frameAll();
-	}, 1000);
-	*/
 })
 
 .controller('ShapeCtrl', function ($scope, $rootScope) {

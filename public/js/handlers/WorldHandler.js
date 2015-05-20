@@ -7,7 +7,6 @@ function WorldHandler(sceneHandler, world, renderer){
 WorldHandler.prototype = Object.create(Handler.prototype);
 
 WorldHandler.prototype.update = function(config){
-	console.log(config)
 	var world = this.world;
 	world.gravity.set([config.gravityX, config.gravityY]);
 	this.renderer.maxSubSteps = config.maxSubSteps;

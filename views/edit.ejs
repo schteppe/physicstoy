@@ -47,16 +47,11 @@
 				}
 			<% } %>
 
-			setTimeout(function(){
-				$('.menu').show();
-			}, 1000);
-
 			// Attach qtip
 			// https://github.com/qTip2/qTip2/wiki/Events-Guide#delegation-on--live--delegate
 			$('.menu').on('mouseover', '[data-tooltip!=""]', function (evt){
 				var hasqtip = $(this).data('hasqtip');
 
-				//console.log(hasqtip)
 				if(!hasqtip){
 					$(this).qtip({
 						overwrite: false,
