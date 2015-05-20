@@ -44,6 +44,8 @@ BodyHandler.prototype.create = function(){
 };
 
 BodyHandler.prototype.update = function(config){
+	console.log(config.fixedRotation)
+
 	var body = this.objects[config.id];
 	if(!body){
 		this.add(config);

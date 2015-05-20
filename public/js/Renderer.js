@@ -546,17 +546,6 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
     }
 };
 
-Renderer.prototype.handleClick = function(physicsPosition){
-    if(this.selectionEnabled){
-        // Check if the clicked point overlaps bodies
-        var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
-        this.clearSelection();
-        if(result.length){
-            this.toggleSelect(result[0]);
-        }
-    }
-};
-
 p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
     precision = precision || 0;
 
@@ -600,16 +589,22 @@ p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
     return result;
 };
 
+Renderer.prototype.handleClick = function(physicsPosition){
+    var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
+    var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+    this.emit({
+        type: 'click',
+        targets: result.concat(result2)
+    });
+};
 
 Renderer.prototype.handleDoubleClick = function(physicsPosition){
-    if(this.selectionEnabled){
-        // Check if the clicked point overlaps bodies
-        var result = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
-        this.clearSelection();
-        if(result.length){
-            this.toggleSelect(result[0]);
-        }
-    }
+    var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
+    var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+    this.emit({
+        type: 'dblclick',
+        targets: result.concat(result2)
+    });
 };
 
 /**

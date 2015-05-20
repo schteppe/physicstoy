@@ -587,17 +587,6 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
     }
 };
 
-Renderer.prototype.handleClick = function(physicsPosition){
-    if(this.selectionEnabled){
-        // Check if the clicked point overlaps bodies
-        var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
-        this.clearSelection();
-        if(result.length){
-            this.toggleSelect(result[0]);
-        }
-    }
-};
-
 p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
     precision = precision || 0;
 
@@ -641,16 +630,22 @@ p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
     return result;
 };
 
+Renderer.prototype.handleClick = function(physicsPosition){
+    var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
+    var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+    this.emit({
+        type: 'click',
+        targets: result.concat(result2)
+    });
+};
 
 Renderer.prototype.handleDoubleClick = function(physicsPosition){
-    if(this.selectionEnabled){
-        // Check if the clicked point overlaps bodies
-        var result = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
-        this.clearSelection();
-        if(result.length){
-            this.toggleSelect(result[0]);
-        }
-    }
+    var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
+    var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
+    this.emit({
+        type: 'dblclick',
+        targets: result.concat(result2)
+    });
 };
 
 /**
@@ -1558,6 +1553,7 @@ WebGLRenderer.prototype.render = function(){
     }
 
     // Draw selection
+    // TODO: Only when selection changed
     var g = this.selectionGraphics;
     g.clear();
     this.stage.removeChild(g);
@@ -1566,7 +1562,7 @@ WebGLRenderer.prototype.render = function(){
     for(var i=0; this.paused && i!==this.selection.length; i++){
         var object = this.selection[i];
 
-        if(object instanceof p2.Body){
+        if(object instanceof p2.Body && object.shapes.length){
             var aabb = object.getAABB();
             g.drawRect(
                 aabb.lowerBound[0],
@@ -1963,6 +1959,7 @@ function WorldHandler(sceneHandler, world, renderer){
 WorldHandler.prototype = Object.create(Handler.prototype);
 
 WorldHandler.prototype.update = function(config){
+	console.log(config)
 	var world = this.world;
 	world.gravity.set([config.gravityX, config.gravityY]);
 	this.renderer.maxSubSteps = config.maxSubSteps;
@@ -2481,6 +2478,8 @@ BodyHandler.prototype.create = function(){
 };
 
 BodyHandler.prototype.update = function(config){
+	console.log(config.fixedRotation)
+
 	var body = this.objects[config.id];
 	if(!body){
 		this.add(config);

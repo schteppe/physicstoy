@@ -16,796 +16,6 @@
 	</head>
 	<body ng-app="physicsApp" ng-controller="SceneCtrl">
 
-		<div class="menu-container no-select">
-			<div class="menu" style="display:none">
-
-				<span class="control header" ng-click="controlToggled=!controlToggled" ng-init="controlToggled=true" ng-class="controlToggled ? 'open' : 'closed'">
-					<div class="text">Control</div>
-				</span>
-				<div class="control content" ng-show="controlToggled">
-					<div class="form-group">
-						<label data-tooltip="Run the simulation.">Play/pause</label>
-						<button ng-click="togglePlaying()" class="playButton">{{playing ? 'Stop' : 'Play'}}</button>
-					</div>
-					<div class="form-group">
-						<form method="POST" novalidate id="form">
-							<label data-tooltip="Publish the scene on the web.">save</label>
-							<input id="sceneData" name="scene" type="hidden" />
-							<input id="saveButton" type="submit" value="Save"/>
-						</form>
-					</div>
-				</div>
-
-				<span class="solver header" ng-click="solverToggled=!solverToggled" ng-init="solverToggled=false" ng-class="solverToggled ? 'open' : 'closed'">
-					<div class="text">Solver</div>
-				</span>
-
-				<div class="solver content" ng-show="solverToggled" ng-controller="SolverCtrl">
-					<div class="form-group">
-						<label data-tooltip="The number of iterations controls the quality of all constraints, including contacts and friction. More means better quality, but needs more computations. A value between 3 and 10 is usually enough.">
-							max iterations
-						</label>
-						<input type="number" ng-model="solver.iterations" min="0"/>
-					</div>
-
-					<div class="form-group">
-						<label data-tooltip="If the solver error is less than this value, the solver quit early in its iterations. Set to a small number, for example 0.001.">tolerance</label>
-						<input type="number" ng-model="solver.tolerance" min="0"/>
-					</div>
-				</div>
-
-				<span class="renderer header" ng-click="rendererToggled=!rendererToggled" ng-init="rendererToggled=false" ng-class="rendererToggled ? 'open' : 'closed'">
-					<div class="text">Renderer</div>
-				</span>
-
-				<div class="renderer content" ng-show="rendererToggled" ng-controller="RendererCtrl">
-					<div class="form-group">
-						<label>contacts</label>
-						<input type="checkbox" ng-model="renderer.contacts"/>
-					</div>
-
-					<div class="form-group">
-						<label data-tooltip="Render bounding boxes.">aabbs</label>
-						<input type="checkbox" ng-model="renderer.aabbs"/>
-					</div>
-
-					<div class="form-group">
-						<label data-tooltip="Render constraints.">constraints</label>
-						<input type="checkbox" ng-model="renderer.constraints"/>
-					</div>
-				</div>
-
-				<span class="world header" ng-click="worldToggled=!worldToggled" ng-init="worldToggled=true" ng-class="worldToggled ? 'open' : 'closed'">
-					<div class="text">World</div>
-				</span>
-
-				<div class="world content" ng-show="worldToggled">
-					<div class="form-group">
-						<label data-tooltip="Global gravity acceleration vector.">gravity</label>
-						<input type="number" class="vec2 x" ng-model="world.gravityX"/>
-						<input type="number" class="vec2 y" ng-model="world.gravityY"/>
-					</div>
-
-					<div class="form-group">
-						<label data-tooltip="Number of physics steps per second. More means more smooth movement and stable simulation, but needs more computations.">FPS</label>
-						<input type="number" step="1" min="1" ng-model="world.fps"/>
-					</div>
-
-					<div class="form-group">
-						<label data-tooltip="The maximum number of time steps to use to make the physics clock catch up with the wall clock. Usually, between 3 and 10 are enough.">max substeps</label>
-						<input type="number" step="1" min="1" ng-model="world.maxSubSteps"/>
-					</div>
-
-					<div class="form-group">
-						<label>
-							Bodies <button ng-click="addBody()">+</button>
-						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </label>
-					</div>
-					<ul class="bodies">
-						<li class="body" ng-repeat="body in bodies" ng-controller="BodyCtrl">
-							<span class="body header" id="id-{{body.id}}" ng-class="bodyToggled ? 'open' : 'closed'" ng-click="bodyToggled=!bodyToggled" ng-init="bodyToggled=false">
-								<div class="text">{{body.name||'&nbsp;'}}</div>
-								<span class="rm" ng-click="removeBody(body)">X</span>
-							</span>
-
-							<div class="body content" ng-show="bodyToggled">
-
-								<!-- name -->
-								<div class="form-group">
-									<label>Name</label>
-									<input type="text" ng-model="body.name" />
-								</div>
-
-								<!-- body type -->
-								<div class="form-group">
-									<label data-tooltip="Determines how to simulate this body. Static bodies never move. Dynamic bodies always move, and is the only type that respond to forces. A kinematic body will move if you set its velocity.">Type</label>
-									<select ng-model="body.type">
-										<option>dynamic</option>
-										<option>static</option>
-										<option>kinematic</option>
-									</select>
-								</div>
-
-								<!-- mass -->
-								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label data-tooltip="Total mass of the body.">Mass</label>
-									<input type="number" step="any" min="0" ng-model="body.mass" />
-								</div>
-
-								<!-- sleep -->
-								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label data-tooltip="If sleeping is enabled, the body will be deactivated if has little velocity for some time.">Enable sleep</label>
-									<input type="checkbox" ng-model="body.enableSleep" />
-								</div>
-
-								<!-- gravityScale -->
-								<div ng-show="body.type=='dynamic'" class="form-group">
-									<label data-tooltip="The gravity vector will be scaled by this value before being applied to the body. If you set it to 1, the body will fall normally. 0 will disable gravity for the body, and -1 will make it fall the other way.">gravity scale</label>
-									<input type="number" ng-model="body.gravityScale" />
-								</div>
-
-								<!-- Positions -->
-								<div class="form-group">
-									<label data-tooltip="The initial world position of the bodys center of mass.">position</label>
-									<input type="number" class="vec2 x" ng-model="body.x"/>
-									<input type="number" class="vec2 y" ng-model="body.y"/>
-								</div>
-
-								<div class="form-group">
-									<label data-tooltip="The initial angle of the body, in radians, around the center of mass. Positive values rotate counter-clockwise.">angle</label>
-									<input type="number" ng-model="body.angle"/>
-								</div>
-
-								<!-- Velocities -->
-								<div class="form-group" ng-show="body.type!='static'">
-									<label data-tooltip="Initial velocity of the body.">velocity</label>
-									<input type="number" class="vec2 x" ng-model="body.velocityX"/>
-									<input type="number" class="vec2 y" ng-model="body.velocityY"/>
-								</div>
-
-								<div class="form-group" ng-show="body.type!='static'">
-									<label>angular velocity</label>
-									<input type="number" ng-model="body.angularVelocity"/>
-								</div>
-
-								<!-- damping -->
-								<div class="form-group">
-									<label data-tooltip="A value usually between 0 and 1, that will slow down the movement of the body. 0 will not slow it down at all while 1 will slow it down very fast.">damping</label>
-									<input type="number" ng-model="body.damping" min="0"/>
-								</div>
-
-								<div class="form-group">
-									<label>angular damping</label>
-									<input type="number" ng-model="body.angularDamping" min="0"/>
-								</div>
-
-								<div class="form-group">
-									<label data-tooltip="If enabled, the body will not be able to rotate.">fixed rotation</label>
-									<input type="checkbox" ng-model="body.fixedRotation"/>
-								</div>
-
-								<div class="form-group">
-									<label>material</label>
-									<select ng-model="body.material" ng-options="mat.id as mat.name for mat in materials">
-									</select>
-								</div>
-
-								<div class="form-group">
-									<label>collision group</label>
-									<select ng-model="body.collisionGroup">
-										<option>1</option>
-										<option>2</option>
-										<option>4</option>
-										<option>8</option>
-										<option>16</option>
-										<option>32</option>
-										<option>64</option>
-									</select>
-								</div>
-
-								<div class="form-group">
-									<label>collision mask</label>
-									<input ng-model="body.collisionMask" type="number" step="1"/>
-								</div>
-
-								<!-- Shapes -->
-								<div class="form-group">
-									<label>
-										Shapes <button ng-click="addShapeToBody(body)">+</button>
-									</label>
-								</div>
-								<ul class="shapes">
-									<li class="shape" ng-repeat="shape in body.shapes" ng-controller="ShapeCtrl">
-
-										<span class="shape header" id="id-{{shape.id}}" ng-click="shapeToggled=!shapeToggled" ng-init="shapeToggled=false" ng-class="shapeToggled ? 'open' : 'closed'">
-											<div class="text">{{shape.name||'&nbsp;'}}</div>
-											<span class="rm" ng-click="removeShape(body,shape)">X</span>
-										</span>
-
-										<div class="shape content" ng-show="shapeToggled">
-
-											<div class="form-group">
-												<label>name</label>
-												<input type="text" ng-model="shape.name"/>
-											</div>
-
-											<div class="form-group">
-												<label>Type</label>
-												<select ng-model="shape.type">
-													<option>circle</option>
-													<option>box</option>
-													<option>plane</option>
-													<!-- <option>convex</option> -->
-													<option>capsule</option>
-												</select>
-											</div>
-
-											<div class="form-group">
-												<label>color</label>
-												<input type="color" ng-model="shape.color"/>
-											</div>
-
-											<div class="form-group">
-												<label data-tooltip="The position of the shape, locally in the body.">local position</label>
-												<input type="number" class="vec2 x" ng-model="shape.x"/>
-												<input type="number" class="vec2 y" ng-model="shape.y"/>
-											</div>
-
-											<div class="form-group">
-												<label>local angle</label>
-												<input type="number" ng-model="shape.angle"/>
-											</div>
-
-											<div class="form-group" ng-show="shape.type=='circle' || shape.type=='capsule'">
-												<label data-tooltip="Circle radius.">radius</label>
-												<input type="number" min="0" ng-model="shape.radius" />
-											</div>
-
-											<div class="form-group" ng-show="shape.type=='capsule'">
-												<label data-tooltip="The distance between the end center points in the capsule. Note that the total length of the capsule becomes length + 2*radius.">length</label>
-												<input type="number" min="0" ng-model="shape.length" />
-											</div>
-
-											<div class="form-group" ng-show="shape.type=='box'">
-												<label data-tooltip="Total X extent of the rectangle.">width</label>
-												<input type="number" min="0" ng-model="shape.width"/>
-											</div>
-
-											<div class="form-group" ng-show="shape.type=='box'">
-												<label data-tooltip="Total Y-extent of the rectangle.">height</label>
-												<input type="number" min="0" ng-model="shape.height"/>
-											</div>
-
-											<div class="form-group" ng-show="shape.type=='convex'">
-												<label>vertices</label>
-											</div>
-										</div>
-									</li>
-								</ul>
-								<!-- / Shapes -->
-
-								<!-- State machines -->
-								<div class="form-group">
-									<label>
-										State machines <button ng-click="addMachineToBody(body)">+</button>
-									</label>
-								</div>
-								<ul class="machines">
-									<li class="machine" ng-repeat="machine in body.machines" ng-controller="MachineCtrl">
-
-										<span class="machine header" id="id-{{machine.id}}" ng-click="machineToggled=!machineToggled" ng-init="machineToggled=false" ng-class="machineToggled ? 'open' : 'closed'">
-											<div class="text">{{machine.name||'&nbsp;'}}</div>
-											<span class="rm" ng-click="removeMachine(body,machine)">X</span>
-										</span>
-
-										<div class="machine content" ng-show="machineToggled">
-
-											<!-- name -->
-											<div class="form-group">
-												<label>Name</label>
-												<input type="text" ng-model="machine.name" />
-											</div>
-
-											<div class="form-group">
-												<label data-tooltip="Log the state transitions to the developer console.">log</label>
-												<input type="checkbox" ng-model="machine.log"/>
-											</div>
-
-											<!-- states -->
-											<div class="form-group">
-												<label>
-													States <button ng-click="addState(machine)">+</button>
-												</label>
-											</div>
-											<ul class="states">
-												<li class="state" ng-repeat="state in machine.states" ng-controller="StateCtrl">
-
-													<span class="state header" id="id-{{state.id}}" ng-click="stateToggled=!stateToggled" ng-init="stateToggled=false" ng-class="stateToggled ? 'open' : 'closed'">
-														<div class="text">{{state.name||'&nbsp;'}}</div>
-														<span class="rm" ng-click="removeState(machine,state)">X</span>
-													</span>
-
-													<div class="state content" ng-show="stateToggled">
-
-														<!-- name -->
-														<div class="form-group">
-															<label>Name</label>
-															<input type="text" ng-model="state.name" />
-														</div>
-
-														<!-- actions -->
-														<div class="form-group">
-															<label>
-																Actions <button ng-click="addAction(state)">+</button>
-															</label>
-														</div>
-														<ul class="actions">
-															<li class="action" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
-
-																<span class="action header" id="id-{{action.id}}" ng-click="actionToggled=!actionToggled" ng-init="actionToggled=false" ng-class="actionToggled ? 'open' : 'closed'">
-																	<div class="text">{{action.type}} action</div>
-																	<span class="rm" ng-click="removeAction(state,action)">X</span>
-																</span>
-
-																<div class="action content" ng-show="actionToggled">
-																	<div class="form-group">
-																		<div class="form-group">
-																			<label>Type</label>
-																			<select ng-model="action.type">
-																				<option>wait</option>
-																				<option>setPosition</option>
-																				<option>setVelocity</option>
-																				<option>addForce</option>
-																				<option>key</option>
-																			</select>
-																		</div>
-
-																		<!-- time -->
-																		<div ng-show="action.type=='wait'" class="form-group">
-																			<label>time</label>
-																			<input type="number" step="any" min="0" ng-model="action.time" />
-																		</div>
-
-																		<!-- to -->
-																		<div ng-show="action.type=='wait' || action.type=='key'" class="form-group">
-																			<label data-tooltip="The state to transition to">to</label>
-																			<select ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states">
-																			</select>
-																		</div>
-
-																		<!-- position -->
-																		<div ng-show="action.type=='setPosition'" class="form-group">
-																			<label data-tooltip="World position to warp the body to.">position</label>
-																			<input type="number" class="vec2 x" ng-model="action.positionX"/>
-																			<input type="number" class="vec2 y" ng-model="action.positionY"/>
-																		</div>
-
-																		<!-- angle -->
-																		<div ng-show="action.type=='setPosition'" class="form-group">
-																			<label>angle</label>
-																			<input type="number" ng-model="action.angle"/>
-																		</div>
-
-																		<!-- velocity -->
-																		<div ng-show="action.type=='setVelocity'" class="form-group">
-																			<label data-tooltip="The velocity to set on the body.">velocity</label>
-																			<input type="number" class="vec2 x" ng-model="action.velocityX"/>
-																			<input type="number" class="vec2 y" ng-model="action.velocityY"/>
-																		</div>
-
-																		<!-- angularVelocity -->
-																		<div ng-show="action.type=='setVelocity'" class="form-group">
-																			<label>angular velocity</label>
-																			<input type="number" ng-model="action.angularVelocity"/>
-																		</div>
-
-																		<!-- force -->
-																		<div ng-show="action.type=='addForce'" class="form-group">
-																			<label data-tooltip="The force to add on the body.">force</label>
-																			<input type="number" class="vec2 x" ng-model="action.forceX"/>
-																			<input type="number" class="vec2 y" ng-model="action.forceY"/>
-																		</div>
-
-																		<!-- angularForce -->
-																		<div ng-show="action.type=='addForce'" class="form-group">
-																			<label>angular force</label>
-																			<input type="number" ng-model="action.angularForce"/>
-																		</div>
-
-																		<!-- localFrame -->
-																		<div ng-show="action.type=='addForce'" class="form-group">
-																			<label>local frame</label>
-																			<input type="checkbox" ng-model="action.localFrame"/>
-																		</div>
-
-																		<!-- keyCode -->
-																		<div ng-show="action.type=='key'" class="form-group">
-																			<label>keyCode</label>
-																			<input type="number" ng-model="action.keyCode"/>
-																		</div>
-
-																		<!-- eventType -->
-																		<div ng-show="action.type=='key'" class="form-group">
-																			<label>eventType</label>
-																			<select ng-model="action.eventType">
-																				<option>keydown</option>
-																				<option>keyup</option>
-																			</select>
-																		</div>
-
-																	</div>
-																</div>
-															</li>
-														</ul>
-														<!-- / actions -->
-
-													</div>
-												</li>
-											</ul>
-											<!-- / states -->
-
-										</div>
-									</li>
-								</ul>
-								<!-- / State machines -->
-
-							</div>
-						</li>
-					</ul>
-
-					<div class="form-group">
-						<label>
-							Springs <button ng-click="addSpring()">+</button>
-						</label>
-					</div>
-					<ul class="springs">
-						<li class="spring" ng-repeat="spring in springs" ng-controller="SpringCtrl">
-							<span class="spring header" id="id-{{spring.id}}" ng-click="springToggled=!springToggled" ng-init="springToggled=false" ng-class="springToggled ? 'open' : 'closed'">
-								<div class="text">{{spring.name||'&nbsp;'}}</div>
-								<span class="rm" ng-click="removeSpring(spring)">X</span>
-							</span>
-
-							<div class="spring content" ng-show="springToggled">
-
-								<!-- name -->
-								<div class="form-group">
-									<label>Name</label>
-									<input type="text" ng-model="spring.name" />
-								</div>
-
-								<!-- type -->
-								<div class="form-group">
-									<label>Type</label>
-									<select ng-model="spring.type">
-										<option>linear</option>
-										<option>rotational</option>
-									</select>
-								</div>
-
-								<!-- stiffness -->
-								<div class="form-group">
-									<label data-tooltip="Spring stiffness, as defined in Hookes Law.">stiffness</label>
-									<input type="number" ng-model="spring.stiffness" />
-								</div>
-
-								<!-- damping -->
-								<div class="form-group">
-									<label data-tooltip="Spring damping">damping</label>
-									<input type="number" ng-model="spring.damping" />
-								</div>
-
-								<!-- useInitialRestLength -->
-								<div class="form-group">
-									<label ng-show="spring.type=='linear'" data-tooltip="Make the spring start at its rest length.">use initial rest length</label>
-									<label ng-show="spring.type=='rotational'" data-tooltip="Use the initial relative angle as rest angle.">use initial rest angle</label>
-									<input type="checkbox" ng-model="spring.useInitialRestLength" />
-								</div>
-
-								<!-- restLength -->
-								<div class="form-group" ng-show="!spring.useInitialRestLength">
-									<label ng-show="spring.type=='linear'">rest length</label>
-									<label ng-show="spring.type=='rotational'">rest angle</label>
-									<input type="number" ng-model="spring.restLength" />
-								</div>
-
-								<!-- bodyA -->
-								<div class="form-group">
-									<label>body A</label>
-									<select ng-model="spring.bodyA" ng-options="springBodyA.id as springBodyA.name for springBodyA in bodies">
-									</select>
-								</div>
-
-								<!-- bodyB -->
-								<div class="form-group">
-									<label>body B</label>
-									<select ng-model="spring.bodyB" ng-options="springBodyB.id as springBodyB.name for springBodyB in bodies">
-									</select>
-								</div>
-
-								<!-- localAnchorA -->
-								<div class="form-group" ng-show="spring.type=='linear'">
-									<label data-tooltip="Where to attach the spring on bodyA.">local anchor A</label>
-									<input type="number" class="vec2 x" ng-model="spring.localAnchorAX"/>
-									<input type="number" class="vec2 y" ng-model="spring.localAnchorAY"/>
-								</div>
-
-								<!-- localAnchorB -->
-								<div class="form-group" ng-show="spring.type=='linear'">
-									<label data-tooltip="Where to attach the spring on bodyB.">local anchor B</label>
-									<input type="number" class="vec2 x" ng-model="spring.localAnchorBX"/>
-									<input type="number" class="vec2 y" ng-model="spring.localAnchorBY"/>
-								</div>
-
-							</div>
-						</li>
-					</ul>
-
-					<div class="form-group">
-						<label>
-							Constraints <button ng-click="addConstraint()">+</button>
-						</label>
-					</div>
-					<ul class="constraints">
-						<li class="constraint" ng-repeat="constraint in constraints" ng-controller="ConstraintCtrl">
-							<span class="constraint header" id="id-{{constraint.id}}" ng-click="constraintToggled=!constraintToggled" ng-init="constraintToggled=false" ng-class="constraintToggled ? 'open' : 'closed'">
-								<div class="text">{{constraint.name||'&nbsp;'}}</div>
-								<span class="rm" ng-click="removeConstraint(constraint)">X</span>
-							</span>
-
-							<div class="constraint content" ng-show="constraintToggled">
-
-								<!-- name -->
-								<div class="form-group">
-									<label>Name</label>
-									<input type="text" ng-model="constraint.name" />
-								</div>
-
-								<!-- type -->
-								<div class="form-group">
-									<label>Type</label>
-									<select ng-model="constraint.type">
-										<option>hinge</option>
-										<option>lock</option>
-										<option>slider</option>
-										<option>distance</option>
-										<option>gear</option>
-									</select>
-								</div>
-
-								<!-- stiffness -->
-								<div class="form-group">
-									<label data-tooltip="How stiff the constraint should be.">stiffness</label>
-									<input type="number" ng-model="constraint.stiffness" />
-								</div>
-
-								<!-- relaxation -->
-								<div class="form-group">
-									<label data-tooltip="How many time steps until the constraint should be stabilized. A value of 4 is usually good.">relaxation</label>
-									<input type="number" ng-model="constraint.relaxation" />
-								</div>
-
-								<!-- bodyA -->
-								<div class="form-group">
-									<label>body A</label>
-									<select ng-model="constraint.bodyA" ng-options="constraintBodyA.id as constraintBodyA.name for constraintBodyA in bodies">
-									</select>
-								</div>
-
-								<!-- bodyB -->
-								<div class="form-group">
-									<label>body B</label>
-									<select ng-model="constraint.bodyB" ng-options="constraintBodyB.id as constraintBodyB.name for constraintBodyB in bodies">
-									</select>
-								</div>
-
-								<!-- collideConnected -->
-								<div class="form-group">
-									<label data-tooltip="If enabled, the connected bodies will also collide.">collide connected</label>
-									<input type="checkbox" ng-model="constraint.collideConnected" />
-								</div>
-
-								<!-- maxForce -->
-								<div class="form-group">
-									<label data-tooltip="The maximum force to be applied by the constraint.">max force</label>
-									<input type="number" ng-model="constraint.maxForce" />
-								</div>
-
-								<!-- localAnchorA -->
-								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider' || constraint.type=='hinge'">
-									<label data-tooltip="Attachment points of the constraint on body A">local anchor A</label>
-									<input type="number" class="vec2 x" ng-model="constraint.localAnchorAX"/>
-									<input type="number" class="vec2 y" ng-model="constraint.localAnchorAY"/>
-								</div>
-
-								<!-- localAnchorB -->
-								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='slider'">
-									<label data-tooltip="Attachment points of the constraint on body A">local anchor B</label>
-									<input type="number" class="vec2 x" ng-model="constraint.localAnchorBX"/>
-									<input type="number" class="vec2 y" ng-model="constraint.localAnchorBY"/>
-								</div>
-
-								<!-- localAxisA -->
-								<div class="form-group" ng-show="constraint.type=='slider'">
-									<label data-tooltip="An axis, defined locally in body A, that the anchor point of body B can slide along.">local axis A</label>
-									<input type="number" class="vec2 x" ng-model="constraint.localAxisAX"/>
-									<input type="number" class="vec2 y" ng-model="constraint.localAxisAY"/>
-								</div>
-
-								<!-- useCurrentDistance -->
-								<div class="form-group" ng-show="constraint.type=='distance'">
-									<label data-tooltip="If enabled, the constraint will start at rest.">use initial distance</label>
-									<input type="checkbox" ng-model="constraint.useCurrentDistance" />
-								</div>
-
-								<!-- distance -->
-								<div class="form-group" ng-show="constraint.type=='distance'">
-									<label data-tooltip="The distance to keep between the world anchor points.">distance</label>
-									<input type="number" ng-model="constraint.distance" />
-								</div>
-
-								<!-- upperLimitEnabled -->
-								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
-									<label>enable upper limit</label>
-									<input type="checkbox" ng-model="constraint.upperLimitEnabled" />
-								</div>
-
-								<!-- lowerLimitEnabled -->
-								<div class="form-group" ng-show="constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider'">
-									<label>enable lower limit</label>
-									<input type="checkbox" ng-model="constraint.lowerLimitEnabled" />
-								</div>
-
-								<!-- limits -->
-								<div class="form-group" ng-show="(constraint.type=='distance' || constraint.type=='hinge' || constraint.type=='slider') && (constraint.lowerLimitEnabled || constraint.upperLimitEnabled)">
-									<label>Limits</label>
-									<input type="number" class="vec2 x" ng-model="constraint.lowerLimit"/>
-									<input type="number" class="vec2 y" ng-model="constraint.upperLimit"/>
-								</div>
-
-								<!-- gear ratio -->
-								<div class="form-group" ng-show="constraint.type=='gear'">
-									<label data-tooltip="If the gear ratio is 2, then body B is constrained to have the same angle value as body A, but doubled.">gear ratio</label>
-									<input type="number" ng-model="constraint.ratio"/>
-								</div>
-
-								<!-- use rel angle -->
-								<div class="form-group" ng-show="constraint.type=='gear'">
-									<label data-tooltip="If enabled, the constraint will start at rest.">use current relative angle</label>
-									<input type="checkbox" ng-model="constraint.useCurrentRelAngle"/>
-								</div>
-
-								<!-- relative angle -->
-								<div class="form-group" ng-show="constraint.type=='gear' && !constraint.useCurrentRelAngle">
-									<label>relative angle</label>
-									<input type="number" ng-model="constraint.relAngle"/>
-								</div>
-
-								<!-- enableMotor -->
-								<div class="form-group" ng-show="constraint.type=='slider' || constraint.type=='hinge'">
-									<label data-tooltip="If enabled, the sliding velocity of your slider, or rotational velocity of your hinge, will be constrained to a given value.">motor enabled</label>
-									<input type="checkbox" ng-model="constraint.motorEnabled"/>
-								</div>
-
-								<!-- disableRotationalLock -->
-								<div class="form-group" ng-show="constraint.type=='slider'">
-									<label>disable rotational lock</label>
-									<input type="checkbox" ng-model="constraint.disableRotationalLock"/>
-								</div>
-
-								<!-- motorSpeed -->
-								<div class="form-group" ng-show="(constraint.type=='slider' || constraint.type=='hinge') && constraint.motorEnabled">
-									<label>motor speed</label>
-									<input type="number" ng-model="constraint.motorSpeed"/>
-								</div>
-							</div>
-						</li>
-					</ul>
-
-					<div class="form-group">
-						<label>
-							Materials <button ng-click="addMaterial()">+</button>
-						</label>
-					</div>
-					<ul class="materials">
-						<li class="material" ng-repeat="material in materials" ng-controller="MaterialCtrl">
-							<span class="material header" id="id-{{material.id}}" ng-click="materialToggled=!materialToggled" ng-init="materialToggled=false" ng-class="materialToggled ? 'open' : 'closed'">
-								<div class="text">{{material.name||'&nbsp;'}}</div>
-								<span class="rm" ng-click="removeMaterial(material)">X</span>
-							</span>
-
-							<div class="material content" ng-show="materialToggled">
-
-								<!-- name -->
-								<div class="form-group">
-									<label>Name</label>
-									<input type="text" ng-model="material.name" />
-								</div>
-							</div>
-						</li>
-					</ul>
-
-					<div class="form-group">
-						<label>
-							ContactMaterials <button ng-click="addContactMaterial()">+</button>
-						</label>
-					</div>
-					<ul class="contactMaterials">
-						<li class="contactMaterial" ng-repeat="contactMaterial in contactMaterials" ng-controller="ContactMaterialCtrl">
-							<span class="contactMaterial header" id="id-{{contactMaterial.id}}" ng-click="contactMaterialToggled=!contactMaterialToggled" ng-init="contactMaterialToggled=false" ng-class="contactMaterialToggled ? 'open' : 'closed'">
-								<div class="text">{{contactMaterial.name||'&nbsp;'}}</div>
-								<span class="rm" ng-click="removeContactMaterial(contactMaterial)">X</span>
-							</span>
-
-							<div class="contactMaterial content" ng-show="contactMaterialToggled">
-
-								<!-- name -->
-								<div class="form-group">
-									<label>Name</label>
-									<input type="text" ng-model="contactMaterial.name" />
-								</div>
-
-								<!-- bodyA -->
-								<div class="form-group">
-									<label>material A</label>
-									<select ng-model="contactMaterial.materialA" ng-options="contactMaterial_materialA.id as contactMaterial_materialA.name for contactMaterial_materialA in materials">
-									</select>
-								</div>
-
-								<!-- materialB -->
-								<div class="form-group">
-									<label>material B</label>
-									<select ng-model="contactMaterial.materialB" ng-options="contactMaterial_materialB.id as contactMaterial_materialB.name for contactMaterial_materialB in materials">
-									</select>
-								</div>
-
-								<!-- friction -->
-								<div class="form-group">
-									<label>friction</label>
-									<input type="number" ng-model="contactMaterial.friction" />
-								</div>
-
-								<!-- restitution -->
-								<div class="form-group">
-									<label>restitution</label>
-									<input type="number" ng-model="contactMaterial.restitution" />
-								</div>
-
-								<!-- stiffness -->
-								<div class="form-group">
-									<label>stiffness</label>
-									<input type="number" ng-model="contactMaterial.stiffness" />
-								</div>
-
-								<!-- relaxation -->
-								<div class="form-group">
-									<label>relaxation</label>
-									<input type="number" ng-model="contactMaterial.relaxation" />
-								</div>
-
-								<!-- frictionStiffness -->
-								<div class="form-group">
-									<label>frictionStiffness</label>
-									<input type="number" ng-model="contactMaterial.frictionStiffness" />
-								</div>
-
-								<!-- frictionRelaxation -->
-								<div class="form-group">
-									<label>frictionRelaxation</label>
-									<input type="number" ng-model="contactMaterial.frictionRelaxation" />
-								</div>
-
-								<!-- surfaceVelocity -->
-								<div class="form-group">
-									<label>surfaceVelocity</label>
-									<input type="number" ng-model="contactMaterial.surfaceVelocity" />
-								</div>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-
 		<% include fullscreenbutton %>
 
 		<% if(typeof(scene) !== 'undefined'){ %>
@@ -925,173 +135,13 @@
 			</div>
 		</nav>
 
+		<form method="POST" novalidate id="form" style="display:none">
+			<input id="sceneData" name="scene" type="hidden" />
+			<input id="saveButton" type="submit"/>
+		</form>
+
 		<nav class="navbar navbar-default" ng-show="!playing" style="position:fixed; top: 60px; left: 10px; width:300px; bottom:0px; overflow: auto;">
 			<div class="container-fluid">
-
-				<div class="row" ng-show="getSelectedId() == -1">
-					<div class="col-md-12">
-
-						<div class="form-horizontal">
-
-							<h4>World</h4>
-
-							<div class="form-group">
-								<label class="col-sm-4 control-label" data-tooltip="Global gravity acceleration vector.">gravity</label>
-								<div class="col-sm-4">
-									<input class="form-control" type="number" ng-model="world.gravityX"/>
-								</div>
-								<div class="col-sm-4">
-									<input class="form-control" type="number" ng-model="world.gravityY"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label class="col-sm-4 control-label" data-tooltip="Number of physics steps per second. More means more smooth movement and stable simulation, but needs more computations.">FPS</label>
-								<div class="col-sm-8">
-									<input class="form-control" type="number" step="1" min="1" ng-model="world.fps"/>
-								</div>
-							</div>
-
-							<div class="form-group">
-								<label class="col-sm-4 control-label" data-tooltip="The maximum number of time steps to use to make the physics clock catch up with the wall clock. Usually, between 3 and 10 are enough.">maxSubSteps</label>
-								<div class="col-sm-8">
-									<input class="form-control" type="number" step="1" min="1" ng-model="world.maxSubSteps"/>
-								</div>
-							</div>
-
-							<h4>Solver</h4>
-
-							<div ng-controller="SolverCtrl">
-
-								<div class="form-group">
-									<label class="col-sm-4 control-label" data-tooltip="The number of iterations controls the quality of all constraints, including contacts and friction. More means better quality, but needs more computations. A value between 3 and 10 is usually enough.">
-										iterations
-									</label>
-									<div class="col-sm-8">
-										<input class="form-control" type="number" ng-model="solver.iterations" min="0"/>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<label class="col-sm-4 control-label" data-tooltip="If the solver error is less than this value, the solver quit early in its iterations. Set to a small number, for example 0.001.">tolerance</label>
-									<div class="col-sm-8">
-										<input class="form-control" type="number" ng-model="solver.tolerance" min="0"/>
-									</div>
-								</div>
-							</div>
-
-							<h4>Rendering</h4>
-
-							<div ng-controller="RendererCtrl">
-
-								<div class="form-group">
-									<div class="col-sm-offset-4 col-sm-8">
-										<div class="checkbox">
-											<label class="col-sm-4 control-label">
-												<input type="checkbox" ng-model="renderer.contacts"/> contacts
-											</label>
-										</div>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<div class="col-sm-offset-4 col-sm-8">
-										<div class="checkbox">
-											<label class="col-sm-4 control-label">
-												<input type="checkbox" ng-model="renderer.aabbs"/> aabbs
-											</label>
-										</div>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<div class="col-sm-offset-4 col-sm-8">
-										<div class="checkbox">
-											<label class="col-sm-4 control-label">
-												<input type="checkbox" ng-model="renderer.constraints"/> constraints
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<h4>Bodies</h4>
-							<div>
-								<!-- Body select -->
-								<div class="form-group">
-									<div class="btn-group-vertical col-md-12">
-										<button ng-click="setSelectedId(body.id)" ng-repeat="body in bodies" type="button" class="btn btn-default btn-block">
-											{{body.name}}
-										</button>
-										<button ng-click="addBody()" type="button" class="btn btn-default btn-block">
-											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add body
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<h4>Springs</h4>
-							<div>
-								<!-- Spring select -->
-								<div class="form-group">
-									<div class="btn-group-vertical col-md-12">
-										<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" type="button" class="btn btn-default btn-block">
-											{{spring.name}}
-										</button>
-										<button ng-click="addSpring()" type="button" class="btn btn-default btn-block">
-											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add spring
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<h4>Constraints</h4>
-							<div>
-								<!-- Spring select -->
-								<div class="form-group">
-									<div class="btn-group-vertical col-md-12">
-										<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" type="button" class="btn btn-default btn-block">
-											{{constraint.name}}
-										</button>
-										<button ng-click="addConstraint()" type="button" class="btn btn-default btn-block">
-											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add constraint
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<h4>Materials</h4>
-							<div>
-								<!-- Material select -->
-								<div class="form-group">
-									<div class="btn-group-vertical col-md-12">
-										<button ng-click="setSelectedId(material.id)" ng-repeat="material in materials" type="button" class="btn btn-default btn-block">
-											{{material.name}}
-										</button>
-										<button ng-click="addMaterial()" type="button" class="btn btn-default btn-block">
-											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add material
-										</button>
-									</div>
-								</div>
-							</div>
-
-							<h4>ContactMaterials</h4>
-							<div>
-								<!-- ContactMaterial select -->
-								<div class="form-group">
-									<div class="btn-group-vertical col-md-12">
-										<button ng-click="setSelectedId(contactMaterial.id)" ng-repeat="contactMaterial in contactMaterials" type="button" class="btn btn-default btn-block">
-											{{contactMaterial.name}}
-										</button>
-										<button ng-click="addContactMaterial()" type="button" class="btn btn-default btn-block">
-											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add contact material
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 
 				<div class="row" ng-show="getSelectedId() != -1">
 					<div class="col-md-12">
@@ -1141,7 +191,7 @@
 										<div class="col-sm-offset-4 col-sm-8">
 											<div class="checkbox">
 												<label data-tooltip="If sleeping is enabled, the body will be deactivated if has little velocity for some time.">
-													<input type="checkbox"> Enable sleep
+													<input type="checkbox" ng-model="body.enableSleep"> Enable sleep
 												</label>
 											</div>
 										</div>
@@ -1212,7 +262,7 @@
 										<div class="col-sm-offset-4 col-sm-8">
 											<div class="checkbox">
 												<label>
-													<input type="checkbox"> fixedRotation
+													<input type="checkbox" ng-model="body.fixedRotation"> fixedRotation
 												</label>
 											</div>
 										</div>
@@ -1221,8 +271,7 @@
 									<div class="form-group">
 										<label class="col-sm-4 control-label">material</label>
 										<div class="col-sm-8">
-											<select class="form-control" ng-model="body.material" ng-options="mat.id as mat.name for mat in materials">
-											</select>
+											<select class="form-control" ng-model="body.material" ng-options="mat.id as mat.name for mat in materials"></select>
 										</div>
 									</div>
 
@@ -1854,6 +903,176 @@
 
 					</div>
 				</div>
+
+
+
+				<div class="row" ng-show="getSelectedId() == -1">
+					<div class="col-md-12">
+
+						<div class="form-horizontal">
+
+							<h4>Bodies</h4>
+							<div>
+								<!-- Body select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(body.id)" ng-repeat="body in bodies" type="button" class="btn btn-default btn-block btn-sm">
+											{{body.name}}
+										</button>
+										<button ng-click="addBody()" type="button" class="btn btn-default btn-block btn-sm">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add body
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>Springs</h4>
+							<div>
+								<!-- Spring select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" type="button" class="btn btn-default btn-block btn-sm">
+											{{spring.name}}
+										</button>
+										<button ng-click="addSpring()" type="button" class="btn btn-default btn-block btn-sm">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add spring
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>Constraints</h4>
+							<div>
+								<!-- Spring select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" type="button" class="btn btn-default btn-block btn-sm">
+											{{constraint.name}}
+										</button>
+										<button ng-click="addConstraint()" type="button" class="btn btn-default btn-block btn-sm">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add constraint
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>Materials</h4>
+							<div>
+								<!-- Material select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(material.id)" ng-repeat="material in materials" type="button" class="btn btn-default btn-block btn-sm">
+											{{material.name}}
+										</button>
+										<button ng-click="addMaterial()" type="button" class="btn btn-default btn-block btn-sm">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add material
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<h4>ContactMaterials</h4>
+							<div>
+								<!-- ContactMaterial select -->
+								<div class="form-group">
+									<div class="btn-group-vertical col-md-12">
+										<button ng-click="setSelectedId(contactMaterial.id)" ng-repeat="contactMaterial in contactMaterials" type="button" class="btn btn-default btn-block btn-sm">
+											{{contactMaterial.name}}
+										</button>
+										<button ng-click="addContactMaterial()" type="button" class="btn btn-default btn-block btn-sm">
+											<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add contact material
+										</button>
+									</div>
+								</div>
+							</div>
+
+
+							<h4>World</h4>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="Global gravity acceleration vector.">gravity</label>
+								<div class="col-sm-4">
+									<input class="form-control" type="number" ng-model="world.gravityX"/>
+								</div>
+								<div class="col-sm-4">
+									<input class="form-control" type="number" ng-model="world.gravityY"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="Number of physics steps per second. More means more smooth movement and stable simulation, but needs more computations.">FPS</label>
+								<div class="col-sm-8">
+									<input class="form-control" type="number" step="1" min="1" ng-model="world.fps"/>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-4 control-label" data-tooltip="The maximum number of time steps to use to make the physics clock catch up with the wall clock. Usually, between 3 and 10 are enough.">maxSubSteps</label>
+								<div class="col-sm-8">
+									<input class="form-control" type="number" step="1" min="1" ng-model="world.maxSubSteps"/>
+								</div>
+							</div>
+
+							<h4>Solver</h4>
+
+							<div ng-controller="SolverCtrl">
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" data-tooltip="The number of iterations controls the quality of all constraints, including contacts and friction. More means better quality, but needs more computations. A value between 3 and 10 is usually enough.">
+										iterations
+									</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="number" ng-model="solver.iterations" min="0"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" data-tooltip="If the solver error is less than this value, the solver quit early in its iterations. Set to a small number, for example 0.001.">tolerance</label>
+									<div class="col-sm-8">
+										<input class="form-control" type="number" ng-model="solver.tolerance" min="0"/>
+									</div>
+								</div>
+							</div>
+
+							<h4>Rendering</h4>
+
+							<div ng-controller="RendererCtrl">
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.contacts"/> contacts
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.aabbs"/> aabbs
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-offset-4 col-sm-8">
+										<div class="checkbox">
+											<label class="col-sm-4 control-label">
+												<input type="checkbox" ng-model="renderer.constraints"/> constraints
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
 			</div>
 		</nav>
 

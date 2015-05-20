@@ -818,6 +818,7 @@ WebGLRenderer.prototype.render = function(){
     }
 
     // Draw selection
+    // TODO: Only when selection changed
     var g = this.selectionGraphics;
     g.clear();
     this.stage.removeChild(g);
@@ -826,7 +827,7 @@ WebGLRenderer.prototype.render = function(){
     for(var i=0; this.paused && i!==this.selection.length; i++){
         var object = this.selection[i];
 
-        if(object instanceof p2.Body){
+        if(object instanceof p2.Body && object.shapes.length){
             var aabb = object.getAABB();
             g.drawRect(
                 aabb.lowerBound[0],
