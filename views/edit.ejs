@@ -317,8 +317,11 @@
 										<!-- Spring select -->
 										<div class="form-group">
 											<div class="btn-group-vertical col-md-12">
-												<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" ng-show="spring.bodyA == body.id" type="button" class="btn btn-default btn-block">
+												<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" ng-show="spring.bodyA == body.id" type="button" class="btn btn-default btn-block btn-sm">
 													{{spring.name}}
+												</button>
+												<button ng-click="addSpring(body.id)" type="button" class="btn btn-default btn-block btn-sm">
+													<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add spring
 												</button>
 											</div>
 										</div>

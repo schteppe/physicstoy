@@ -148,6 +148,16 @@ angular.module('physicsApp', [])
 		return null;
 	};
 
+	$scope.getSpringConfigById = function (id){
+		for (var i = 0; i < $scope.springs.length; i++) {
+			var spring = $scope.springs[i];
+			if(spring.id === id){
+				return spring;
+			}
+		}
+		return null;
+	};
+
 	$scope.getShapeConfigById = function (id){
 		for (var i = 0; i < $scope.bodies.length; i++) {
 			var bodyConfig = $scope.bodies[i];
@@ -174,6 +184,17 @@ angular.module('physicsApp', [])
             }
         }
     };
+
+	$scope.getBodyConfigFromShapeConfig = function (shapeConfig){
+		for (var i = 0; i < $scope.bodies.length; i++) {
+			var bodyConfig = $scope.bodies[i];
+
+			if(bodyConfig.shapes.indexOf(shapeConfig) !== -1){
+				return bodyConfig;
+			}
+		}
+		return null;
+	};
 
 	$scope.removeShape = function(body, shape){
 		var idx = body.shapes.indexOf(shape);
@@ -209,9 +230,15 @@ angular.module('physicsApp', [])
 		$scope.setSelectedId(-1);
 	};
 
-	$scope.addSpring = function () {
+	$scope.addSpring = function (bodyIdA, bodyIdB) {
 		var config = sceneHandler.springHandler.create();
 		$scope.springs.push(config);
+		if(bodyIdA !== undefined){
+			config.bodyA = bodyIdA;
+		}
+		if(bodyIdB !== undefined){
+			config.bodyB = bodyIdB;
+		}
 		sceneHandler.springHandler.add(config);
 		$scope.setSelectedId(config.id);
 	};
@@ -327,33 +354,28 @@ angular.module('physicsApp', [])
 			break;
 
 		case Keys.DELETE:
-			// Delete current selection
-			for (var i = 0; i < renderer.selection.length; i++) {
-				var obj = renderer.selection[i];
-				if(obj instanceof p2.Body){
-					var id = sceneHandler.bodyHandler.getIdOf(obj);
-					var bodyConfig = $scope.getBodyConfigById(id);
-					$scope.removeBody(bodyConfig);
-				} else if(obj instanceof p2.Shape){
-					var shapeId = sceneHandler.shapeHandler.getIdOf(obj);
-					var body = $scope.getBodyFromShape(obj);
-					var bodyId = sceneHandler.bodyHandler.getIdOf(body);
-					var bodyConfig = $scope.getBodyConfigById(bodyId);
-					var shapeConfig = $scope.getShapeConfigById(shapeId);
-					$scope.removeShape(bodyConfig, shapeConfig);
-				}
+
+			var id = $scope.selectedId;
+
+			var bodyConfig = $scope.getBodyConfigById(id);
+			var shapeConfig = $scope.getShapeConfigById(id);
+			var springConfig = $scope.getSpringConfigById(id);
+
+			if(bodyConfig){
+				$scope.removeBody(bodyConfig);
+			} else if(shapeConfig){
+				var bodyConfig2 = $scope.getBodyConfigFromShapeConfig(shapeConfig);
+				$scope.removeShape(bodyConfig2, shapeConfig);
+			} else if(springConfig){
+				$scope.removeSpring(springConfig);
 			}
+
 			renderer.selection.length = 0;
 			$scope.selectedId = -1;
 			$scope.$digest();
 			break;
 		}
 	});
-
-	// On click save - old!
-	// document.getElementById('saveButton').addEventListener('click', function (evt){
-	// 	$scope.save();
-	// }, true);
 
 	$scope.save = function () {
 		var vars = Object.keys($scope).filter(function(v){ return v[0] !== '$'; });
