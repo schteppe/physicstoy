@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		var container = containers[i];
 
 		var canvas = document.createElement('CANVAS');
-		canvas.width = 100 * dpr;
-		canvas.height = 100 * dpr;
+		canvas.width = 300 * dpr;
+		canvas.height = 300 * dpr;
 		container.appendChild(canvas);
 		var ctx = canvas.getContext('2d');
 

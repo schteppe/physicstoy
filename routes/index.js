@@ -3,10 +3,11 @@ var db = require(path.join(__dirname, '..', 'src', 'Database'));
 var Scene = require(path.join(__dirname, '..', 'src', 'Scene'));
 var Validator = require('../src/Validator');
 
+var numPerPage = 12;
+
 // GET /
 exports.index = function(req, res, next){
-
-	Scene.listThumbnailData(0, 10, function (err, scenes){
+	Scene.listThumbnailData(0, numPerPage, function (err, scenes){
 		if(err) return next(err);
 
 		res.render('index', {
@@ -19,8 +20,7 @@ exports.index = function(req, res, next){
 // GET /browse?p=0
 // GET /browse?p=1
 exports.browse = function(req, res, next){
-	var numPerPage = 10;
-	var page = parseInt(req.query.p, 10);
+	var page = parseInt(req.query.p, numPerPage);
 	if(!isNaN(page)){
 		page = Math.max(page, 0);
 	} else {

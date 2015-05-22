@@ -1,44 +1,90 @@
 <!DOCTYPE html>
 <html>
 	<head>
+			<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<title><%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
 		<% include meta %>
-    	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link rel="stylesheet" href="/css/main.css">
+
+		<script src="/jquery.min.js"></script>
+		<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/bootstrap/css/bootstrap-theme.min.css">
+		<script src="/bootstrap/js/bootstrap.min.js"></script>
+
+		<!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+		<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css">
 	</head>
 	<body>
-		<h1>Physics Toy</h1>
-		<p>
-			Physics Toy is a tool for creating simple 2D physics scenes. It's is a small side project made by <a href="http://twitter.com/schteppe">Stefan Hedman</a>.
-		</p>
 
-		<h2>Instructions</h2>
-		<p>
-			Open a scene, modify its initial state via the menu to the right. Save it via the "control" menu. Share or keep modifying your scene.
-		</p>
+		<!-- Static navbar -->
+		<nav class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">PhysicsToy</a>
+				</div>
+    			<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li><a href="/new">New scene</a></li>
+						<li><a href="/browse">Browse scenes</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
 
-		<h2>Latest scenes</h2>
-		<ul>
-			<% for (var i = 0; i < scenes.length; i++) { %>
-				<li>
-					<a href="/<%=scenes[i].id%>">
-						<div width="100" height="100" class="thumbnail">
+
+		<div class="container">
+
+			<!-- Main component for a primary marketing message or call to action -->
+			<div class="jumbotron">
+				<h1>PhysicsToy</h1>
+				<p>
+					Physics Toy is a tool for creating 2D physics scenes using the p2.js physics engine. It's is a project made by <a href="http://twitter.com/schteppe">@schteppe</a>.
+				</p>
+
+				<p>
+					<a class="btn btn-lg btn-primary" href="/new" role="button">Create a new scene &raquo;</a>
+				</p>
+			</div>
+
+
+			<h2>Latest scenes</h2>
+
+			<div class="row">
+				<% for (var i = 0; i < scenes.length; i++) { %>
+					<div class="col-xs-6 col-md-3">
+						<a href="/<%=scenes[i].id%>" class="thumbnail">
 							<script type="application/json"><%-JSON.stringify(scenes[i].scene)%></script>
-						</div>
-					</a>
-				</li>
-			<% } %>
-		</ul>
+						</a>
+					</div>
+				<% } %>
+			</div>
+			<div class="row">
+				<div class="col-md-offset-4 col-md-4 col-sm-12">
+					<a class="btn btn-lg btn-block btn-default" href="/browse" role="button">Browse more scenes &raquo;</a>
+				</div>
+			</div>
 
-		<p>
-			<a href="/new">Create new scene</a>
-			<a href="/browse">Browse scenes</a>
-		</p>
+			<p>
+				<br>
+				&copy; schteppe 2015
+				<br>
+			</p>
+		</div> <!-- /container -->
 
 		<% include ga %>
 		<script type="text/javascript" src="js/lib/p2.<%-(process.env.NODE_ENV=='development' ? '' : 'min.')%>js"></script>
 		<script type="text/javascript" src="js/Thumbnail.js"></script>
 		<script type="text/javascript" src="js/main.js"></script>
+
 
 	</body>
 </html>
