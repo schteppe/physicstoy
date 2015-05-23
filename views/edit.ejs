@@ -311,7 +311,7 @@
 										<!-- Spring select -->
 										<div class="form-group">
 											<div class="btn-group-vertical col-md-12">
-												<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" ng-show="spring.bodyA == body.id" type="button" class="btn btn-default btn-block btn-sm">
+												<button ng-click="setSelectedId(spring.id)" ng-repeat="spring in springs" ng-show="spring.bodyA == body.id || spring.bodyB == body.id" type="button" class="btn btn-default btn-block btn-sm">
 													{{spring.name}}
 												</button>
 												<button ng-click="addSpring(body.id)" type="button" class="btn btn-default btn-block btn-sm">
@@ -940,9 +940,10 @@
 									</div>
 
 									<!-- log -->
-									<div class="form-group">
-										<label class="col-sm-4 control-label" data-tooltip="Log the state transitions to the developer console.">log</label>
-										<input class="form-control" type="checkbox" ng-model="machine.log"/>
+									<div class="checkbox">
+										<label data-tooltip="Log the state transitions to the developer console.">
+											<input type="checkbox" ng-model="machine.log"/> log
+										</label>
 									</div>
 
 									<!-- states -->
@@ -958,10 +959,11 @@
 											</div>
 										</div>
 
-										<!-- actions -->
-										<div class="well" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
+										<h5>Actions</h5>
 
-											<h6>Actions</h6>
+										<!-- actions -->
+										<div class="well col-md-12" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
+
 
 											<div class="form-group">
 												<label class="col-sm-4 control-label">Type</label>
@@ -994,62 +996,88 @@
 
 											<!-- position -->
 											<div ng-show="action.type=='setPosition'" class="form-group">
-												<label data-tooltip="World position to warp the body to.">position</label>
-												<input type="number" class="vec2 x" ng-model="action.positionX"/>
-												<input type="number" class="vec2 y" ng-model="action.positionY"/>
+												<label class="col-sm-4 control-label" data-tooltip="World position to warp the body to.">position</label>
+												<div class="col-sm-4">
+													<input class="form-control" type="number" ng-model="action.positionX"/>
+												</div>
+												<div class="col-sm-4">
+													<input class="form-control" type="number" ng-model="action.positionY"/>
+												</div>
 											</div>
 
 											<!-- angle -->
 											<div ng-show="action.type=='setPosition'" class="form-group">
-												<label>angle</label>
-												<input type="number" ng-model="action.angle"/>
+												<label class="col-sm-4 control-label">angle</label>
+												<div class="col-sm-8">
+													<input type="number" class="form-control" ng-model="action.angle"/>
+												</div>
 											</div>
 
 											<!-- velocity -->
 											<div ng-show="action.type=='setVelocity'" class="form-group">
-												<label data-tooltip="The velocity to set on the body.">velocity</label>
-												<input type="number" class="vec2 x" ng-model="action.velocityX"/>
-												<input type="number" class="vec2 y" ng-model="action.velocityY"/>
+												<label class="col-sm-4 control-label" data-tooltip="The velocity to set on the body.">velocity</label>
+												<div class="col-sm-4">
+													<input type="number" class="form-control" ng-model="action.velocityX"/>
+												</div>
+												<div class="col-sm-4">
+													<input type="number" class="form-control" ng-model="action.velocityY"/>
+												</div>
 											</div>
 
 											<!-- angularVelocity -->
 											<div ng-show="action.type=='setVelocity'" class="form-group">
-												<label>angular velocity</label>
-												<input type="number" ng-model="action.angularVelocity"/>
+												<label class="col-sm-4 control-label">angular velocity</label>
+												<input type="number" class="form-control" ng-model="action.angularVelocity"/>
 											</div>
 
 											<!-- force -->
 											<div ng-show="action.type=='addForce'" class="form-group">
-												<label data-tooltip="The force to add on the body.">force</label>
-												<input type="number" class="vec2 x" ng-model="action.forceX"/>
-												<input type="number" class="vec2 y" ng-model="action.forceY"/>
+												<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceX</label>
+												<div class="col-sm-8">
+													<input type="number" class="form-control" ng-model="action.forceX"/>
+												</div>
+											</div>
+											<div ng-show="action.type=='addForce'" class="form-group">
+												<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceY</label>
+												<div class="col-sm-8">
+													<input type="number" class="form-control" ng-model="action.forceY"/>
+												</div>
 											</div>
 
 											<!-- angularForce -->
 											<div ng-show="action.type=='addForce'" class="form-group">
-												<label>angular force</label>
-												<input type="number" ng-model="action.angularForce"/>
+												<label class="col-sm-4 control-label">angular force</label>
+												<div class="col-sm-8">
+													<input type="number" class="form-control" ng-model="action.angularForce"/>
+												</div>
 											</div>
 
 											<!-- localFrame -->
 											<div ng-show="action.type=='addForce'" class="form-group">
-												<label>local frame</label>
-												<input type="checkbox" ng-model="action.localFrame"/>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" ng-model="action.localFrame"/> local frame
+													</label>
+												</div>
 											</div>
 
 											<!-- keyCode -->
 											<div ng-show="action.type=='key'" class="form-group">
-												<label>keyCode</label>
-												<input type="number" ng-model="action.keyCode"/>
+												<label class="col-sm-4 control-label">keyCode</label>
+												<div class="col-sm-8">
+													<input type="number" class="form-control" ng-model="action.keyCode"/>
+												</div>
 											</div>
 
 											<!-- eventType -->
 											<div ng-show="action.type=='key'" class="form-group">
-												<label>eventType</label>
-												<select ng-model="action.eventType">
-													<option>keydown</option>
-													<option>keyup</option>
-												</select>
+												<label class="col-sm-4 control-label">eventType</label>
+												<div class="col-sm-8">
+													<select class="form-control" ng-model="action.eventType">
+														<option>keydown</option>
+														<option>keyup</option>
+													</select>
+												</div>
 											</div>
 										</div>
 
