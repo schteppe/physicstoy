@@ -38,6 +38,11 @@ exports.browse = function(req, res, next){
 	});
 };
 
+// GET /manual
+exports.manual = function(req, res){
+	res.render('manual');
+};
+
 // GET /new
 exports.new = function(req, res, next){
 	res.render('edit');

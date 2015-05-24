@@ -13,39 +13,78 @@
 		<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/bootstrap/css/bootstrap-theme.min.css">
 		<script src="/bootstrap/js/bootstrap.min.js"></script>
-
-		<!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
-		<link rel="stylesheet" type="text/css" href="/qtip/jquery.qtip.min.css">
 	</head>
 	<body>
 
-		<!-- Static navbar -->
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="/">PhysicsToy</a>
-				</div>
-    			<div id="navbar" class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
-						<li><a href="/new">New scene</a></li>
-						<li><a href="/browse">Browse scenes</a></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
+		<% include nav %>
 
 		<div class="container">
-
 			<h1>Manual</h1>
 
 			<div class="row">
-</div>
+				<div class="col-md-12">
+					<h2>Quick create</h2>
+					<p>Use the Quick create menu to create a predefined body with a single shape, for example a Box, Circle or a Plane.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Play mode</h2>
+					<p>Press Play to see your physics objects come to life. While in play mode, you can interact with the object by mouse dragging them. Press the play button again to exit play mode.</p>
+					<p>You can use SPACE key to toggle play mode.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Save</h2>
+					<p>When you press the Save button, your scene will get published online so that you can share it, or continue working with it later. The scene will get listed in the Browse section of the site.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 col-sm-12">
+					<h2>The Scene</h2>
+					<p>The physics scene hosts all bodies, constraints and springs, and has a few own properties like gravity.</p>
+					<p>You can edit these properties and get an overview of all things in the world by opening the Scene panel. The Scene panel is visible when nothing else in the scene is selected.</p>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<img src="/img/world-panel.gif" class="img-responsive manual-gif"/>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 col-sm-12">
+					<h2>Bodies</h2>
+					<p>Click a shape in the main view to select the corresponding body. Use the Body panel to change its parameters.</p>
+					<p>One of the most important properties is the body type. A <b>dynamic</b> body falls due to gravity and collides with other objects. A <b>kinametic</b> body can move if you set its velocity but does not get affected by anything else. A <b>static</b> body never moves.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Shapes</h2>
+					<p>Double-click a shape in the main view to select it. Use the Shape panel to edit the shape type and properties. You can also change the Shape color.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Springs</h2>
+					<p>Add a Spring to the scene to add a springy force between a pair of bodies. When you add the Spring you need to specify two bodies that are connected, along with other spring parameters such as stiffness.</p>
+					<p>There are two types of springs: <b>linear</b> and <b>angular</b>.</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Constraints</h2>
+					<p>Add a Constraint to the scene to add a strong force between a pair of bodies. When you add the Constraint you need to specify two bodies that are connected, along with other parameters.</p>
+				</div>
+			</div>
+
+			<% include foot %>
 		</div>
 
 		<% include ga %>

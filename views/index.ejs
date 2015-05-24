@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-			<meta charset="utf-8">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<title><%=process.env.PHYSICSTOY_TITLE || "PhysicsToy" %></title>
 		<% include meta %>
@@ -19,27 +19,7 @@
 	</head>
 	<body>
 
-		<!-- Static navbar -->
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="/">PhysicsToy</a>
-				</div>
-    			<div id="navbar" class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
-						<li><a href="/new">New scene</a></li>
-						<li><a href="/browse">Browse scenes</a></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-
+		<% include nav %>
 
 		<div class="container">
 
@@ -73,11 +53,8 @@
 				</div>
 			</div>
 
-			<p>
-				<br>
-				&copy; schteppe 2015
-				<br>
-			</p>
+			<% include foot %>
+
 		</div> <!-- /container -->
 
 		<% include ga %>

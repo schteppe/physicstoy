@@ -18,3 +18,10 @@ ul {
 li {
 	display: inline-block;
 }
+
+.manual-gif {
+	border: 1px solid #eee;
+	border-radius: 5px;
+	margin-top:10px;
+	margin-bottom:20px;
+}

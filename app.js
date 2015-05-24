@@ -28,6 +28,7 @@ app.all('*', Middleware.id());
 
 app.get ('/', routes.index);
 app.get ('/browse', routes.browse);
+app.get ('/manual', routes.manual);
 app.get (/^\/(\d+)$/, routes.view);
 app.get ('/new', routes.new);
 app.post('/new', routes.save);
