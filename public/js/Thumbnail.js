@@ -132,16 +132,16 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
         var b = scene.bodies[i];
 
         ctx.save();
-        ctx.rotate(b.angle);
         ctx.translate(b.x, b.y);
+        ctx.rotate(b.angle);
 
         for (j = 0; j < b.shapes.length; j++) {
             var s = b.shapes[j];
             ctx.fillStyle = s.color;
 
             ctx.save();
-            ctx.rotate(s.angle);
             ctx.translate(s.x, s.y);
+            ctx.rotate(s.angle);
 
             switch(s.type){
 
