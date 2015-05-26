@@ -45,6 +45,9 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
                 case "capsule":
                     shape = new p2.Capsule(s.length, s.radius);
                     break;
+                case "plane":
+                    shape = new p2.Circle(0.5); // good approx?
+                    break;
                 }
                 if(shape){
                     body.addShape(shape, [s.x, s.y], s.angle);
@@ -88,24 +91,24 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
         return worldPoint;
     }
 
-    // function polygon(c,points,options){
-    //     setStyle(c,options);
-    //     c.beginPath();
-    //     for(var i=0; i<points.length; i++){
-    //         var x = options.scaleX * points[i][0] + options.offsetX,
-    //             y = options.scaleY * points[i][1] + options.offsetY;
-    //         if(i==0)
-    //             c.moveTo(x,y);
-    //         else
-    //             c.lineTo(x,y);
-    //     }
-    //     // Last point
-    //     var x = options.scaleX * points[0][0] + options.offsetX,
-    //         y = options.scaleY * points[0][1] + options.offsetY;
-    //     c.lineTo(x,y);
-    //     c.stroke();
-    //     c.fill();
-    // }
+    function polygon(c,points,options){
+        var x, y;
+        c.beginPath();
+        for(var i=0; i<points.length; i++){
+            x = points[i][0];
+            y = points[i][1];
+            if(i === 0)
+                c.moveTo(x,y);
+            else
+                c.lineTo(x,y);
+        }
+        // Last point
+        x = points[0][0];
+        y = points[0][1];
+        c.lineTo(x,y);
+        c.stroke();
+        c.fill();
+    }
 
     // function line(c,x0,y0,x1,y1,options){
     //     setStyle(c,options);
@@ -187,6 +190,13 @@ Thumbnail.drawOnCanvas = function(ctx,scene,w,h,options){
                      worldEnd[0],
                      worldEnd[1],
                      settings);
+                break;
+
+            case "plane":
+                ctx.beginPath();
+                ctx.rect(-50, -100, 100, 100);
+                ctx.stroke();
+                ctx.fill();
                 break;
 
             case "polygon":
