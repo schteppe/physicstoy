@@ -29,3 +29,13 @@ Handler.prototype.getIdOf = function(obj){
 	}
 	return -1;
 };
+
+Handler.prototype.duplicate = function(config){
+	var newConfig = this.create();
+	var id = newConfig.id;
+	for(var key in newConfig){
+		newConfig[key] = config[key];
+	}
+	newConfig.id = id;
+	return newConfig;
+};

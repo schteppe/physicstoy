@@ -1783,6 +1783,16 @@ Handler.prototype.getIdOf = function(obj){
 	}
 	return -1;
 };
+
+Handler.prototype.duplicate = function(config){
+	var newConfig = this.create();
+	var id = newConfig.id;
+	for(var key in newConfig){
+		newConfig[key] = config[key];
+	}
+	newConfig.id = id;
+	return newConfig;
+};
 function RendererHandler(renderer){
 	Handler.call(this);
 	this.renderer = renderer;
@@ -2265,6 +2275,14 @@ MachineHandler.prototype.create = function(){
 	return config;
 };
 
+MachineHandler.prototype.duplicate = function(config){
+	var machineConfig = Handler.prototype.duplicate.call(this, config);
+	machineConfig.states = machineConfig.states.map(function (stateConfig){
+		return this.sceneHandler.stateHandler.duplicate(stateConfig);
+	});
+	return machineConfig;
+};
+
 MachineHandler.prototype.add = function(config, bodyConfig){
 	if(this.getById(config.id)){
 		return; // already added
@@ -2476,6 +2494,22 @@ BodyHandler.prototype.create = function(){
 	return bodyConfig;
 };
 
+BodyHandler.prototype.duplicate = function(config){
+	var bodyConfig = this.create();
+	var id = bodyConfig.id;
+	for(var key in bodyConfig){
+		bodyConfig[key] = config[key];
+	}
+	bodyConfig.id = id;
+	bodyConfig.shapes = bodyConfig.shapes.map(function (shapeConfig){
+		return this.sceneHandler.shapeHandler.duplicate(shapeConfig);
+	});
+	bodyConfig.machines = bodyConfig.machines.map(function (machineConfig){
+		return this.sceneHandler.machineHandler.duplicate(machineConfig);
+	});
+	return bodyConfig;
+};
+
 BodyHandler.prototype.update = function(config){
 	var body = this.objects[config.id];
 	if(!body){
@@ -2527,7 +2561,6 @@ BodyHandler.prototype.add = function(config){
 	});
 	this.objects[config.id] = body;
 	this.world.addBody(body);
-	//this.renderer.addVisual(body);
 };
 
 BodyHandler.prototype.remove = function(config){
@@ -2713,6 +2746,14 @@ StateHandler.prototype.update = function(config, machineConfig){
 		this.objects[config.id] = state;
 	}
 	// ??
+};
+
+StateHandler.prototype.duplicate = function(config){
+	var stateConfig = Handler.prototype.duplicate.call(this, config);
+	stateConfig.actions = stateConfig.actions.map(function (actionConfig){
+		return this.sceneHandler.actionHandler.duplicate(actionConfig);
+	});
+	return stateConfig;
 };
 function SceneHandler(world,renderer){
 	this.world = world;

@@ -40,3 +40,11 @@ StateHandler.prototype.update = function(config, machineConfig){
 	}
 	// ??
 };
+
+StateHandler.prototype.duplicate = function(config){
+	var stateConfig = Handler.prototype.duplicate.call(this, config);
+	stateConfig.actions = stateConfig.actions.map(function (actionConfig){
+		return this.sceneHandler.actionHandler.duplicate(actionConfig);
+	});
+	return stateConfig;
+};

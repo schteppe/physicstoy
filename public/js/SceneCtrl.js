@@ -30,6 +30,23 @@ angular.module('physicsApp', [])
 		$scope.selectedId = id;
 	};
 
+	$scope.duplicateSelection = function () {
+		var id = $scope.selectedId;
+		var bodyConfig = $scope.getBodyConfigById(id);
+		if(bodyConfig){
+			var newConfig = sceneHandler.bodyHandler.duplicate(bodyConfig);
+			$scope.bodies.push(newConfig);
+			sceneHandler.bodyHandler.add(newConfig);
+			$scope.setSelectedId(newConfig.id);
+		}
+	};
+
+	$scope.canDuplicate = function () {
+		var id = $scope.selectedId;
+		var bodyConfig = $scope.getBodyConfigById(id);
+		return !!bodyConfig;
+	};
+
 	// Selection made from within the renderer. Update the app state
 	renderer.on('click', function (event){
 		var targets = event.targets.filter(function (target){
@@ -354,13 +371,18 @@ angular.module('physicsApp', [])
 	// Keyboard shortcuts
 	var Keys = {
 		DELETE: 46,
-		SPACE: 32
+		SPACE: 32,
+		D: 68
 	};
 	window.addEventListener('keyup', function (evt) {
 		if(['CANVAS','BODY'].indexOf(document.activeElement.nodeName) === -1){
 			return;
 		}
 		switch(evt.keyCode){
+
+		case Keys.D:
+			$scope.duplicateSelection();
+			break;
 
 		case Keys.SPACE:
 			$scope.playing = !$scope.playing;
@@ -385,6 +407,7 @@ angular.module('physicsApp', [])
 			$scope.selectedId = -1;
 			break;
 		}
+
 		$scope.$digest();
 	});
 
@@ -478,7 +501,7 @@ angular.module('physicsApp', [])
 
 	var vars = Object.keys(sceneHandler.machineHandler.create()).map(function(v){ return 'machine.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.machineHandler.update($scope.machine);
+		sceneHandler.machineHandler.update($scope.machine, $scope.body);
 	});
 })
 
@@ -518,14 +541,14 @@ angular.module('physicsApp', [])
 
 	var vars = Object.keys(sceneHandler.stateHandler.create()).map(function(v){ return 'state.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.stateHandler.update($scope.state);
+		sceneHandler.stateHandler.update($scope.state, $scope.machine);
 	});
 })
 
 .controller('ActionCtrl', function ($scope, $rootScope) {
 	var vars = Object.keys(sceneHandler.actionHandler.create()).map(function(v){ return 'action.' + v; });
 	watchMany($scope, vars, function(){
-		sceneHandler.actionHandler.update($scope.action);
+		sceneHandler.actionHandler.update($scope.action, $scope.state);
 	});
 })
 

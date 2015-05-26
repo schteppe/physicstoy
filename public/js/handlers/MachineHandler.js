@@ -28,6 +28,14 @@ MachineHandler.prototype.create = function(){
 	return config;
 };
 
+MachineHandler.prototype.duplicate = function(config){
+	var machineConfig = Handler.prototype.duplicate.call(this, config);
+	machineConfig.states = machineConfig.states.map(function (stateConfig){
+		return this.sceneHandler.stateHandler.duplicate(stateConfig);
+	});
+	return machineConfig;
+};
+
 MachineHandler.prototype.add = function(config, bodyConfig){
 	if(this.getById(config.id)){
 		return; // already added

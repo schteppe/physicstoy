@@ -121,6 +121,12 @@
 								<li><a href="#">Distance</a></li> -->
 							</ul>
 						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Edit</a>
+							<ul class="dropdown-menu" role="menu">
+								<li ng-class="canDuplicate() ? '' : 'disabled'"><a href="#" ng-click="duplicateSelection()"><u>D</u>uplicate</a></li>
+							</ul>
+						</li>
 						<li>
 							<a href="#" ng-click="save()">Save</a>
 						</li>
@@ -923,13 +929,13 @@
 						<!-- /ContactMaterials -->
 
 
-
-
 						<!-- State machines -->
 						<div ng-repeat="body in bodies">
-							<div ng-repeat="machine in body.machines">
-								<div ng-show="getSelectedId() == machine.id" ng-controller="MachineCtrl">
-									<h4>{{machine.name||'&nbsp;'}}</h4>
+							<div ng-repeat="machine in body.machines" ng-show="getSelectedId() == machine.id" ng-controller="MachineCtrl">
+
+								<h4>{{machine.name||'&nbsp;'}}</h4>
+
+								<div class="form-horizontal">
 
 									<!-- name -->
 									<div class="form-group">
@@ -940,161 +946,162 @@
 									</div>
 
 									<!-- log -->
-									<div class="checkbox">
-										<label data-tooltip="Log the state transitions to the developer console.">
-											<input type="checkbox" ng-model="machine.log"/> log
-										</label>
-									</div>
-
-									<!-- states -->
-									<h4>States</h4>
-
-									<div ng-repeat="state in machine.states" ng-controller="StateCtrl" class="well">
-
-										<!-- name -->
-										<div class="form-group">
-											<label class="col-sm-4 control-label">Name</label>
-											<div class="col-sm-8">
-												<input class="form-control" type="text" ng-model="state.name" />
+									<div class="form-group">
+										<div class="col-sm-offset-4 col-sm-8">
+											<div class="checkbox">
+												<label data-tooltip="Log the state transitions to the developer console.">
+													<input type="checkbox" ng-model="machine.log"/> log
+												</label>
 											</div>
 										</div>
-
-										<h5>Actions</h5>
-
-										<!-- actions -->
-										<div class="well col-md-12" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
-
-
-											<div class="form-group">
-												<label class="col-sm-4 control-label">Type</label>
-												<div class="col-sm-8">
-													<select class="form-control" ng-model="action.type">
-														<option>wait</option>
-														<option>setPosition</option>
-														<option>setVelocity</option>
-														<option>addForce</option>
-														<option>key</option>
-													</select>
-												</div>
-											</div>
-
-											<!-- time -->
-											<div ng-show="action.type=='wait'" class="form-group">
-												<label class="col-sm-4 control-label">time</label>
-												<div class="col-sm-8">
-													<input class="form-control" type="number" step="any" min="0" ng-model="action.time" />
-												</div>
-											</div>
-
-											<!-- to -->
-											<div ng-show="action.type=='wait' || action.type=='key'" class="form-group">
-												<label class="col-sm-4 control-label" data-tooltip="The state to transition to">to</label>
-												<div class="col-sm-8">
-													<select class="form-control" ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states"></select>
-												</div>
-											</div>
-
-											<!-- position -->
-											<div ng-show="action.type=='setPosition'" class="form-group">
-												<label class="col-sm-4 control-label" data-tooltip="World position to warp the body to.">position</label>
-												<div class="col-sm-4">
-													<input class="form-control" type="number" ng-model="action.positionX"/>
-												</div>
-												<div class="col-sm-4">
-													<input class="form-control" type="number" ng-model="action.positionY"/>
-												</div>
-											</div>
-
-											<!-- angle -->
-											<div ng-show="action.type=='setPosition'" class="form-group">
-												<label class="col-sm-4 control-label">angle</label>
-												<div class="col-sm-8">
-													<input type="number" class="form-control" ng-model="action.angle"/>
-												</div>
-											</div>
-
-											<!-- velocity -->
-											<div ng-show="action.type=='setVelocity'" class="form-group">
-												<label class="col-sm-4 control-label" data-tooltip="The velocity to set on the body.">velocity</label>
-												<div class="col-sm-4">
-													<input type="number" class="form-control" ng-model="action.velocityX"/>
-												</div>
-												<div class="col-sm-4">
-													<input type="number" class="form-control" ng-model="action.velocityY"/>
-												</div>
-											</div>
-
-											<!-- angularVelocity -->
-											<div ng-show="action.type=='setVelocity'" class="form-group">
-												<label class="col-sm-4 control-label">angular velocity</label>
-												<input type="number" class="form-control" ng-model="action.angularVelocity"/>
-											</div>
-
-											<!-- force -->
-											<div ng-show="action.type=='addForce'" class="form-group">
-												<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceX</label>
-												<div class="col-sm-8">
-													<input type="number" class="form-control" ng-model="action.forceX"/>
-												</div>
-											</div>
-											<div ng-show="action.type=='addForce'" class="form-group">
-												<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceY</label>
-												<div class="col-sm-8">
-													<input type="number" class="form-control" ng-model="action.forceY"/>
-												</div>
-											</div>
-
-											<!-- angularForce -->
-											<div ng-show="action.type=='addForce'" class="form-group">
-												<label class="col-sm-4 control-label">angular force</label>
-												<div class="col-sm-8">
-													<input type="number" class="form-control" ng-model="action.angularForce"/>
-												</div>
-											</div>
-
-											<!-- localFrame -->
-											<div ng-show="action.type=='addForce'" class="form-group">
-												<div class="checkbox">
-													<label>
-														<input type="checkbox" ng-model="action.localFrame"/> local frame
-													</label>
-												</div>
-											</div>
-
-											<!-- keyCode -->
-											<div ng-show="action.type=='key'" class="form-group">
-												<label class="col-sm-4 control-label">keyCode</label>
-												<div class="col-sm-8">
-													<input type="number" class="form-control" ng-model="action.keyCode"/>
-												</div>
-											</div>
-
-											<!-- eventType -->
-											<div ng-show="action.type=='key'" class="form-group">
-												<label class="col-sm-4 control-label">eventType</label>
-												<div class="col-sm-8">
-													<select class="form-control" ng-model="action.eventType">
-														<option>keydown</option>
-														<option>keyup</option>
-													</select>
-												</div>
-											</div>
-										</div>
-
-										<!-- / actions -->
-										<button ng-click="addAction(state)" class="btn btn-default btn-block">Add action</button>
 									</div>
-
-									<!-- / states -->
-									<button ng-click="addState(machine)" class="btn btn-default btn-block">Add state</button>
 								</div>
+
+
+								<!-- states -->
+								<h4>States</h4>
+
+								<div ng-repeat="state in machine.states" ng-controller="StateCtrl" class="well">
+
+									<!-- name -->
+									<div class="form-group">
+										<label class="col-sm-4 control-label">Name</label>
+										<div class="col-sm-8">
+											<input class="form-control" type="text" ng-model="state.name" />
+										</div>
+									</div>
+
+									<h5>Actions</h5>
+
+									<!-- actions -->
+									<div class="well col-md-12" ng-repeat="action in state.actions" ng-controller="ActionCtrl">
+
+
+										<div class="form-group">
+											<label class="col-sm-4 control-label">Type</label>
+											<div class="col-sm-8">
+												<select class="form-control" ng-model="action.type">
+													<option>wait</option>
+													<option>setPosition</option>
+													<option>setVelocity</option>
+													<option>addForce</option>
+													<option>key</option>
+												</select>
+											</div>
+										</div>
+
+										<!-- time -->
+										<div ng-show="action.type=='wait'" class="form-group">
+											<label class="col-sm-4 control-label">time</label>
+											<div class="col-sm-8">
+												<input class="form-control" type="number" step="any" min="0" ng-model="action.time" />
+											</div>
+										</div>
+
+										<!-- to -->
+										<div ng-show="action.type=='wait' || action.type=='key'" class="form-group">
+											<label class="col-sm-4 control-label" data-tooltip="The state to transition to">to</label>
+											<div class="col-sm-8">
+												<select class="form-control" ng-model="action.toState" ng-options="toState.id as toState.name for toState in machine.states"></select>
+											</div>
+										</div>
+
+										<!-- position -->
+										<div ng-show="action.type=='setPosition'" class="form-group">
+											<label class="col-sm-4 control-label" data-tooltip="World position to warp the body to.">position</label>
+											<div class="col-sm-4">
+												<input class="form-control" type="number" ng-model="action.positionX"/>
+											</div>
+											<div class="col-sm-4">
+												<input class="form-control" type="number" ng-model="action.positionY"/>
+											</div>
+										</div>
+
+										<!-- angle -->
+										<div ng-show="action.type=='setPosition'" class="form-group">
+											<label class="col-sm-4 control-label">angle</label>
+											<div class="col-sm-8">
+												<input type="number" class="form-control" ng-model="action.angle"/>
+											</div>
+										</div>
+
+										<!-- velocity -->
+										<div ng-show="action.type=='setVelocity'" class="form-group">
+											<label class="col-sm-4 control-label" data-tooltip="The velocity to set on the body.">velocity</label>
+											<div class="col-sm-4">
+												<input type="number" class="form-control" ng-model="action.velocityX"/>
+											</div>
+											<div class="col-sm-4">
+												<input type="number" class="form-control" ng-model="action.velocityY"/>
+											</div>
+										</div>
+
+										<!-- angularVelocity -->
+										<div ng-show="action.type=='setVelocity'" class="form-group">
+											<label class="col-sm-4 control-label">angular velocity</label>
+											<input type="number" class="form-control" ng-model="action.angularVelocity"/>
+										</div>
+
+										<!-- force -->
+										<div ng-show="action.type=='addForce'" class="form-group">
+											<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceX</label>
+											<div class="col-sm-8">
+												<input type="number" class="form-control" ng-model="action.forceX"/>
+											</div>
+										</div>
+										<div ng-show="action.type=='addForce'" class="form-group">
+											<label class="col-sm-4 control-label" data-tooltip="The force to add on the body.">forceY</label>
+											<div class="col-sm-8">
+												<input type="number" class="form-control" ng-model="action.forceY"/>
+											</div>
+										</div>
+
+										<!-- angularForce -->
+										<div ng-show="action.type=='addForce'" class="form-group">
+											<label class="col-sm-4 control-label">angular force</label>
+											<div class="col-sm-8">
+												<input type="number" class="form-control" ng-model="action.angularForce"/>
+											</div>
+										</div>
+
+										<!-- localFrame -->
+										<div ng-show="action.type=='addForce'" class="form-group">
+											<div class="checkbox">
+												<label>
+													<input type="checkbox" ng-model="action.localFrame"/> local frame
+												</label>
+											</div>
+										</div>
+
+										<!-- keyCode -->
+										<div ng-show="action.type=='key'" class="form-group">
+											<label class="col-sm-4 control-label">keyCode</label>
+											<div class="col-sm-8">
+												<input type="number" class="form-control" ng-model="action.keyCode"/>
+											</div>
+										</div>
+
+										<!-- eventType -->
+										<div ng-show="action.type=='key'" class="form-group">
+											<label class="col-sm-4 control-label">eventType</label>
+											<div class="col-sm-8">
+												<select class="form-control" ng-model="action.eventType">
+													<option>keydown</option>
+													<option>keyup</option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<!-- / actions -->
+									<button ng-click="addAction(state)" class="btn btn-default btn-block">Add action</button>
+								</div>
+
+								<!-- / states -->
+								<button ng-click="addState(machine)" class="btn btn-default btn-block">Add state</button>
 							</div>
 						</div>
 						<!-- / State machines -->
-
-
-
-
 					</div>
 				</div>
 

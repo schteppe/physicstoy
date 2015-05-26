@@ -43,6 +43,22 @@ BodyHandler.prototype.create = function(){
 	return bodyConfig;
 };
 
+BodyHandler.prototype.duplicate = function(config){
+	var bodyConfig = this.create();
+	var id = bodyConfig.id;
+	for(var key in bodyConfig){
+		bodyConfig[key] = config[key];
+	}
+	bodyConfig.id = id;
+	bodyConfig.shapes = bodyConfig.shapes.map(function (shapeConfig){
+		return this.sceneHandler.shapeHandler.duplicate(shapeConfig);
+	});
+	bodyConfig.machines = bodyConfig.machines.map(function (machineConfig){
+		return this.sceneHandler.machineHandler.duplicate(machineConfig);
+	});
+	return bodyConfig;
+};
+
 BodyHandler.prototype.update = function(config){
 	var body = this.objects[config.id];
 	if(!body){
@@ -94,7 +110,6 @@ BodyHandler.prototype.add = function(config){
 	});
 	this.objects[config.id] = body;
 	this.world.addBody(body);
-	//this.renderer.addVisual(body);
 };
 
 BodyHandler.prototype.remove = function(config){
