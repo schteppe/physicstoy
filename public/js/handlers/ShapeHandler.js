@@ -33,6 +33,7 @@ ShapeHandler.prototype.update = function(bodyConfig, config){
 		break;
 	}
 	this.objects[config.id] = body.shapes[i] = shape;
+	shape.id = config.id;
 	shape.color = oldColor;
 
 	// Hack in the color

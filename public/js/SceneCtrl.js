@@ -32,19 +32,33 @@ angular.module('physicsApp', [])
 
 	$scope.duplicateSelection = function () {
 		var id = $scope.selectedId;
+
 		var bodyConfig = $scope.getBodyConfigById(id);
 		if(bodyConfig){
 			var newConfig = sceneHandler.bodyHandler.duplicate(bodyConfig);
 			$scope.bodies.push(newConfig);
 			sceneHandler.bodyHandler.add(newConfig);
 			$scope.setSelectedId(newConfig.id);
+			return;
+		}
+
+		var shapeConfig = $scope.getShapeConfigById(id);
+		if(shapeConfig){
+			var parentBodyConfig = $scope.getBodyConfigFromShapeConfig(shapeConfig);
+			var newConfig = sceneHandler.shapeHandler.duplicate(shapeConfig);
+			parentBodyConfig.shapes.push(newConfig);
+			sceneHandler.shapeHandler.add(parentBodyConfig, newConfig);
+			$scope.setSelectedId(newConfig.id);
+			return;
 		}
 	};
 
 	$scope.canDuplicate = function () {
 		var id = $scope.selectedId;
-		var bodyConfig = $scope.getBodyConfigById(id);
-		return !!bodyConfig;
+		return !!(
+			$scope.getBodyConfigById(id) ||
+			$scope.getShapeConfigById(id)
+		);
 	};
 
 	// Selection made from within the renderer. Update the app state
