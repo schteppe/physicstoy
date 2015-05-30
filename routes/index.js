@@ -111,17 +111,15 @@ exports.save = function(req, res, next){
 	}
 
 	if(errors.length){
-		res.render('edit', {
+		return res.render('edit', {
 			errors: errors,
 			scene: req.body.scene
 		});
-	} else {
-		db.query('INSERT INTO pt_scenes (scene,version) VALUES($1,$2) RETURNING id', [obj,Validator.CURRENT_VERSION], function (err, result){
-			if(err) return next(err);
-
-			var insertId = result.rows[0].id;
-
-			res.redirect('/' + insertId);
-		});
 	}
+
+	Scene.insert(obj, function (err, insertId){
+		if(err) return next(err);
+
+		res.redirect('/' + insertId);
+	});
 };

@@ -169,3 +169,13 @@ Scene.prototype.listThumbnailData = function(offset, limit, callback){
 		callback(null, scenes);
 	});
 };
+
+Scene.prototype.insert = function(scene, callback){
+	db.query('INSERT INTO pt_scenes (scene,version) VALUES($1,$2) RETURNING id', [scene, Validator.CURRENT_VERSION], function (err, result){
+		if(err) return callback(err);
+
+		var insertId = result.rows[0].id;
+
+		callback(null, insertId);
+	});
+};
