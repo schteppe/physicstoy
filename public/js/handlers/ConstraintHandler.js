@@ -106,6 +106,11 @@ ConstraintHandler.prototype.update = function(config){
 			constraint.motorSpeed = config.motorSpeed;
 		}
 
+		constraint.upperLimitEnabled = config.upperLimitEnabled;
+		constraint.lowerLimitEnabled = config.lowerLimitEnabled;
+		constraint.upperLimit = config.upperLimit;
+		constraint.lowerLimit = config.lowerLimit;
+
 		break;
 
 	case 'hinge':

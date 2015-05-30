@@ -1435,6 +1435,7 @@ WebGLRenderer.prototype.updateSpriteTransform = function(sprite,body){
 
 var tempVec0 = p2.vec2.create();
 var tempVec1 = p2.vec2.create();
+var tempVec2 = p2.vec2.create();
 
 var tmpAABB = new p2.AABB();
 
@@ -1559,9 +1560,11 @@ WebGLRenderer.prototype.render = function(){
                 xi = bi.position,
                 xj = bj.position;
 
+            var ri = tempVec0;
+            var rj = tempVec1;
+            var axis = tempVec2;
+
             if(constraint instanceof p2.DistanceConstraint){
-                var ri = tempVec0;
-                var rj = tempVec1;
 
                 p2.vec2.copy(ri, constraint.localAnchorA);
                 p2.vec2.copy(rj, constraint.localAnchorB);
@@ -1578,6 +1581,57 @@ WebGLRenderer.prototype.render = function(){
 
                 g.moveTo(ri[0], ri[1]);
                 g.lineTo(rj[0], rj[1]);
+
+                g.drawCircle(ri[0], ri[1], this.lineWidth * 3);
+                g.drawCircle(rj[0], rj[1], this.lineWidth * 3);
+
+            } else if(constraint instanceof p2.RevoluteConstraint && constraint !== this.mouseConstraint){
+
+                p2.vec2.copy(ri, constraint.pivotA);
+                p2.vec2.copy(rj, constraint.pivotB);
+
+                bi.toWorldFrame(ri, ri);
+                bj.toWorldFrame(rj, rj);
+
+                g.moveTo(xi[0], xi[1]);
+                g.lineTo(ri[0], ri[1]);
+
+                g.moveTo(xj[0], xj[1]);
+                g.lineTo(rj[0], rj[1]);
+
+                g.moveTo(ri[0], ri[1]);
+                g.lineTo(rj[0], rj[1]);
+
+                g.drawCircle(ri[0], ri[1], this.lineWidth * 3);
+                g.drawCircle(rj[0], rj[1], this.lineWidth * 3);
+
+            } else if(constraint instanceof p2.LockConstraint){
+
+                // Just a line in between for now
+                g.moveTo(xi[0], xi[1]);
+                g.lineTo(xj[0], xj[1]);
+
+            } else if(constraint instanceof p2.PrismaticConstraint){
+
+                p2.vec2.copy(ri, constraint.localAnchorA);
+                p2.vec2.copy(rj, constraint.localAnchorB);
+                p2.vec2.copy(axis, constraint.localAxisA);
+
+                bi.toWorldFrame(ri, ri);
+                bj.toWorldFrame(rj, rj);
+                p2.vec2.rotate(axis, axis, bi.angle);
+
+                // AnchorA
+                g.moveTo(xi[0], xi[1]);
+                g.lineTo(ri[0], ri[1]);
+
+                // AnchorB
+                g.moveTo(xj[0], xj[1]);
+                g.lineTo(rj[0], rj[1]);
+
+                // AxisA
+                g.moveTo(ri[0], ri[1]);
+                g.lineTo(ri[0] + axis[0], ri[1] + axis[1]);
             }
 
         }
@@ -2237,6 +2291,11 @@ ConstraintHandler.prototype.update = function(config){
 			constraint.enableMotor();
 			constraint.motorSpeed = config.motorSpeed;
 		}
+
+		constraint.upperLimitEnabled = config.upperLimitEnabled;
+		constraint.lowerLimitEnabled = config.lowerLimitEnabled;
+		constraint.upperLimit = config.upperLimit;
+		constraint.lowerLimit = config.lowerLimit;
 
 		break;
 
