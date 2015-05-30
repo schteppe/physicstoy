@@ -133,6 +133,10 @@ WebGLRenderer.prototype.init = function(){
     this.contactGraphics = new PIXI.Graphics();
     stage.addChild(this.contactGraphics);
 
+    // Graphics object for constraints
+    this.constraintsGraphics = new PIXI.Graphics();
+    stage.addChild(this.constraintsGraphics);
+
     // Graphics object for AABBs
     this.aabbGraphics = new PIXI.Graphics();
     stage.addChild(this.aabbGraphics);
@@ -694,6 +698,8 @@ WebGLRenderer.prototype.updateSpriteTransform = function(sprite,body){
     }
 };
 
+var tempVec0 = p2.vec2.create();
+var tempVec1 = p2.vec2.create();
 
 var tmpAABB = new p2.AABB();
 
@@ -768,8 +774,8 @@ WebGLRenderer.prototype.render = function(){
         }
     }
 
-    // Clear contacts
-    if(this.drawContacts){
+    // Draw contacts
+    if(this.drawContacts && !this.paused){
         this.contactGraphics.clear();
         this.stage.removeChild(this.contactGraphics);
         this.stage.addChild(this.contactGraphics);
@@ -800,6 +806,53 @@ WebGLRenderer.prototype.render = function(){
         this.contactGraphics.cleared = true;
     }
 
+
+    // Draw constraints
+    if(this.drawConstraints){
+        this.constraintsGraphics.clear();
+
+        // Put on top - todo: only when adding / removing stuff to scene
+        this.stage.removeChild(this.constraintsGraphics);
+        this.stage.addChild(this.constraintsGraphics);
+
+        var g = this.constraintsGraphics;
+        g.lineStyle(this.lineWidth,0x000000,1);
+        for(var i=0; i!==this.world.constraints.length; i++){
+            var constraint = this.world.constraints[i],
+                bi = constraint.bodyA,
+                bj = constraint.bodyB,
+                xi = bi.position,
+                xj = bj.position;
+
+            if(constraint instanceof p2.DistanceConstraint){
+                var ri = tempVec0;//p2.vec2.create();
+                var rj = tempVec1;//p2.vec2.create();
+
+                p2.vec2.copy(ri, constraint.localAnchorA);
+                p2.vec2.copy(rj, constraint.localAnchorB);
+
+                bi.toWorldFrame(ri, ri);
+                bj.toWorldFrame(rj, rj);
+
+                // Dunno why, but sometines a single line strip dont work
+                g.moveTo(xi[0], xi[1]);
+                g.lineTo(ri[0], ri[1]);
+
+                g.moveTo(xj[0], xj[1]);
+                g.lineTo(rj[0], rj[1]);
+
+                g.moveTo(ri[0], ri[1]);
+                g.lineTo(rj[0], rj[1]);
+            }
+
+        }
+        this.constraintsGraphics.cleared = false;
+    } else if(!this.constraintsGraphics.cleared){
+        this.constraintsGraphics.clear();
+        this.constraintsGraphics.cleared = true;
+    }
+
+
     // Draw AABBs
     if(this.drawAABBs){
         this.aabbGraphics.clear();
@@ -819,7 +872,7 @@ WebGLRenderer.prototype.render = function(){
     }
 
     // Draw selection
-    // TODO: Only when selection changed
+    // TODO: only change when selection changed
     var g = this.selectionGraphics;
     g.clear();
     this.stage.removeChild(g);

@@ -15,4 +15,6 @@ RendererHandler.prototype.create = function(){
 RendererHandler.prototype.update = function(config){
 	var renderer = this.renderer;
 	renderer.drawAABBs = config.aabbs;
+	renderer.drawContacts = config.contacts;
+	renderer.drawConstraints = config.constraints;
 };
