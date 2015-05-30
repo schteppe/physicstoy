@@ -1575,6 +1575,7 @@ WebGLRenderer.prototype.render = function(){
         if(object instanceof p2.Shape){
             // Get body of shape
             var bodyObject;
+            var shapeObject;
             var shapeOffset = [0,0];
             var shapeAngle = 0;
             var world = this.world;
@@ -1582,8 +1583,9 @@ WebGLRenderer.prototype.render = function(){
                 var body = world.bodies[k];
                 for(var j=0; j<body.shapes.length; j++){
                     var shape = body.shapes[j];
-                    if(shape === object){
+                    if(shape.id === object.id){
                         bodyObject = body;
+                        shapeObject = shape;
                         p2.vec2.copy(shapeOffset, body.shapeOffsets[j]);
                         shapeAngle = body.shapeAngles[j];
                         break;
@@ -1593,7 +1595,7 @@ WebGLRenderer.prototype.render = function(){
 
             if(bodyObject){
                 bodyObject.toWorldFrame(shapeOffset, shapeOffset);
-                object.computeAABB(tmpAABB, shapeOffset, bodyObject.angle + shapeAngle);
+                shapeObject.computeAABB(tmpAABB, shapeOffset, bodyObject.angle + shapeAngle);
                 g.drawRect(
                     tmpAABB.lowerBound[0],
                     tmpAABB.lowerBound[1],
@@ -1866,6 +1868,7 @@ ShapeHandler.prototype.update = function(bodyConfig, config){
 		break;
 	}
 	this.objects[config.id] = body.shapes[i] = shape;
+	shape.id = config.id;
 	shape.color = oldColor;
 
 	// Hack in the color
