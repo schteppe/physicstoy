@@ -1560,8 +1560,8 @@ WebGLRenderer.prototype.render = function(){
                 xj = bj.position;
 
             if(constraint instanceof p2.DistanceConstraint){
-                var ri = tempVec0;//p2.vec2.create();
-                var rj = tempVec1;//p2.vec2.create();
+                var ri = tempVec0;
+                var rj = tempVec1;
 
                 p2.vec2.copy(ri, constraint.localAnchorA);
                 p2.vec2.copy(rj, constraint.localAnchorB);

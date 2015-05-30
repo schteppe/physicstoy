@@ -824,9 +824,10 @@ WebGLRenderer.prototype.render = function(){
                 xi = bi.position,
                 xj = bj.position;
 
+            var ri = tempVec0;
+            var rj = tempVec1;
+
             if(constraint instanceof p2.DistanceConstraint){
-                var ri = tempVec0;//p2.vec2.create();
-                var rj = tempVec1;//p2.vec2.create();
 
                 p2.vec2.copy(ri, constraint.localAnchorA);
                 p2.vec2.copy(rj, constraint.localAnchorB);
@@ -835,6 +836,23 @@ WebGLRenderer.prototype.render = function(){
                 bj.toWorldFrame(rj, rj);
 
                 // Dunno why, but sometines a single line strip dont work
+                g.moveTo(xi[0], xi[1]);
+                g.lineTo(ri[0], ri[1]);
+
+                g.moveTo(xj[0], xj[1]);
+                g.lineTo(rj[0], rj[1]);
+
+                g.moveTo(ri[0], ri[1]);
+                g.lineTo(rj[0], rj[1]);
+
+            } else if(constraint instanceof p2.RevoluteConstraint && constraint !== this.mouseConstraint){
+
+                p2.vec2.copy(ri, constraint.pivotA);
+                p2.vec2.copy(rj, constraint.pivotB);
+
+                bi.toWorldFrame(ri, ri);
+                bj.toWorldFrame(rj, rj);
+
                 g.moveTo(xi[0], xi[1]);
                 g.lineTo(ri[0], ri[1]);
 
