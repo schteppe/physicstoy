@@ -1,5 +1,7 @@
 var db = require('./Database');
 var Validator = require('../src/Validator');
+var crypto = require('crypto');
+var fs = require('fs');
 
 module.exports = new Scene();
 
@@ -89,6 +91,20 @@ Scene.prototype.getById = function(id, callback){
 	});
 };
 
+
+Scene.prototype.getIdByMD5 = function(md5, callback){
+	var that = this;
+	db.query('SELECT id FROM pt_scenes WHERE md5sum=$1', [md5], function (err, result){
+		if(err) return callback(err);
+
+		if(!result.rows[0])
+			return callback(null, null);
+
+		callback(null, result.rows[0].id);
+	});
+};
+
+
 Scene.prototype.forEach = function(iterator, callback){
 	var id = 0;
 	function doNext(){
@@ -171,8 +187,21 @@ Scene.prototype.listThumbnailData = function(offset, limit, callback){
 };
 
 Scene.prototype.insert = function(scene, callback){
-	db.query('INSERT INTO pt_scenes (scene,version) VALUES($1,$2) RETURNING id', [scene, Validator.CURRENT_VERSION], function (err, result){
-		if(err) return callback(err);
+
+	// Create md5 sum
+	var sum = crypto.createHash('md5');
+	sum.update(JSON.stringify(scene));
+	var md5sum = sum.digest('hex');
+
+	var that = this;
+	db.query('INSERT INTO pt_scenes (scene,version,md5sum) VALUES($1,$2,$3) RETURNING id', [scene, Validator.CURRENT_VERSION, md5sum], function (err, result){
+
+		if(err && err.code === '23505'){
+			// Already exists, find the existing id instead
+			return that.getIdByMD5(md5sum, callback);
+		} else if(err) {
+			return callback(err);
+		}
 
 		var insertId = result.rows[0].id;
 
