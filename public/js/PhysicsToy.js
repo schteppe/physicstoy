@@ -1282,10 +1282,11 @@ WebGLRenderer.prototype.drawCapsule = function(g, x, y, angle, len, radius, colo
     vec2.rotate(p1, p1, angle);
     vec2.rotate(pp2, pp2, angle);
     vec2.rotate(p3, p3, angle);
+
     vec2.add(p0, p0, localPos);
     vec2.add(p1, p1, localPos);
     vec2.add(pp2, pp2, localPos);
-    vec2.add(p1, p1, localPos);
+    vec2.add(p3, p3, localPos);
 
     g.lineStyle(lineWidth, color, 0);
     g.beginFill(fillColor, isSleeping ? this.sleepOpacity : 1.0);
