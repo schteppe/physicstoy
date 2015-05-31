@@ -18,6 +18,8 @@ Validator.upgrade = function(obj){
 	}
 
 	var version, i, j, k, l;
+
+	// Version 1 didn't have version numbers...
 	if(typeof(obj.version) === 'number'){
 		version = obj.version;
 	} else {

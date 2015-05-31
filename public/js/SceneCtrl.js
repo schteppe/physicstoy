@@ -134,6 +134,13 @@ angular.module('physicsApp', [])
 		scene = sceneHandler.createDefaultScene();
 	}
 
+	window.loadScene = function(scene){
+		for(var key in scene){
+			$scope[key] = scene[key];
+		}
+		$scope.$digest();
+	};
+
 	// Extend the scope with the scene data
 	for(var key in scene){
 		$scope[key] = scene[key];
