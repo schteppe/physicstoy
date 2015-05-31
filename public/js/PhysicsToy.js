@@ -2628,6 +2628,10 @@ BodyHandler.prototype.duplicate = function(config){
 	return bodyConfig;
 };
 
+function clamp(n, min, max){
+	return Math.max(min, Math.min(max, n));
+}
+
 BodyHandler.prototype.update = function(config){
 	var body = this.objects[config.id];
 	if(!body){
@@ -2641,8 +2645,8 @@ BodyHandler.prototype.update = function(config){
 
 	body.velocity.set([config.velocityX, config.velocityY]);
 	body.angularVelocity = config.angularVelocity;
-	body.damping = config.damping;
-	body.angularDamping = config.angularDamping;
+	body.damping = clamp(config.damping, 0, 1);
+	body.angularDamping = clamp(config.angularDamping, 0, 1);
 	body.collisionResponse = config.collisionResponse;
 	body.fixedRotation = config.fixedRotation;
 	body.enableSleep = config.enableSleep;
