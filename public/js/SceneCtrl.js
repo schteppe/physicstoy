@@ -90,6 +90,19 @@ angular.module('physicsApp', [])
 		);
 	};
 
+	$scope.moveSelection = function (dx, dy) {
+		var id = $scope.selectedId;
+		var bodyConfig = $scope.getBodyConfigById(id);
+
+		if(!bodyConfig) return;
+
+		bodyConfig.x += dx;
+		bodyConfig.y += dy;
+
+		$scope.$digest();
+	};
+
+
 	// Selection made from within the renderer. Update the app state
 	renderer.on('click', function (event){
 		var targets = event.targets.filter(function (target){
@@ -422,12 +435,19 @@ angular.module('physicsApp', [])
 	var Keys = {
 		DELETE: 46,
 		SPACE: 32,
-		D: 68
+		D: 68,
+		UP: 38,
+		DOWN: 40,
+		LEFT: 37,
+		RIGHT: 39
 	};
 	window.addEventListener('keyup', function (evt) {
 		if(['CANVAS','BODY'].indexOf(document.activeElement.nodeName) === -1){
 			return;
 		}
+
+		var moveScale = evt.shiftKey ? 0.1 : 1;
+
 		switch(evt.keyCode){
 
 		case Keys.D:
@@ -441,6 +461,24 @@ angular.module('physicsApp', [])
 		case Keys.DELETE:
 			$scope.deleteSelection();
 			break;
+
+		case Keys.LEFT:
+			$scope.moveSelection(-moveScale,0);
+			break;
+
+		case Keys.RIGHT:
+			$scope.moveSelection(moveScale,0);
+			break;
+
+		case Keys.UP:
+			$scope.moveSelection(0,moveScale);
+			break;
+
+		case Keys.DOWN:
+			$scope.moveSelection(0,-moveScale);
+			break;
+
+
 		}
 
 		$scope.$digest();

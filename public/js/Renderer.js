@@ -408,6 +408,11 @@ Renderer.prototype.handleMouseDown = function(physicsPosition){
 
     // Store for next
     p2.vec2.copy(this.lastMouseDownPhysicsPosition, physicsPosition);
+
+    this.emit({
+        type: 'mousedown',
+        position: physicsPosition
+    });
 };
 
 /**
@@ -448,6 +453,11 @@ Renderer.prototype.handleMouseMove = function(physicsPosition){
         this.emit(this.drawRectangleChangeEvent);
         break;
     }
+
+    this.emit({
+        type: 'mousemove',
+        position: physicsPosition
+    });
 };
 
 /**
@@ -544,6 +554,11 @@ Renderer.prototype.handleMouseUp = function(physicsPosition){
             s.collisionGroup = this.newShapeCollisionGroup;
         }
     }
+
+    this.emit({
+        type: 'mouseup',
+        position: physicsPosition
+    });
 };
 
 p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
@@ -594,7 +609,8 @@ Renderer.prototype.handleClick = function(physicsPosition){
     var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
     this.emit({
         type: 'click',
-        targets: result.concat(result2)
+        targets: result.concat(result2),
+        position: physicsPosition
     });
 };
 
@@ -603,7 +619,8 @@ Renderer.prototype.handleDoubleClick = function(physicsPosition){
     var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
     this.emit({
         type: 'dblclick',
-        targets: result.concat(result2)
+        targets: result.concat(result2),
+        position: physicsPosition
     });
 };
 
