@@ -399,7 +399,7 @@ angular.module('physicsApp', [])
 			break;
 
 		case Keys.SPACE:
-			$scope.playing = !$scope.playing;
+			angular.element('#nav-play').trigger('click');
 			break;
 
 		case Keys.DELETE:
