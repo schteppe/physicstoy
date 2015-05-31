@@ -61,6 +61,35 @@ angular.module('physicsApp', [])
 		);
 	};
 
+	$scope.deleteSelection = function () {
+		var id = $scope.selectedId;
+		var bodyConfig, shapeConfig, springConfig, constraintConfig;
+
+		if(bodyConfig = $scope.getBodyConfigById(id)){
+			$scope.removeBody(bodyConfig);
+		} else if(shapeConfig = $scope.getShapeConfigById(id)){
+			var bodyConfig2 = $scope.getBodyConfigFromShapeConfig(shapeConfig);
+			$scope.removeShape(bodyConfig2, shapeConfig);
+		} else if(springConfig = $scope.getSpringConfigById(id)){
+			$scope.removeSpring(springConfig);
+		} else if(constraintConfig = $scope.getConstraintConfigById(id)){
+			$scope.removeConstraint(constraintConfig);
+		}
+
+		renderer.selection.length = 0;
+		$scope.selectedId = -1;
+	};
+
+	$scope.canDeleteSelection = function () {
+		var id = $scope.selectedId;
+		return !!(
+			$scope.getBodyConfigById(id) ||
+			$scope.getShapeConfigById(id) ||
+			$scope.getSpringConfigById(id) ||
+			$scope.getConstraintConfigById(id)
+		);
+	};
+
 	// Selection made from within the renderer. Update the app state
 	renderer.on('click', function (event){
 		var targets = event.targets.filter(function (target){
@@ -403,22 +432,7 @@ angular.module('physicsApp', [])
 			break;
 
 		case Keys.DELETE:
-			var id = $scope.selectedId;
-			var bodyConfig, shapeConfig, springConfig, constraintConfig;
-
-			if(bodyConfig = $scope.getBodyConfigById(id)){
-				$scope.removeBody(bodyConfig);
-			} else if(shapeConfig = $scope.getShapeConfigById(id)){
-				var bodyConfig2 = $scope.getBodyConfigFromShapeConfig(shapeConfig);
-				$scope.removeShape(bodyConfig2, shapeConfig);
-			} else if(springConfig = $scope.getSpringConfigById(id)){
-				$scope.removeSpring(springConfig);
-			} else if(constraintConfig = $scope.getConstraintConfigById(id)){
-				$scope.removeConstraint(constraintConfig);
-			}
-
-			renderer.selection.length = 0;
-			$scope.selectedId = -1;
+			$scope.deleteSelection();
 			break;
 		}
 

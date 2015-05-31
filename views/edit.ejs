@@ -121,7 +121,8 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Edit</a>
 								<ul class="dropdown-menu" role="menu">
-									<li ng-class="canDuplicate() ? '' : 'disabled'"><a href="#" ng-click="duplicateSelection()"><u>D</u>uplicate</a></li>
+									<li ng-class="canDuplicate() ? '' : 'disabled'"><a href="#" ng-click="duplicateSelection()">Duplicate [d]</a></li>
+									<li ng-class="canDeleteSelection() ? '' : 'disabled'"><a href="#" ng-click="deleteSelection()">Delete [del]</a></li>
 								</ul>
 							</li>
 							<li ng-class="{'disabled': inputForm.$invalid}">
