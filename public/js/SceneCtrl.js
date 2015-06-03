@@ -460,7 +460,7 @@ angular.module('physicsApp', [])
 
 
 
-	$scope.quickAdd = function (shapeType, bodyName, shapeName) {
+	$scope.quickAdd = function (shapeType, bodyName, shapeName, bodyType) {
 		var bodyConfig = sceneHandler.bodyHandler.create();
 		$scope.bodies.push(bodyConfig);
 		sceneHandler.bodyHandler.add(bodyConfig);
@@ -471,6 +471,7 @@ angular.module('physicsApp', [])
 
 		shapeConfig.type = shapeType;
 		bodyConfig.name = bodyName;
+		bodyConfig.type = bodyType;
 		shapeConfig.name = shapeName;
 
 		$scope.setSelectedId(bodyConfig.id);
