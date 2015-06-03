@@ -136,12 +136,12 @@
 			<nav class="navbar navbar-default" ng-show="!playing" style="position:fixed; top: 60px; left: 10px; width:300px; bottom:0px; overflow: auto;">
 				<div class="container-fluid">
 
-					<div class="row" ng-show="getSelectedId() != -1">
+					<div class="row" ng-show="getSelectionSize() == 1">
 						<div class="col-md-12">
 
 							<!-- bodies -->
 							<div ng-repeat="body in bodies" ng-controller="BodyCtrl">
-								<div ng-show="body.id == getSelectedId()">
+								<div ng-show="idIsSingleSelected(body.id)">
 									<h4>{{body.name||'&nbsp;'}}</h4>
 
 									<div class="form-horizontal">
@@ -347,7 +347,7 @@
 
 							<!-- Shapes -->
 							<div ng-repeat="body in bodies">
-								<div ng-repeat="shape in body.shapes" ng-show="getSelectedId() == shape.id" ng-controller="ShapeCtrl">
+								<div ng-repeat="shape in body.shapes" ng-show="idIsSingleSelected(shape.id)" ng-controller="ShapeCtrl">
 
 									<h4>{{shape.name||'&nbsp;'}}</h4>
 
@@ -444,7 +444,7 @@
 
 							<!-- Springs -->
 							<div ng-repeat="spring in springs">
-								<div ng-show="getSelectedId() == spring.id" ng-controller="SpringCtrl">
+								<div ng-show="idIsSingleSelected(spring.id)" ng-controller="SpringCtrl">
 
 									<h4>{{spring.name||'&nbsp;'}}</h4>
 
@@ -565,7 +565,7 @@
 
 							<!-- Constraints -->
 							<div ng-repeat="constraint in constraints">
-								<div ng-show="getSelectedId() == constraint.id" ng-controller="ConstraintCtrl">
+								<div ng-show="idIsSingleSelected(constraint.id)" ng-controller="ConstraintCtrl">
 
 									<h4>{{constraint.name||'&nbsp;'}}</h4>
 
@@ -788,7 +788,7 @@
 
 							<!-- Materials -->
 							<div ng-repeat="material in materials">
-								<div ng-show="getSelectedId() == material.id" ng-controller="MaterialCtrl">
+								<div ng-show="idIsSingleSelected(material.id)" ng-controller="MaterialCtrl">
 									<h4>{{material.name||'&nbsp;'}}</h4>
 									<div class="form-horizontal">
 
@@ -819,7 +819,7 @@
 
 							<!-- ContactMaterials -->
 							<div ng-repeat="contactMaterial in contactMaterials">
-								<div ng-show="getSelectedId() == contactMaterial.id" ng-controller="ContactMaterialCtrl">
+								<div ng-show="idIsSingleSelected(contactMaterial.id)" ng-controller="ContactMaterialCtrl">
 									<h4>{{contactMaterial.name||'&nbsp;'}}</h4>
 
 									<div class="form-horizontal">
@@ -924,7 +924,7 @@
 
 							<!-- State machines -->
 							<div ng-repeat="body in bodies">
-								<div ng-repeat="machine in body.machines" ng-show="getSelectedId() == machine.id" ng-controller="MachineCtrl">
+								<div ng-repeat="machine in body.machines" ng-show="idIsSingleSelected(machine.id)" ng-controller="MachineCtrl">
 
 									<h4>{{machine.name||'&nbsp;'}}</h4>
 
@@ -1099,8 +1099,17 @@
 					</div>
 
 
+					<div class="row" ng-show="getSelectionSize() >= 2">
+						<div class="col-md-12">
+							<h4>Selection ({{getSelectionSize()}})</h4>
 
-					<div class="row" ng-show="getSelectedId() == -1">
+							<div ng-show="canCreateConstraintFromSelection()">
+								<a class="btn btn-default" ng-click="addConstraintFromSelection()">Create constraint</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="row" ng-show="getSelectionSize() == 0">
 						<div class="col-md-12">
 
 							<div class="form-horizontal">

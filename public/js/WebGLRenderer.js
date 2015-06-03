@@ -278,9 +278,9 @@ WebGLRenderer.prototype.init = function(){
         var movedDist = Math.sqrt(Math.pow(e.global.x - lastDownX, 2) + Math.pow(e.global.y - lastDownY, 2));
         if(movedDist < 10){
             if(doubleClick)
-                that.handleDoubleClick(init_physicsPosition);
+                that.handleDoubleClick(init_physicsPosition, e.originalEvent);
             else
-                that.handleClick(init_physicsPosition);
+                that.handleClick(init_physicsPosition, e.originalEvent);
         }
     };
 

@@ -604,23 +604,25 @@ p2.World.prototype.hitTest2 = function(worldPoint,bodies,precision){
     return result;
 };
 
-Renderer.prototype.handleClick = function(physicsPosition){
+Renderer.prototype.handleClick = function(physicsPosition, originalEvent){
     var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
     var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
     this.emit({
         type: 'click',
         targets: result.concat(result2),
-        position: physicsPosition
+        position: physicsPosition,
+        originalEvent: originalEvent
     });
 };
 
-Renderer.prototype.handleDoubleClick = function(physicsPosition){
+Renderer.prototype.handleDoubleClick = function(physicsPosition, originalEvent){
     var result = this.world.hitTest(physicsPosition, this.world.bodies, this.pickPrecision);
     var result2 = this.world.hitTest2(physicsPosition, this.world.bodies, this.pickPrecision);
     this.emit({
         type: 'dblclick',
         targets: result.concat(result2),
-        position: physicsPosition
+        position: physicsPosition,
+        originalEvent: originalEvent
     });
 };
 
