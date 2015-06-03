@@ -16,8 +16,6 @@
 	</head>
 	<body ng-app="physicsApp" ng-controller="SceneCtrl">
 
-		<% include fullscreenbutton %>
-
 		<% if(typeof(scene) !== 'undefined'){ %>
 			<script id="loadedSceneData" type="application/json"><%-scene%></script>
 			<script>
@@ -123,6 +121,14 @@
 								<ul class="dropdown-menu" role="menu">
 									<li ng-class="canDuplicate() ? '' : 'disabled'"><a href="#" ng-click="duplicateSelection()">Duplicate [d]</a></li>
 									<li ng-class="canDeleteSelection() ? '' : 'disabled'"><a href="#" ng-click="deleteSelection()">Delete [del]</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View</a>
+								<ul class="dropdown-menu" role="menu">
+									<li ng-class="">
+										<a href="#" onclick="window.screenfull && screenfull.request()">Fullscreen</a>
+									</li>
 								</ul>
 							</li>
 							<li ng-class="{'disabled': inputForm.$invalid}">
