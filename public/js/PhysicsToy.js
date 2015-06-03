@@ -1579,6 +1579,8 @@ WebGLRenderer.prototype.render = function(){
                 xi = bi.position,
                 xj = bj.position;
 
+            if(!bi.world || !bj.world) break;
+
             var ri = tempVec0;
             var rj = tempVec1;
             var axis = tempVec2;
@@ -1865,6 +1867,7 @@ WebGLRenderer.prototype.removeRenderable = function(obj){
             this.stage.removeChild(this.sprites[i]);
             this.sprites.splice(i,1);
         }
+        // TODO: remove springs connected
     } else if(obj instanceof p2.Spring){
         var i = this.springs.indexOf(obj);
         if(i!==-1){
@@ -2181,8 +2184,9 @@ SpringHandler.prototype.update = function(config){
 		spring = new p2.RotationalSpring(bodyA, bodyB, opts);
 		break;
 	}
-	this.world.addSpring(spring);
 	this.objects[config.id] = spring;
+
+	this.world.addSpring(spring);
 	this.renderer.addVisual(spring);
 };
 

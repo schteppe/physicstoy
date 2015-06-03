@@ -63,8 +63,9 @@ SpringHandler.prototype.update = function(config){
 		spring = new p2.RotationalSpring(bodyA, bodyB, opts);
 		break;
 	}
-	this.world.addSpring(spring);
 	this.objects[config.id] = spring;
+
+	this.world.addSpring(spring);
 	this.renderer.addVisual(spring);
 };
 

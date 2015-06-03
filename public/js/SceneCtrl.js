@@ -251,6 +251,22 @@ angular.module('physicsApp', [])
 				$scope.removeMachine(body, machines[0]);
 			}
 
+			// remove dead refs to the body
+			for(var i=0; i<$scope.springs.length; i++){
+				var spring = $scope.springs[i];
+				if(spring.bodyA === body.id)
+					spring.bodyA = 0;
+				if(spring.bodyB === body.id)
+					spring.bodyB = 0;
+			}
+			for(var i=0; i<$scope.constraints.length; i++){
+				var constraint = $scope.constraints[i];
+				if(constraint.bodyA === body.id)
+					constraint.bodyA = 0;
+				if(constraint.bodyB === body.id)
+					constraint.bodyB = 0;
+			}
+
 		}
 		sceneHandler.bodyHandler.remove(body);
 		$scope.setSelectedId(-1);
