@@ -218,6 +218,7 @@ angular.module('physicsApp', [])
 	// Frame all
 	$timeout(function(){
 		renderer.frameAll();
+		$scope.contentLoaded = true;
 	});
 
 	// Make sure we get new ids
