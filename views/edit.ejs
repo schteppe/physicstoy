@@ -320,6 +320,21 @@
 											</div>
 										</div>
 
+										<h4>Connected constraints</h4>
+										<div>
+											<!-- Constraint select -->
+											<div class="form-group">
+												<div class="btn-group-vertical col-md-12">
+													<button ng-click="setSelectedId(constraint.id)" ng-repeat="constraint in constraints" ng-show="constraint.bodyA == body.id || constraint.bodyB == body.id" type="button" class="btn btn-default btn-block btn-sm">
+														{{constraint.name}}
+													</button>
+													<button ng-click="addConstraint(body.id)" type="button" class="btn btn-default btn-block btn-sm">
+														<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add constraint
+													</button>
+												</div>
+											</div>
+										</div>
+
 										<h4>State machines</h4>
 										<div>
 											<!-- Machine select -->
