@@ -44,7 +44,7 @@ angular.module('physicsApp', [])
 		$scope.selectedIds[0] = id;
 	};
 
-	$scope.canCreateConstraintFromSelection = function () {
+	$scope.selectionIsTwoBodies = function () {
 		if($scope.getSelectionSize() !== 2)
 			return false;
 
@@ -391,6 +391,10 @@ angular.module('physicsApp', [])
 		}
 		sceneHandler.springHandler.add(config);
 		$scope.setSelectedId(config.id);
+	};
+
+	$scope.addSpringFromSelection = function () {
+		$scope.addSpring($scope.selectedIds[0], $scope.selectedIds[1]);
 	};
 
 	$scope.removeSpring = function (config) {

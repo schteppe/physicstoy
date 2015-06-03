@@ -1113,13 +1113,16 @@
 						</div>
 					</div>
 
-
 					<div class="row" ng-show="getSelectionSize() >= 2">
 						<div class="col-md-12">
 							<h4>Selection ({{getSelectionSize()}})</h4>
 
-							<div ng-show="canCreateConstraintFromSelection()">
-								<a class="btn btn-default" ng-click="addConstraintFromSelection()">Create constraint</a>
+							<div ng-show="selectionIsTwoBodies()">
+								<a class="btn btn-default btn-block btn-sm" ng-click="addConstraintFromSelection()">Create constraint</a>
+							</div>
+
+							<div ng-show="selectionIsTwoBodies()">
+								<a class="btn btn-default btn-block btn-sm" ng-click="addSpringFromSelection()">Create spring</a>
 							</div>
 						</div>
 					</div>
