@@ -18,7 +18,8 @@ angular.module('physicsApp', [])
 	};
 
 	$scope.$watch('selectedIds', function(ov, nv){
-		$("#left-menu")[0].scrollTop = 0;
+		var el = $("#left-menu")[0];
+		if(el) el.scrollTop = 0;
 	});
 
 	$scope.idIsSingleSelected = function (id) {
