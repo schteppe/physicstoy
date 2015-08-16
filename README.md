@@ -1,4 +1,4 @@
-p2.js physics editor for the web
+[p2.js](https://github.com/schteppe/p2.js) physics editor for the web
 
 # Install & build
 
