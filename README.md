@@ -1,17 +1,33 @@
-# Install & run
+p2.js physics editor for the web
 
-Prerequisities: Node.js, grunt, Heroku toolbelt, Postgres
+# Install & build
 
-```js
-npm install && grunt && foreman start
+Prerequisities: [Node.js](https://nodejs.org/), [Grunt](http://gruntjs.com/), [Heroku toolbelt](https://toolbelt.heroku.com/), [Postgres](http://www.postgresql.org/)
+
+```
+$ npm install && grunt
 ```
 
-# Environment vars
+# Run the server
 
- * DATABASE_URL
- * PHYSICSTOY_GA_ID
- * PHYSICSTOY_TITLE
- * PHYSICSTOY_MAX_DB_CONNECTIONS
- * PHYSICSTOY_MAX_CACHED_THUMBNAIL_PAGES
- * PHYSICSTOY_MAX_CACHED_SCENES
- * PHYSICSTOY_MAX_CACHE_AGE
+```
+$ foreman start
+```
+
+# Sample .env file
+
+The following environment variables are used in the app. You'll need to specify at least the ```DATABASE_URL``` to get the app to run at all.
+
+```
+DATABASE_URL=postgres://user@domain/postgres
+PHYSICSTOY_GA_ID=UAXXXX
+PHYSICSTOY_TITLE=PhysicsToy
+PHYSICSTOY_MAX_DB_CONNECTIONS=10
+PHYSICSTOY_MAX_CACHED_THUMBNAIL_PAGES=10
+PHYSICSTOY_MAX_CACHED_SCENES=10
+PHYSICSTOY_MAX_CACHE_AGE=0
+```
+
+# Contribute
+
+PR's are very welcome! Base your PR's on the ```master``` branch. Thank you.
